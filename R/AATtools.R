@@ -25,7 +25,7 @@
 #' If you want to see plots of your data, 1 iteration is enough.
 #' @param plot Create a scatterplot of the AAT scores computed from each half of the data from the last iteration.
 #' This is highly recommended, as it helps to identify outliers that can inflate or diminish the reliability.
-#' @param algorithm Function (without brackets or quotes) to be used to compute AAT scores. See \link{algorithm()} for a list of usable algorithms.
+#' @param algorithm Function (without brackets or quotes) to be used to compute AAT scores. See \link{algorithm} for a list of usable algorithms.
 #' @param trialdropfunc Function (without brackets or quotes) to be used to exclude outlying trials in each half.
 #' The way you handle outliers for the reliability computation should mimic the way you do it in your regular analyses.
 #' It is recommended to exclude outlying trials when computing AAT scores using the mean double-dfference scores and multilevel scoring approaches,
