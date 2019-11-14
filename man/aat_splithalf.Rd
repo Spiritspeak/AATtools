@@ -38,7 +38,7 @@ If you want to see plots of your data, 1 iteration is enough.}
 \item{plot}{Create a scatterplot of the AAT scores computed from each half of the data from the last iteration.
 This is highly recommended, as it helps to identify outliers that can inflate or diminish the reliability.}
 
-\item{algorithm}{Function (without brackets or quotes) to be used to compute AAT scores. See \link{aat_doublemeandiff} for a list of usable algorithms.}
+\item{algorithm}{Function (without brackets or quotes) to be used to compute AAT scores. See \link{algorithm()} for a list of usable algorithms.}
 
 \item{trialdropfunc}{Function (without brackets or quotes) to be used to exclude outlying trials in each half.
 The way you handle outliers for the reliability computation should mimic the way you do it in your regular analyses.
@@ -89,6 +89,9 @@ aat_splithalf(ds=ds2,subjvar="subjectid",pullvar="is_pull",targetvar="is_food",
 #Mean reliability: 0.5313939
 #Spearman-Brown-corrected r: 0.6940003
 #95\%CI: [0.2687186, 0.6749176]
+}
+\seealso{
+\link{plot.aat_splithalf}
 }
 \author{
 Sercan Kahveci

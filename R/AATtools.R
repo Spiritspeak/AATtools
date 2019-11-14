@@ -25,7 +25,7 @@
 #' If you want to see plots of your data, 1 iteration is enough.
 #' @param plot Create a scatterplot of the AAT scores computed from each half of the data from the last iteration.
 #' This is highly recommended, as it helps to identify outliers that can inflate or diminish the reliability.
-#' @param algorithm Function (without brackets or quotes) to be used to compute AAT scores. See \link{aat_doublemeandiff} for a list of usable algorithms.
+#' @param algorithm Function (without brackets or quotes) to be used to compute AAT scores. See \link{algorithm()} for a list of usable algorithms.
 #' @param trialdropfunc Function (without brackets or quotes) to be used to exclude outlying trials in each half.
 #' The way you handle outliers for the reliability computation should mimic the way you do it in your regular analyses.
 #' It is recommended to exclude outlying trials when computing AAT scores using the mean double-dfference scores and multilevel scoring approaches,
@@ -49,6 +49,7 @@
 #' a list of data.frames used over each iteration, and a vector containing the split-half reliability of each iteration.
 #'
 #' @author Sercan Kahveci
+#' @seealso \link{plot.aat_splithalf}
 #' @examples #Not Run
 #' aat_splithalf(ds=ds2,subjvar="subjectid",pullvar="is_pull",targetvar="is_food",
 #'               rtvar="rt",iters=1000,trialdropfunc=trial_prune_3SD,
@@ -74,8 +75,7 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar,rtvar,iters,plot=T,
                         errortrialfunc=c("prune_nothing","error_replace_blockmeanplus"),
                         casedropfunc=c("prune_nothing","case_prune_3SD"),
                         ...){
-  for(pack in c("magrittr","dplyr","tidyr","lme4","doParallel")){ require(pack,character.only=T) }
-  packs<-c("magrittr","dplyr","skMisc")
+  packs<-c("magrittr","dplyr","AATtools")
 
   #Handle arguments
   args<-list(...)
@@ -136,15 +136,18 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar,rtvar,iters,plot=T,
     }
   stopCluster(cluster)
 
-  cors<-sapply(results,FUN=function(x){x$corr}) %>% sort
+  cors<-sapply(results,FUN=function(x){x$corr})
+  ordering<-order(cors)
+  cors<-cors[ordering]
+
   #cat(scan("splithalfmessages.txt",what=character(),quiet=TRUE))
   output<-list(rsplithalf=mean(cors),
                lowerci=cors[round(iters*0.025)],
                upperci=cors[round(iters*0.975)],
                rSB=SpearmanBrown(mean(cors)),
                iters=iters,
-               itercors=sapply(results,function(x){ x$corr }),
-               iterdata=lapply(results,function(x){ x$abds })) %>%
+               itercors=cors,
+               iterdata=lapply(results,function(x){ x$abds })[ordering]) %>%
     structure(class = "aat_splithalf")
   if(plot){ plot(output) }
   return(output)
@@ -160,7 +163,6 @@ aat_splithalf_singlecore<-function(ds,subjvar,pullvar,targetvar,rtvar,iters,plot
                         errortrialfunc=c("prune_nothing","error_replace_blockmeanplus"),
                         casedropfunc=c("prune_nothing","case_prune_3SD"),
                         ...){
-  for(pack in c("magrittr","dplyr","tidyr","lme4","doParallel")){ require(pack,character.only=T) }
 
   #Handle arguments
   args<-list(...)
@@ -235,11 +237,35 @@ print.aat_splithalf<-function(x){
       sep="")
 }
 
-plot.aat_splithalf<-function(x){
-  abds<-x$iterdata[[length(x$iterdata)]]
+#' @title Plot split-half scatterplots
+#'
+#' @param x an \code{aat_splithalf} object
+#' @param type Character argument indicating which iteration should be chosen. Must be an abbreviation of
+#' \code{"median"} (default), \code{"minimum"}, \code{"maximum"}, or \code{"random"}.
+#'
+#' @export
+#'
+#' @examples
+#' #Coming soon
+plot.aat_splithalf<-function(x,type=c("median","minimum","maximum","random")){
+  type<-match.arg(type)
+  if(type=="median"){
+    title<-"Split-half Scatterplot for Iteration with Median Reliability"
+    idx<-ceiling(x$iters/2)
+  }else if(type=="minimum"){
+    title<-"Split-half Scatterplot for Iteration with the Lowest Reliability"
+    idx<-1
+  }else if(type=="maximum"){
+    title<-"Split-half Scatterplot for Iteration with the Highest Reliability"
+    idx<-x$iters
+  }else if(type=="random"){
+    title<-"Split-half Scatterplot for Random Iteration"
+    idx<-sample(1:x$iters,1)
+  }
+  abds<-x$iterdata[[idx]]
   plot(abds$abhalf0,abds$abhalf1,pch=20,main=
-         paste0("Split-half Scatterplot for Last Iteration",
-                "\n(r = ", round(x$itercors[length(x$itercors)],digits=2),")"),
+         paste0(title,
+                "\n(r = ", round(x$itercors[idx],digits=2),")"),
        xlab="Half 1 computed bias",ylab="Half 2 computed bias")
   text(abds$abhalf0,abds$abhalf1,abds[,1],cex= 0.7, pos=3, offset=0.3)
 }
@@ -428,8 +454,7 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar,rtvar,iters,plot=T,
                         trialdropfunc=c("prune_nothing","trial_prune_3SD"),
                         errortrialfunc=c("prune_nothing","error_replace_blockmeanplus"),
                         ...){
-  for(pack in c("magrittr","dplyr","tidyr","lme4","doParallel")){ require(pack,character.only=T) }
-  packs<-c("magrittr","dplyr","skMisc")
+  packs<-c("magrittr","dplyr","AATtools")
 
   #Handle arguments
   args<-list(...)
@@ -495,7 +520,7 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar,rtvar,iters,plot=T,
 
 plot.aat_bootstrap <- function(x){
   statset<-x$bias
-  rank<-rank(statset$bias)
+  rank<-order(statset$bias)
   wideness<-max(statset$upperci) - min(statset$lowerci)
   plot(x=statset$bias,y=rank,xlim=c(min(statset$lowerci)-0.01*wideness,max(statset$upperci)+0.01*wideness),
        xlab="Bias score",main=paste0("Individual bias scores with 95%CI",
