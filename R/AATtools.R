@@ -30,7 +30,9 @@
 #' The way you handle outliers for the reliability computation should mimic the way you do it in your regular analyses.
 #' It is recommended to exclude outlying trials when computing AAT scores using the mean double-dfference scores and multilevel scoring approaches,
 #' but not when using d-scores or median double-difference scores.
-#' \code{prune_nothing} excludes no trials, while \code{trial_prune_3SD} excludes trials deviating more than 3SD from the mean per participant.
+#' \code{prune_nothing} excludes no trials, \code{trial_prune_3SD} excludes trials deviating more than 3SD from the mean per participant.
+#' \code{trial_prune_dropcases} allows you to set the maximum standard deviation to include using argument \code{trialsd} (default is 3)
+#' and prune participants altogether if they have more than a certain proportion of outliers using argument \code{maxoutliers} (default is .15)
 #' @param errortrialfunc Function (without brackets or quotes) to apply to an error trial.
 #'
 #' \code{error_replace_blockmeanplus} replaces error trial reaction times with the block mean plus an arbitrary extra amount of time.
@@ -40,6 +42,8 @@
 #' \item \code{errorvar} - Quoted name of the error variable, where errors are 1 or TRUE and correct trials are 0 or FALSE
 #' \item \code{errorbonus} - Amount to add to the reaction time of error trials. Default is 0.6 (recommended by \code{Greenwald, Nosek, & Banaji, 2003})
 #' }
+#' \code{error_prune_dropcases} removes errors and drops participants if they have a larger proportion of errors
+#'  than given by argument \code{maxerrors}, default is .15
 #' @param casedropfunc Function (without brackets or quotes) to be used to exclude outlying participant scores in each half.
 #' The way you handle outliers here should mimic the way you do it in your regular analyses.
 #' \code{prune_nothing} excludes no participants, while \code{case_prune_3SD} excludes participants deviating more than 3SD from the sample mean.
@@ -49,7 +53,7 @@
 #' a list of data.frames used over each iteration, and a vector containing the split-half reliability of each iteration.
 #'
 #' @author Sercan Kahveci
-#' @seealso \link{plot.aat_splithalf()}
+#' @seealso \link{plot.aat_splithalf}
 #' @examples #Not Run
 #' aat_splithalf(ds=ds2,subjvar="subjectid",pullvar="is_pull",targetvar="is_food",
 #'               rtvar="rt",iters=1000,trialdropfunc=trial_prune_3SD,
@@ -71,8 +75,8 @@
 aat_splithalf<-function(ds,subjvar,pullvar,targetvar,rtvar,iters,plot=T,
                         algorithm=c("aat_doublemeandiff","aat_doublemediandiff","aat_dscore",
                                     "aat_dscore_multiblock","aat_multilevelscore"),
-                        trialdropfunc=c("prune_nothing","trial_prune_3SD"),
-                        errortrialfunc=c("prune_nothing","error_replace_blockmeanplus"),
+                        trialdropfunc=c("prune_nothing","trial_prune_3SD","trial_prune_dropcases"),
+                        errortrialfunc=c("prune_nothing","error_replace_blockmeanplus","error_prune_dropcases"),
                         casedropfunc=c("prune_nothing","case_prune_3SD"),
                         ...){
   packs<-c("magrittr","dplyr","AATtools")
@@ -99,7 +103,7 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar,rtvar,iters,plot=T,
             args$formula," and AAT-term ",args$aatterm)
     }
   }
-  ds%<>%aat_preparedata(subjvar,pullvar,targetvar,rtvar)
+  ds%<>%aat_preparedata(subjvar,pullvar,targetvar,rtvar,...)
 
   #splithalf loop
   cluster<-makeCluster(detectCores()-1)#,outfile="splithalfmessages.txt")
@@ -110,11 +114,11 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar,rtvar,iters,plot=T,
       iterds<-ds%>%group_by(!! sym(subjvar), !! sym(pullvar), !! sym(targetvar))%>%
         mutate(key=sample(n())%%2)%>%ungroup()
       #Handle outlying trials
-      iterds<-do.call(trialdropfunc,list(ds=iterds,subjvar=subjvar,rtvar=rtvar))
+      iterds<-do.call(trialdropfunc,c(args,list(ds=iterds,subjvar=subjvar,rtvar=rtvar)))
       #Handle error trials
-      iterds<-do.call(errortrialfunc,list(ds=iterds,subjvar=subjvar,rtvar=rtvar,
-                                          blockvar=args$blockvar,errorvar=args$errorvar,
-                                          errorbonus=args$errorbonus))
+      iterds<-do.call(errortrialfunc,c(args,list(ds=iterds,subjvar=subjvar,rtvar=rtvar)))
+      #intermediate prune of empty cases
+      iterds<-drop_empty_cases(iterds,subjvar)
 
       # abds<-do.call(algorithm,c(list(iterds=iterds,subjvar=subjvar,pullvar=pullvar,
       #                                targetvar=targetvar,rtvar=rtvar),args))
@@ -132,7 +136,7 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar,rtvar,iters,plot=T,
       abds<-do.call(casedropfunc,list(ds=abds))
       #Compute reliability
       currcorr<-cor(abds$abhalf0,abds$abhalf1,use="complete.obs")
-      list(corr=currcorr,abds=abds)
+      list(corr=currcorr,abds=abds,rawdata=iterds)
     }
   stopCluster(cluster)
 
@@ -147,7 +151,8 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar,rtvar,iters,plot=T,
                rSB=SpearmanBrown(mean(cors)),
                iters=iters,
                itercors=cors,
-               iterdata=lapply(results,function(x){ x$abds })[ordering]) %>%
+               iterdata=lapply(results,function(x){ x$abds })[ordering],
+               rawiterdata=lapply(results,function(x){ x$rawdata })[ordering]) %>%
     structure(class = "aat_splithalf")
   if(plot){ plot(output) }
   return(output)
@@ -288,6 +293,15 @@ trial_prune_3SD<-function(ds,subjvar,rtvar){
 }
 
 #' @export
+trial_prune_SD_dropcases<-function(ds,subjvar,rtvar,trialsd=3,maxoutliers=.15){
+  ds$ol.rt.var<-ds[[rtvar]]
+  ds%>%group_by(!! sym(subjvar),key)%>%
+    mutate( prune.ol.mean=mean(ol.rt.var,na.rm=T),prune.ol.sd=sd(ol.rt.var,na.rm=T))%>%
+    dplyr::filter(abs(scale(ol.rt.var)) < trialsd & (mean(abs(scale(ol.rt.var)) > trialsd)) < maxoutliers) %>%
+    dplyr::select(-prune.ol.mean,-prune.ol.sd,-ol.rt.var)
+}
+
+#' @export
 case_prune_3SD<-function(ds){
   dplyr::filter(ds,(abhalf0 < mean(abhalf0,na.rm=T)+3*sd(abhalf0,na.rm=T) &
                     abhalf0 > mean(abhalf0,na.rm=T)-3*sd(abhalf0,na.rm=T)) &
@@ -300,11 +314,16 @@ case_prune_3SD<-function(ds){
 #' @export
 error_replace_blockmeanplus<-function(ds,subjvar,rtvar,blockvar,errorvar,errorbonus, ...){
   ds%<>%group_by(!!sym(subjvar),!!sym(blockvar), key)%>%
-    mutate(newrt=mean((!!sym(rtvar))[!(!!sym(errorvar))])+errorbonus)
+    mutate(newrt=mean((!!sym(rtvar))[!(!!sym(errorvar))])+errorbonus)%>%ungroup()
   ds[ds[,errorvar]==1,rtvar]<-ds[ds[,errorvar]==1,]$newrt
   dplyr::select(ds,-newrt)
 }
 
+#' @export
+error_prune_dropcases<-function(ds,subjvar, errorvar, maxerrors = .15, ...){
+  ds%>%group_by(!!sym(subjvar), key)%>%
+    filter(mean(!!sym(errorvar))<maxerrors & !!sym(errorvar) == F)
+}
 
 # Score computation algorithms ####
 
@@ -539,25 +558,30 @@ plot.aat_bootstrap <- function(x){
 #' @param ntests An integer indicating how many times larger the full test is, for which the corrected correlation coefficient is being computed.
 #' When \code{ntests=2}, the formula will compute what the correlation coefficient would be if the test were twice as long.
 #' @param fix.negative Determines how to deal with a negative value. "nullify" sets it to zero,
-#' "bilateral" applies the correction as if it were a positive number, and then sets it to negative.
+#' "bilateral" applies the correction as if it were a positive number, and then sets it to negative. "none" gives the raw value.
 #' @return Spearman-Brown-corrected correlation coefficient.
 #' @export
-SpearmanBrown<-function(corr,ntests=2,fix.negative=c("nullify","bilateral")){
+SpearmanBrown<-function(corr,ntests=2,fix.negative=c("nullify","bilateral","none")){
   fix.negative<-match.arg(fix.negative)
-  if(fix.negative=="nullify"){
-    sb<-ntests*corr / (1+(ntests-1)*corr)
-    return(ifelse(sb<0,0,sb))
-  }else{
+  if(fix.negative=="bilateral"){
     s<-sign(corr)
     corr<-abs(corr)
     sb<-ntests*corr / (1+(ntests-1)*corr)
     return(s*sb)
+  }else{
+    sb<-ntests*corr / (1+(ntests-1)*corr)
+    if(fix.negative=="nullify"){
+      return(ifelse(sb<0,0,sb))
+    }else{
+      return(sb)
+    }
   }
 }
 
 
 
-aat_preparedata<-function(ds,subjvar,pullvar,targetvar,rtvar){
+aat_preparedata<-function(ds,subjvar,pullvar,targetvar,rtvar,...){
+  args<-list(...)
   stopifnot(all(c(subjvar,pullvar,targetvar,rtvar) %in% colnames(ds)))
   ds[,subjvar]%<>%as.factor()
   if(is.logical(ds[,pullvar])){
@@ -567,7 +591,7 @@ aat_preparedata<-function(ds,subjvar,pullvar,targetvar,rtvar){
   }
   if(is.factor(ds[,pullvar])){
     warning("Recoded ",pullvar," from factor to numeric. Please make sure that ",
-            levels(ds[,pullvar])[1], "represents push trials and ",levels(ds[,pullvar])[2],
+            levels(ds[,pullvar])[1], " represents push trials and ",levels(ds[,pullvar])[2],
             " represents pull trials")
     ds[,pullvar]<-as.numeric(ds[,pullvar])-1
   }
@@ -578,7 +602,7 @@ aat_preparedata<-function(ds,subjvar,pullvar,targetvar,rtvar){
   }
   if(is.factor(ds[,targetvar])){
     warning("Recoded ",targetvar," from factor to numeric. Please make sure that ",
-            levels(ds[,targetvar])[1], "represents control/neutral stimuli and ",levels(ds[,targetvar])[2],
+            levels(ds[,targetvar])[1], " represents control/neutral stimuli and ",levels(ds[,targetvar])[2],
             " represents target stimuli")
     ds[,targetvar]<-as.numeric(ds[,targetvar])-1
   }
@@ -587,6 +611,16 @@ aat_preparedata<-function(ds,subjvar,pullvar,targetvar,rtvar){
     ds<-ds[-rmindices,]
     warning("Removed ",length(rmindices)," rows due to presence of NA in critical variable(s)")
   }
+  ds<-ds[,c(subjvar,pullvar,targetvar,rtvar,args$errorvar,args$blockvar)]
   return(ds)
 }
+
+val_between<-function(x,lb,ub){x>lb & x<ub}
+
+drop_empty_cases<-function(iterds,subjvar){
+  iterds%>%group_by(!!sym(subjvar))%>%filter(val_between(mean(key),0,1))
+}
+
+
+
 
