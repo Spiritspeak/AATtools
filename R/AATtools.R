@@ -31,7 +31,7 @@
 #' It is recommended to exclude outlying trials when computing AAT scores using the mean double-dfference scores and multilevel scoring approaches,
 #' but not when using d-scores or median double-difference scores.
 #' \code{prune_nothing} excludes no trials, \code{trial_prune_3SD} excludes trials deviating more than 3SD from the mean per participant.
-#' \code{trial_prune_dropcases} allows you to set the maximum standard deviation to include using argument \code{trialsd} (default is 3)
+#' \code{trial_prune_SD_dropcases} allows you to set the maximum standard deviation to include using argument \code{trialsd} (default is 3)
 #' and prune participants altogether if they have more than a certain proportion of outliers using argument \code{maxoutliers} (default is .15)
 #' @param errortrialfunc Function (without brackets or quotes) to apply to an error trial.
 #'
@@ -75,8 +75,8 @@
 aat_splithalf<-function(ds,subjvar,pullvar,targetvar,rtvar,iters,plot=T,
                         algorithm=c("aat_doublemeandiff","aat_doublemediandiff","aat_dscore",
                                     "aat_dscore_multiblock","aat_multilevelscore"),
-                        trialdropfunc=c("prune_nothing","trial_prune_3SD","trial_prune_dropcases"),
-                        errortrialfunc=c("prune_nothing","error_replace_blockmeanplus","error_prune_dropcases"),
+                        trialdropfunc=c("prune_nothing","trial_prune_3SD","trial_prune_SD_dropcases"),
+                        errortrialfunc=c("prune_nothing","error_replace_blockmeanplus","error_prune_SD_dropcases"),
                         casedropfunc=c("prune_nothing","case_prune_3SD"),
                         ...){
   packs<-c("magrittr","dplyr","AATtools")
@@ -97,10 +97,10 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar,rtvar,iters,plot=T,
   if(algorithm=="aat_multilevelscore"){
     packs<-c(packs,"lme4")
     if(!any(c("formula","aatterm") %in% names(args))){
-    args$formula<-paste0(rtvar,"~",1,"+(",pullvar,"*",targetvar,"|",subjvar,")")
-    args$aatterm<-paste0(pullvar,":",targetvar)
-    warning("No multilevel formula or AAT-term provided. Defaulting to formula ",
-            args$formula," and AAT-term ",args$aatterm)
+      args$formula<-paste0(rtvar,"~",1,"+(",pullvar,"*",targetvar,"|",subjvar,")")
+      args$aatterm<-paste0(pullvar,":",targetvar)
+      warning("No multilevel formula or AAT-term provided. Defaulting to formula ",
+              args$formula," and AAT-term ",args$aatterm)
     }
   }
   ds%<>%aat_preparedata(subjvar,pullvar,targetvar,rtvar,...)
@@ -162,12 +162,12 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar,rtvar,iters,plot=T,
 #' @rdname aat_splithalf
 #' @export
 aat_splithalf_singlecore<-function(ds,subjvar,pullvar,targetvar,rtvar,iters,plot=T,
-                        algorithm=c("aat_doublemeandiff","aat_doublemediandiff","aat_dscore",
-                                    "aat_dscore_multiblock","aat_multilevelscore"),
-                        trialdropfunc=c("prune_nothing","trial_prune_3SD"),
-                        errortrialfunc=c("prune_nothing","error_replace_blockmeanplus"),
-                        casedropfunc=c("prune_nothing","case_prune_3SD"),
-                        ...){
+                                   algorithm=c("aat_doublemeandiff","aat_doublemediandiff","aat_dscore",
+                                               "aat_dscore_multiblock","aat_multilevelscore"),
+                                   trialdropfunc=c("prune_nothing","trial_prune_3SD"),
+                                   errortrialfunc=c("prune_nothing","error_replace_blockmeanplus"),
+                                   casedropfunc=c("prune_nothing","case_prune_3SD"),
+                                   ...){
 
   #Handle arguments
   args<-list(...)
@@ -304,9 +304,9 @@ trial_prune_SD_dropcases<-function(ds,subjvar,rtvar,trialsd=3,maxoutliers=.15){
 #' @export
 case_prune_3SD<-function(ds){
   dplyr::filter(ds,(abhalf0 < mean(abhalf0,na.rm=T)+3*sd(abhalf0,na.rm=T) &
-                    abhalf0 > mean(abhalf0,na.rm=T)-3*sd(abhalf0,na.rm=T)) &
-                   (abhalf1 < mean(abhalf1,na.rm=T)+3*sd(abhalf1,na.rm=T) &
-                    abhalf1 > mean(abhalf1,na.rm=T)-3*sd(abhalf1,na.rm=T)))
+                      abhalf0 > mean(abhalf0,na.rm=T)-3*sd(abhalf0,na.rm=T)) &
+                  (abhalf1 < mean(abhalf1,na.rm=T)+3*sd(abhalf1,na.rm=T) &
+                     abhalf1 > mean(abhalf1,na.rm=T)-3*sd(abhalf1,na.rm=T)))
 }
 
 #Replace error trial latencies with correct block mean RT + 600
@@ -428,7 +428,7 @@ aat_dscore_multiblock<-function(ds,subjvar,pullvar,targetvar,rtvar,blockvar,...)
 #' @rdname Algorithms
 aat_multilevelscore<-function(ds,subjvar,formula,aatterm,...){
   fit<- lme4::lmer(as.formula(formula),data=ds,control=
-                lme4::lmerControl(optimizer="bobyqa",optCtrl = list(maxfun = 2e6),calc.derivs=F))
+                     lme4::lmerControl(optimizer="bobyqa",optCtrl = list(maxfun = 2e6),calc.derivs=F))
   output<-data.frame(ab=-lme4::ranef(fit,whichel=subjvar)[[subjvar]][[aatterm]])
   testset<<-fit
   output[[subjvar]]<-fit@flist[[subjvar]]%>%levels
@@ -532,7 +532,7 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar,rtvar,iters,plot=T,
   statset$ci<-statset$upperci-statset$lowerci
 
   output<-list(bias=statset,iters=iters,iterdata=results) %>%
-     structure(class = "aat_bootstrap")
+    structure(class = "aat_bootstrap")
   if(plot){ plot(output) }
   return(output)
 }
