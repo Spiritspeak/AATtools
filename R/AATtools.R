@@ -539,7 +539,7 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar,rtvar,iters,plot=T,
 
 plot.aat_bootstrap <- function(x){
   statset<-x$bias
-  rank<-order(statset$bias)
+  rank<-rank(statset$bias)
   wideness<-max(statset$upperci) - min(statset$lowerci)
   plot(x=statset$bias,y=rank,xlim=c(min(statset$lowerci)-0.01*wideness,max(statset$upperci)+0.01*wideness),
        xlab="Bias score",main=paste0("Individual bias scores with 95%CI",
@@ -583,7 +583,7 @@ SpearmanBrown<-function(corr,ntests=2,fix.negative=c("nullify","bilateral","none
 aat_preparedata<-function(ds,subjvar,pullvar,targetvar,rtvar,...){
   args<-list(...)
   stopifnot(all(c(subjvar,pullvar,targetvar,rtvar) %in% colnames(ds)))
-  ds[,subjvar]%<>%as.factor()
+  ds[[subjvar]]%<>%as.factor()
   if(is.logical(ds[,pullvar])){
     warning("Recoded ",pullvar," from logical to numeric. Please make sure that FALSE ",
             "represents push trials and TRUE represents pull trials")
