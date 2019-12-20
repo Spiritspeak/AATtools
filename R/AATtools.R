@@ -546,6 +546,7 @@ plot.aat_bootstrap <- function(x){
                                      "\nMean confidence interval: ",round(mean(statset$ci),digits=2)))
   segments(x0=statset$lowerci,x1=statset$bias-0.005*wideness,y0=rank,y1=rank)
   segments(x0=statset$bias+0.005*wideness,x1=statset$upperci,y0=rank,y1=rank)
+  abline(v=0)
   #text(x=statset$bias,y=statset$rownr,labels=statset$ppidx,cex=0.5)
 }
 
