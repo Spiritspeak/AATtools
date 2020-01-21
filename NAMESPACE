@@ -3,6 +3,7 @@
 S3method(plot,aat_splithalf)
 export(SpearmanBrown)
 export(aat_bootstrap)
+export(aat_compute)
 export(aat_doublemeandiff)
 export(aat_doublemediandiff)
 export(aat_dscore)

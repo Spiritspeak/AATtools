@@ -470,7 +470,7 @@ aat_multilevelscore<-function(ds,subjvar,formula,aatterm,...){
 aat_bootstrap<-function(ds,subjvar,pullvar,targetvar,rtvar,iters,plot=T,
                         algorithm=c("aat_doublemeandiff","aat_doublemediandiff","aat_dscore",
                                     "aat_dscore_multiblock","aat_multilevelscore"),
-                        trialdropfunc=c("prune_nothing","trial_prune_3SD"),
+                        trialdropfunc=c("prune_nothing","trial_prune_3SD","trial_prune_SD_dropcases"),
                         errortrialfunc=c("prune_nothing","error_replace_blockmeanplus"),
                         ...){
   packs<-c("magrittr","dplyr","AATtools")
@@ -550,6 +550,60 @@ plot.aat_bootstrap <- function(x){
   #text(x=statset$bias,y=statset$rownr,labels=statset$ppidx,cex=0.5)
 }
 
+#' @title Compute simple AAT scores
+#' @description Compute simple AAT scores, with optional outlier exclusion and error trial recoding.
+#' @param ds a long-format data.frame
+#' @param subjvar column name of subject variable
+#' @param pullvar column name of pull/push indicator variable, must be numeric or logical (where pull is 1 or TRUE)
+#' @param targetvar column name of target stimulus indicator, must be numeric or logical (where target is 1 or TRUE)
+#' @param rtvar column name of reaction time variable
+#' @param algorithm name of preferred computation algorithm, see \link{aat_doublemeandiff}
+#' @param trialdropfunc preferred trial exclusion method (if any)
+#' @param errortrialfunc preferred error recoding method (if any)
+#' @param ...
+#'
+#' @export
+aat_compute<-function(ds,subjvar,pullvar,targetvar,rtvar,
+                        algorithm=c("aat_doublemeandiff","aat_doublemediandiff","aat_dscore",
+                                    "aat_dscore_multiblock","aat_multilevelscore"),
+                        trialdropfunc=c("prune_nothing","trial_prune_3SD","trial_prune_SD_dropcases"),
+                        errortrialfunc=c("prune_nothing","error_replace_blockmeanplus"),
+                        ...){
+  #Handle arguments
+  args<-list(...)
+  algorithm<-ifelse(is.function(algorithm),deparse(substitute(algorithm)),match.arg(algorithm))
+  trialdropfunc<-ifelse(is.function(trialdropfunc),deparse(substitute(trialdropfunc)),match.arg(trialdropfunc))
+  errortrialfunc<-ifelse(is.function(errortrialfunc),deparse(substitute(errortrialfunc)),match.arg(errortrialfunc))
+  if(errortrialfunc=="error_replace_blockmeanplus"){
+    stopifnot(!is.null(args$blockvar),!is.null(args$errorvar))
+    if(is.null(args$errorbonus)){ args$errorbonus<- 0.6 }
+    if(is.null(args$blockvar)){ args$blockvar<- 0 }
+    if(is.null(args$errorvar)){ args$errorvar<- 0 }
+  }
+  stopifnot(!(algorithm=="aat_dscore_multiblock" & is.null(args$blockvar)))
+  if(algorithm=="aat_multilevelscore"){
+    packs<-c(packs,"lme4")
+    if(!any(c("formula","aatterm") %in% names(args))){
+      args$formula<-paste0(rtvar,"~",1,"+(",pullvar,"*",targetvar,"|",subjvar,")")
+      args$aatterm<-paste0(pullvar,":",targetvar)
+      warning("No multilevel formula or AAT-term provided. Defaulting to formula ",
+              args$formula," and AAT-term ",args$aatterm)
+    }
+  }
+  ds %<>% aat_preparedata(subjvar,pullvar,targetvar,rtvar) %>% mutate(key=1)
+
+  #Handle outlying trials
+  iterds<-do.call(trialdropfunc,list(ds=ds,subjvar=subjvar,rtvar=rtvar))
+  #Handle error trials
+  iterds<-do.call(errortrialfunc,list(ds=ds,subjvar=subjvar,rtvar=rtvar,
+                                      blockvar=args$blockvar,errorvar=args$errorvar,
+                                      errorbonus=args$errorbonus))
+
+  abds<-do.call(algorithm,c(list(ds=ds,subjvar=subjvar,pullvar=pullvar,
+                                 targetvar=targetvar,rtvar=rtvar),args))
+  return(abds)
+}
+
 # utils ####
 #' Correct a correlation coefficient for being based on only a subset of the data.
 #' @title Spearman-Brown corrections for Correlation Coefficients
@@ -578,8 +632,6 @@ SpearmanBrown<-function(corr,ntests=2,fix.negative=c("nullify","bilateral","none
     }
   }
 }
-
-
 
 aat_preparedata<-function(ds,subjvar,pullvar,targetvar,rtvar,...){
   args<-list(...)
