@@ -502,7 +502,7 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar,rtvar,iters,plot=T,
   cluster<-makeCluster(detectCores()-1)
   registerDoParallel(cluster)
   results<-
-    foreach(iter = seq_len(iters), .packages=c("magrittr","dplyr","lme4"), .combine=cbind) %dopar% {
+    foreach(iter = seq_len(iters), .packages=packs, .combine=cbind) %dopar% {
       #Split data
       iterds<-ds %>% group_by(!!sym(subjvar), !!sym(pullvar), !!sym(targetvar)) %>%
         sample_n(size=n(),replace=T) %>% ungroup()
@@ -526,7 +526,7 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar,rtvar,iters,plot=T,
   stopCluster(cluster)
 
   statset<-data.frame(ppidx=rownames(results),
-                      bias=rowMeans(results),
+                      bias=rowMeans(results,na.rm=T),
                       lowerci=apply(results,MARGIN=1,FUN=function(x){quantile(x,0.025,na.rm=T)}),
                       upperci=apply(results,MARGIN=1,FUN=function(x){quantile(x,0.975,na.rm=T)}))
   statset$ci<-statset$upperci-statset$lowerci
