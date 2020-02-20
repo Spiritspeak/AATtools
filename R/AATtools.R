@@ -539,6 +539,7 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar,rtvar,iters,plot=T,
 
 plot.aat_bootstrap <- function(x){
   statset<-x$bias
+  statset<-statset[!is.na(statset$ab),]
   rank<-rank(statset$bias)
   wideness<-max(statset$upperci) - min(statset$lowerci)
   plot(x=statset$bias,y=rank,xlim=c(min(statset$lowerci)-0.01*wideness,max(statset$upperci)+0.01*wideness),
