@@ -527,8 +527,8 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar,rtvar,iters,plot=T,
 
   statset<-data.frame(ppidx=rownames(results),
                       bias=rowMeans(results),
-                      lowerci=apply(results,MARGIN=1,FUN=function(x){quantile(x,0.025)}),
-                      upperci=apply(results,MARGIN=1,FUN=function(x){quantile(x,0.975)}))
+                      lowerci=apply(results,MARGIN=1,FUN=function(x){quantile(x,0.025,na.rm=T)}),
+                      upperci=apply(results,MARGIN=1,FUN=function(x){quantile(x,0.975,na.rm=T)}))
   statset$ci<-statset$upperci-statset$lowerci
 
   output<-list(bias=statset,iters=iters,iterdata=results) %>%
