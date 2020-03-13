@@ -4,8 +4,11 @@
 \alias{SpearmanBrown}
 \title{Spearman-Brown corrections for Correlation Coefficients}
 \usage{
-SpearmanBrown(corr, ntests = 2, fix.negative = c("nullify",
-  "bilateral", "none"))
+SpearmanBrown(
+  corr,
+  ntests = 2,
+  fix.negative = c("nullify", "bilateral", "none")
+)
 }
 \arguments{
 \item{corr}{To-be-corrected correlation coefficient}

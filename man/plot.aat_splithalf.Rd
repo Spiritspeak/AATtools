@@ -4,8 +4,7 @@
 \alias{plot.aat_splithalf}
 \title{Plot split-half scatterplots}
 \usage{
-\method{plot}{aat_splithalf}(x, type = c("median", "minimum", "maximum",
-  "random"))
+\method{plot}{aat_splithalf}(x, type = c("median", "minimum", "maximum", "random"))
 }
 \arguments{
 \item{x}{an \code{aat_splithalf} object}

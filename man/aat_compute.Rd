@@ -4,12 +4,18 @@
 \alias{aat_compute}
 \title{Compute simple AAT scores}
 \usage{
-aat_compute(ds, subjvar, pullvar, targetvar, rtvar,
-  algorithm = c("aat_doublemeandiff", "aat_doublemediandiff",
-  "aat_dscore", "aat_dscore_multiblock", "aat_multilevelscore"),
-  trialdropfunc = c("prune_nothing", "trial_prune_3SD",
-  "trial_prune_SD_dropcases"), errortrialfunc = c("prune_nothing",
-  "error_replace_blockmeanplus"), ...)
+aat_compute(
+  ds,
+  subjvar,
+  pullvar,
+  targetvar,
+  rtvar,
+  algorithm = c("aat_doublemeandiff", "aat_doublemediandiff", "aat_dscore",
+    "aat_dscore_multiblock", "aat_multilevelscore"),
+  trialdropfunc = c("prune_nothing", "trial_prune_3SD", "trial_prune_SD_dropcases"),
+  errortrialfunc = c("prune_nothing", "error_replace_blockmeanplus"),
+  ...
+)
 }
 \arguments{
 \item{ds}{a long-format data.frame}

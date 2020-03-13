@@ -7,6 +7,8 @@
 \alias{aat_dscore}
 \alias{aat_dscore_multiblock}
 \alias{aat_multilevelscore}
+\alias{aat_medianquotient}
+\alias{aat_meanquotient}
 \title{AAT score computation algorithms}
 \usage{
 aat_doublemeandiff(ds, subjvar, pullvar, targetvar, rtvar, ...)
@@ -15,10 +17,13 @@ aat_doublemediandiff(ds, subjvar, pullvar, targetvar, rtvar, ...)
 
 aat_dscore(ds, subjvar, pullvar, targetvar, rtvar, ...)
 
-aat_dscore_multiblock(ds, subjvar, pullvar, targetvar, rtvar, blockvar,
-  ...)
+aat_dscore_multiblock(ds, subjvar, pullvar, targetvar, rtvar, blockvar, ...)
 
 aat_multilevelscore(ds, subjvar, formula, aatterm, ...)
+
+aat_medianquotient(ds, subjvar, pullvar, targetvar, rtvar, ...)
+
+aat_meanquotient(ds, subjvar, pullvar, targetvar, rtvar, ...)
 }
 \arguments{
 \item{ds}{A long-format data.frame}

@@ -74,7 +74,8 @@
 #' @export
 aat_splithalf<-function(ds,subjvar,pullvar,targetvar,rtvar,iters,plot=T,
                         algorithm=c("aat_doublemeandiff","aat_doublemediandiff","aat_dscore",
-                                    "aat_dscore_multiblock","aat_multilevelscore"),
+                                    "aat_dscore_multiblock","aat_multilevelscore",
+                                    "aat_medianquotient","aat_meanquotient"),
                         trialdropfunc=c("prune_nothing","trial_prune_3SD","trial_prune_SD_dropcases"),
                         errortrialfunc=c("prune_nothing","error_replace_blockmeanplus","error_prune_SD_dropcases"),
                         casedropfunc=c("prune_nothing","case_prune_3SD"),
@@ -234,7 +235,7 @@ aat_splithalf_singlecore<-function(ds,subjvar,pullvar,targetvar,rtvar,iters,plot
   return(output)
 }
 
-
+#' @export
 print.aat_splithalf<-function(x){
   cat("\nr = ",format(x$rsplithalf, digits=2),
       "\nSpearman-Brown-corrected r = ",format(x$rSB,digits=2),
@@ -385,6 +386,7 @@ aat_doublemediandiff<-function(ds,subjvar,pullvar,targetvar,rtvar,...){
   return(abds)
 }
 
+
 #' @export
 #' @rdname Algorithms
 aat_dscore<-function(ds,subjvar,pullvar,targetvar,rtvar,...){
@@ -429,10 +431,40 @@ aat_dscore_multiblock<-function(ds,subjvar,pullvar,targetvar,rtvar,blockvar,...)
 aat_multilevelscore<-function(ds,subjvar,formula,aatterm,...){
   fit<- lme4::lmer(as.formula(formula),data=ds,control=
                      lme4::lmerControl(optimizer="bobyqa",optCtrl = list(maxfun = 2e6),calc.derivs=F))
+
   output<-data.frame(ab=-lme4::ranef(fit,whichel=subjvar)[[subjvar]][[aatterm]])
-  testset<<-fit
+  # if problems with convergence, don't give any result
+  if(length(oof@optinfo$conv$lme4)>0){
+    output<-data.frame(ab=NA)
+  }
   output[[subjvar]]<-fit@flist[[subjvar]]%>%levels
   return(output)
+}
+
+#' @export
+#' @rdname Algorithms
+aat_medianquotient<-function(ds,subjvar,pullvar,targetvar,rtvar,...){
+  ds%<>%group_by(!! sym(subjvar), !! sym(pullvar), !! sym(targetvar))%>%
+    summarise(medians =median(!! sym(rtvar),na.rm=T))%>%group_by()
+  abds<-ds%>%mutate(groupcol=paste0("pull",!!sym(pullvar),"target",!!sym(targetvar)))%>%
+    dplyr::select(!! subjvar, groupcol,medians)%>%tidyr::spread("groupcol",value="medians",drop=F)
+  abds%<>%
+    mutate(ab=(pull0target1/pull1target1)-(pull0target0/pull1target0))%>%
+    dplyr::select(!!sym(subjvar),ab)
+  return(abds)
+}
+
+#' @export
+#' @rdname Algorithms
+aat_meanquotient<-function(ds,subjvar,pullvar,targetvar,rtvar,...){
+  ds%<>%group_by(!! sym(subjvar), !! sym(pullvar), !! sym(targetvar))%>%
+    summarise(means =mean(!! sym(rtvar),na.rm=T))%>%group_by()
+  abds<-ds%>%mutate(groupcol=paste0("pull",!!sym(pullvar),"target",!!sym(targetvar)))%>%
+    dplyr::select(!! subjvar, groupcol,means)%>%tidyr::spread("groupcol",value="means",drop=F)
+  abds%<>%
+    mutate(ab=(pull0target1/pull1target1)-(pull0target0/pull1target0))%>%
+    dplyr::select(!!sym(subjvar),ab)
+  return(abds)
 }
 
 #############################
@@ -518,7 +550,6 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar,rtvar,iters,plot=T,
                                      targetvar=targetvar,rtvar=rtvar),args))
 
       #colnames(abds)<-c(subjvar,paste0("iter", formatC(iter, width = nchar(iters), format = "d", flag = "0")))
-
       outvar<-abds$ab
       names(outvar)<-abds[[subjvar]]
       outvar
@@ -537,9 +568,10 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar,rtvar,iters,plot=T,
   return(output)
 }
 
+#' @export
 plot.aat_bootstrap <- function(x){
   statset<-x$bias
-  statset<-statset[!is.na(statset$ab),]
+  statset<-statset[!is.na(statset$bias) & !is.na(statset$upperci) & !is.na(statset$lowerci),]
   rank<-rank(statset$bias)
   wideness<-max(statset$upperci) - min(statset$lowerci)
   plot(x=statset$bias,y=rank,xlim=c(min(statset$lowerci)-0.01*wideness,max(statset$upperci)+0.01*wideness),
