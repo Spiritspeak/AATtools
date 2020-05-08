@@ -3,6 +3,7 @@
 .onLoad<-function(libname, pkgname){
   registerS3method("print",class="aat_splithalf",method=print.aat_splithalf)
   registerS3method("plot",class="aat_splithalf",method=plot.aat_splithalf)
+  registerS3method("print",class="aat_bootstrap",method=print.aat_bootstrap)
   registerS3method("plot",class="aat_bootstrap",method=plot.aat_bootstrap)
   registerS3method("print",class="qreliability",method=print.qreliability)
   registerS3method("plot",class="qreliability",method=plot.qreliability)
@@ -32,30 +33,52 @@
 #' The way you handle outliers for the reliability computation should mimic the way you do it in your regular analyses.
 #' It is recommended to exclude outlying trials when computing AAT scores using the mean double-dfference scores and regression scoring approaches,
 #' but not when using d-scores or median double-difference scores.
-#' \code{prune_nothing} excludes no trials, \code{trial_prune_3SD} excludes trials deviating more than 3SD from the mean per participant.
-#' \code{trial_prune_SD_dropcases} allows you to set the maximum standard deviation to include using argument \code{trialsd} (default is 3)
-#' and prune participants altogether if they have more than a certain proportion of outliers using argument \code{maxoutliers} (default is .15)
+#' \itemize{
+#' \item \code{prune_nothing} excludes no trials (default)
+#' \item \code{trial_prune_3SD} excludes trials deviating more than 3SD from the mean per participant.
+#' \item \code{trial_prune_SD_dropcases} removes trials deviating more than a specific number of standard deviations from the participant's mean,
+#' and removes participants with an excessive percentage of outliers.
+#' Required arguments:
+#' \itemize{
+#' \item \code{trialsd} - trials deviating more than \code{trialsd} standard deviations from the participant's mean are excluded (optional; default is 3)
+#' \item \code{maxoutliers} - participants with a higher percentage of outliers are removed from the data. (optional; default is .15)
+#' }
+#' \item \code{trial_prune_percent_subject} and \code{trial_prune_percent_sample} remove trials below and/or above certain percentiles,
+#' on a subject-by-subject basis or sample-wide, respectively. The following arguments are available:
+#' \itemize{
+#' \item \code{lowerpercent} and \code{uppperpercent} (optional; defaults are .01 and .99).
+#' }
+#' }
 #' @param errortrialfunc Function (without brackets or quotes) to apply to an error trial.
 #'
-#' \code{error_replace_blockmeanplus} replaces error trial reaction times with the block mean plus an arbitrary extra amount of time.
+#' \itemize{
+#' \item \code{prune_nothing} removes no errors (default).
+#' \item \code{error_replace_blockmeanplus} replaces error trial reaction times with the block mean, plus an arbitrary extra quantity.
 #' If used, the following additional arguments are required:
 #' \itemize{
-#' \item \code{blockvar} - Quoted name of the block variable
-#' \item \code{errorvar} - Quoted name of the error variable, where errors are 1 or TRUE and correct trials are 0 or FALSE
+#' \item \code{blockvar} - Quoted name of the block variable (mandatory)
+#' \item \code{errorvar} - Quoted name of the error variable, where errors are 1 or TRUE and correct trials are 0 or FALSE (mandatory)
 #' \item \code{errorbonus} - Amount to add to the reaction time of error trials. Default is 0.6 (recommended by \code{Greenwald, Nosek, & Banaji, 2003})
 #' }
-#' \code{error_prune_dropcases} removes errors and drops participants if they have a larger proportion of errors
-#'  than given by argument \code{maxerrors}, default is .15
+#' \item \code{error_prune_dropcases} removes errors and drops participants if they have more errors than a given percentage. The following arguments are available:
+#' \itemize{
+#' \item \code{errorvar} - Quoted name of the error variable, where errors are 1 or TRUE and correct trials are 0 or FALSE (mandatory)
+#' \item \code{maxerrors} - participants with a higher percentage of errors are excluded from the dataset. Default is .15.
+#' }
+#' }
 #' @param casedropfunc Function (without brackets or quotes) to be used to exclude outlying participant scores in each half.
 #' The way you handle outliers here should mimic the way you do it in your regular analyses.
-#' \code{prune_nothing} excludes no participants, while \code{case_prune_3SD} excludes participants deviating more than 3SD from the sample mean.
-#' @param ... Other arguments, to be passed on to the algorithm functions (see \code{algorithm} above)
+#' \itemize{
+#' \item \code{prune_nothing} excludes no participants (default)
+#' \item \code{case_prune_3SD} excludes participants deviating more than 3SD from the sample mean.
+#' }
+#' @param ... Other arguments, to be passed on to the algorithm or outlier rejection functions (see arguments above)
 #'
 #' @return A list, containing the mean bootstrapped split-half reliability, bootstrapped 95% confidence intervals,
 #' a list of data.frames used over each iteration, and a vector containing the split-half reliability of each iteration.
 #'
 #' @author Sercan Kahveci
-#' @seealso \link{plot.aat_splithalf}
+#' @seealso \link{q_reliability}
 #' @examples #Not Run
 #' aat_splithalf(ds=ds2,subjvar="subjectid",pullvar="is_pull",targetvar="is_food",
 #'               rtvar="rt",iters=1000,trialdropfunc=trial_prune_3SD,
@@ -80,7 +103,8 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,
                                     "aat_regression","aat_standardregression",
                                     "aat_doublemedianquotient","aat_doublemeanquotient",
                                     "aat_singlemeandiff","aat_singlemediandiff"),
-                        trialdropfunc=c("prune_nothing","trial_prune_3SD","trial_prune_SD_dropcases"),
+                        trialdropfunc=c("prune_nothing","trial_prune_3SD","trial_prune_SD_dropcases",
+                                        "trial_prune_percent_subject","trial_prune_percent_sample"),
                         errortrialfunc=c("prune_nothing","error_replace_blockmeanplus","error_prune_dropcases"),
                         casedropfunc=c("prune_nothing","case_prune_3SD"),
                         ...){
@@ -171,6 +195,7 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,
 }
 
 #' @export
+#' @rdname aat_splithalf
 print.aat_splithalf<-function(x){
   cat("\nr = ",format(x$rsplithalf, digits=2),
       "\nSpearman-Brown-corrected r = ",format(x$rSB,digits=2),
@@ -185,7 +210,7 @@ print.aat_splithalf<-function(x){
 #' \code{"median"} (default), \code{"minimum"}, \code{"maximum"}, or \code{"random"}.
 #'
 #' @export
-#'
+#' @rdname aat_splithalf
 #' @examples
 #' #Coming soon
 plot.aat_splithalf<-function(x,type=c("median","minimum","maximum","random")){
@@ -216,6 +241,18 @@ plot.aat_splithalf<-function(x,type=c("median","minimum","maximum","random")){
 #' @export
 prune_nothing<-function(ds,...){
   ds
+}
+
+#' @export
+trial_prune_percent_subject<-function(ds,subjvar,rtvar,lowerpercent=.01,upperpercent=.99,...){
+  ds %>% group_by(!!sym(subjvar)) %>% mutate(percentile=rank(!!sym(rtvar))/n()) %>%
+    filter(percentile > lowerpercent & percentile< upperpercent) %>% ungroup()
+}
+
+#' @export
+trial_prune_percent_sample<-function(ds,rtvar,lowerpercent=.01,upperpercent=.99,...){
+  ds %>% mutate(percentile=rank(!!sym(rtvar))/n()) %>%
+    filter(percentile > lowerpercent & percentile< upperpercent)
 }
 
 #' @export
@@ -288,6 +325,8 @@ error_prune_dropcases<-function(ds,subjvar, errorvar, maxerrors = .15, ...){
 #' \item \code{formula} - a quoted formula to fit to the data;
 #' \item \code{aatterm} the quoted random effect within the subject variable that indicates the approach bias; this is usually the interaction of the pull and target terms.
 #' }
+#' \item \code{aat_singlemeandiff} and \code{aat_singlemediandiff} subtract the mean or median approach reaction time from the mean or median avoidance reaction time.
+#' These algorithms are only sensible if the supplied data contain a single stimulus category.
 #' }
 #' @param ds A long-format data.frame
 #' @param subjvar Column name of the participant identifier variable
@@ -429,18 +468,46 @@ aat_singlemediandiff<-function(ds,subjvar,pullvar,rtvar,...){
 #' @param plot Plot the bias scores and their confidence intervals after computation is complete. This gives a good overview of the data.
 #' @param algorithm Function (without brackets or quotes) to be used to compute AAT scores. See \link{aat_doublemeandiff} for a list of usable algorithms.
 #' @param trialdropfunc Function (without brackets or quotes) to be used to exclude outlying trials in each half.
-#' \code{prune_nothing} excludes no trials, while \code{trial_prune_3SD} excludes trials deviating more than 3SD from the mean per participant.
+#' The way you handle outliers for the reliability computation should mimic the way you do it in your regular analyses.
+#' It is recommended to exclude outlying trials when computing AAT scores using the mean double-dfference scores and regression scoring approaches,
+#' but not when using d-scores or median double-difference scores.
+#' \itemize{
+#' \item \code{prune_nothing} excludes no trials (default)
+#' \item \code{trial_prune_3SD} excludes trials deviating more than 3SD from the mean per participant.
+#' \item \code{trial_prune_SD_dropcases} removes trials deviating more than a specific number of standard deviations from the participant's mean,
+#' and removes participants with an excessive percentage of outliers.
+#' Required arguments:
+#' \itemize{
+#' \item \code{trialsd} - trials deviating more than \code{trialsd} standard deviations from the participant's mean are excluded (optional; default is 3)
+#' \item \code{maxoutliers} - participants with a higher percentage of outliers are removed from the data. (optional; default is .15)
+#' }
+#' \item \code{trial_prune_percent_subject} and \code{trial_prune_percent_sample} remove trials below and/or above certain percentiles,
+#' on a subject-by-subject basis or sample-wide, respectively. The following arguments are available:
+#' \itemize{
+#' \item \code{lowerpercent} and \code{uppperpercent} (optional; defaults are .01 and .99).
+#' }
+#' }
 #' @param errortrialfunc Function (without brackets or quotes) to apply to an error trial.
-#' \code{error_replace_blockmeanplus} replaces error trial reaction times with the block mean plus an arbitrary extra amount of time.
+#'
+#' \itemize{
+#' \item \code{prune_nothing} removes no errors (default).
+#' \item \code{error_replace_blockmeanplus} replaces error trial reaction times with the block mean, plus an arbitrary extra quantity.
 #' If used, the following additional arguments are required:
 #' \itemize{
-#' \item \code{blockvar} - Quoted name of the block variable
-#' \item \code{errorvar} - Quoted name of the error variable, where errors are 1 or TRUE and correct trials are 0 or FALSE
+#' \item \code{blockvar} - Quoted name of the block variable (mandatory)
+#' \item \code{errorvar} - Quoted name of the error variable, where errors are 1 or TRUE and correct trials are 0 or FALSE (mandatory)
 #' \item \code{errorbonus} - Amount to add to the reaction time of error trials. Default is 0.6 (recommended by \code{Greenwald, Nosek, & Banaji, 2003})
 #' }
-#' @param ... Other arguments, to be passed on to the algorithm functions (see \code{algorithm} above)
+#' \item \code{error_prune_dropcases} removes errors and drops participants if they have more errors than a given percentage. The following arguments are available:
+#' \itemize{
+#' \item \code{errorvar} - Quoted name of the error variable, where errors are 1 or TRUE and correct trials are 0 or FALSE (mandatory)
+#' \item \code{maxerrors} - participants with a higher percentage of errors are excluded from the dataset. Default is .15.
+#' }
+#' }
+#' @param ... Other arguments, to be passed on to the algorithm or outlier rejection functions (see arguments above)
 #'
-#' @return A list, containing bootstrapped bias scores, a data frame with bootstrapped 95% confidence intervals,
+#'
+#' @return A list, containing bootstrapped bias scores, their variance, bootstrapped 95 percent confidence intervals,
 #' the number of iterations, and a matrix of bias scores for each iteration.
 #'
 #' @author Sercan Kahveci
@@ -452,7 +519,8 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,
                                     "aat_regression","aat_standardregression",
                                     "aat_doublemeanquotient","aat_doublemedianquotient",
                                     "aat_singlemeandiff","aat_singlemediandiff"),
-                        trialdropfunc=c("prune_nothing","trial_prune_3SD","trial_prune_SD_dropcases"),
+                        trialdropfunc=c("prune_nothing","trial_prune_3SD","trial_prune_SD_dropcases",
+                                        "trial_prune_percent_subject","trial_prune_percent_sample"),
                         errortrialfunc=c("prune_nothing","error_replace_blockmeanplus","error_prune_dropcases"),
                         ...){
   packs<-c("magrittr","dplyr","AATtools")
@@ -510,17 +578,34 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,
 
   statset<-data.frame(ppidx=rownames(results),
                       bias=rowMeans(results,na.rm=T),
+                      var=apply(hm$iterdata,MARGIN = 1,FUN=var,na.rm=T),
                       lowerci=apply(results,MARGIN=1,FUN=function(x){quantile(x,0.025,na.rm=T)}),
                       upperci=apply(results,MARGIN=1,FUN=function(x){quantile(x,0.975,na.rm=T)}))
   statset$ci<-statset$upperci-statset$lowerci
 
-  output<-list(bias=statset,iters=iters,iterdata=results) %>%
+  #q-reliability
+  bv<-var(statset$bias,na.rm=T)
+  wv<-mean(statset$var,na.rm=T)
+  q<-(bv-wv)/(bv+wv)
+
+  output<-list(bias=statset,iters=iters,reliability=q,iterdata=results) %>%
     structure(class = "aat_bootstrap")
   if(plot){ plot(output) }
   return(output)
 }
 
 #' @export
+#' @rdname aat_bootstrap
+print.aat_bootstrap<-function(x){
+  cat("Bootstrapped bias scores and confidence intervals",
+      "Mean bias score: ", mean(x$bias$bias,na.rm=T),
+      "Mean confidence interval: ",mean(x$bias$ci,na.rm=T),
+      "reliability: q = ",mean(x$bias$bias,na.rm=T),
+      "Number of iterations: ",x$iters,sep="")
+}
+
+#' @export
+#' @rdname aat_bootstrap
 plot.aat_bootstrap <- function(x){
   statset<-x$bias
   statset<-statset[!is.na(statset$bias) & !is.na(statset$upperci) & !is.na(statset$lowerci),]
@@ -528,7 +613,7 @@ plot.aat_bootstrap <- function(x){
   wideness<-max(statset$upperci) - min(statset$lowerci)
   plot(x=statset$bias,y=rank,xlim=c(min(statset$lowerci)-0.01*wideness,max(statset$upperci)+0.01*wideness),
        xlab="Bias score",main=paste0("Individual bias scores with 95%CI",
-                                     "\nMean confidence interval: ",round(mean(statset$ci),digits=2)))
+                                     "\nEstimated reliability: q = ",x$reliability))
   segments(x0=statset$lowerci,x1=statset$bias-0.005*wideness,y0=rank,y1=rank)
   segments(x0=statset$bias+0.005*wideness,x1=statset$upperci,y0=rank,y1=rank)
   abline(v=0)
@@ -542,10 +627,45 @@ plot.aat_bootstrap <- function(x){
 #' @param pullvar column name of pull/push indicator variable, must be numeric or logical (where pull is 1 or TRUE)
 #' @param targetvar column name of target stimulus indicator, must be numeric or logical (where target is 1 or TRUE)
 #' @param rtvar column name of reaction time variable
-#' @param algorithm name of preferred computation algorithm, see \link{aat_doublemeandiff}
-#' @param trialdropfunc preferred trial exclusion method (if any)
-#' @param errortrialfunc preferred error recoding method (if any)
-#' @param ...
+#' @param trialdropfunc Function (without brackets or quotes) to be used to exclude outlying trials in each half.
+#' The way you handle outliers for the reliability computation should mimic the way you do it in your regular analyses.
+#' It is recommended to exclude outlying trials when computing AAT scores using the mean double-dfference scores and regression scoring approaches,
+#' but not when using d-scores or median double-difference scores.
+#' \itemize{
+#' \item \code{prune_nothing} excludes no trials (default)
+#' \item \code{trial_prune_3SD} excludes trials deviating more than 3SD from the mean per participant.
+#' \item \code{trial_prune_SD_dropcases} removes trials deviating more than a specific number of standard deviations from the participant's mean,
+#' and removes participants with an excessive percentage of outliers.
+#' Required arguments:
+#' \itemize{
+#' \item \code{trialsd} - trials deviating more than \code{trialsd} standard deviations from the participant's mean are excluded (optional; default is 3)
+#' \item \code{maxoutliers} - participants with a higher percentage of outliers are removed from the data. (optional; default is .15)
+#' }
+#' \item \code{trial_prune_percent_subject} and \code{trial_prune_percent_sample} remove trials below and/or above certain percentiles,
+#' on a subject-by-subject basis or sample-wide, respectively. The following arguments are available:
+#' \itemize{
+#' \item \code{lowerpercent} and \code{uppperpercent} (optional; defaults are .01 and .99).
+#' }
+#' }
+#' @param errortrialfunc Function (without brackets or quotes) to apply to an error trial.
+#'
+#' \itemize{
+#' \item \code{prune_nothing} removes no errors (default).
+#' \item \code{error_replace_blockmeanplus} replaces error trial reaction times with the block mean, plus an arbitrary extra quantity.
+#' If used, the following additional arguments are required:
+#' \itemize{
+#' \item \code{blockvar} - Quoted name of the block variable (mandatory)
+#' \item \code{errorvar} - Quoted name of the error variable, where errors are 1 or TRUE and correct trials are 0 or FALSE (mandatory)
+#' \item \code{errorbonus} - Amount to add to the reaction time of error trials. Default is 0.6 (recommended by \code{Greenwald, Nosek, & Banaji, 2003})
+#' }
+#' \item \code{error_prune_dropcases} removes errors and drops participants if they have more errors than a given percentage. The following arguments are available:
+#' \itemize{
+#' \item \code{errorvar} - Quoted name of the error variable, where errors are 1 or TRUE and correct trials are 0 or FALSE (mandatory)
+#' \item \code{maxerrors} - participants with a higher percentage of errors are excluded from the dataset. Default is .15.
+#' }
+#' }
+#' @param ... Other arguments, to be passed on to the algorithm or outlier rejection functions (see arguments above)
+#'
 #'
 #' @export
 aat_compute<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,
@@ -554,7 +674,8 @@ aat_compute<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,
                                     "aat_regression","aat_standardregression",
                                     "aat_doublemeanquotient","aat_doublemedianquotient",
                                     "aat_singlemeandiff","aat_singlemediandiff"),
-                        trialdropfunc=c("prune_nothing","trial_prune_3SD","trial_prune_SD_dropcases"),
+                        trialdropfunc=c("prune_nothing","trial_prune_3SD","trial_prune_SD_dropcases",
+                                        "trial_prune_percent_subject","trial_prune_percent_sample"),
                         errortrialfunc=c("prune_nothing","error_replace_blockmeanplus","error_prune_dropcases"),
                         ...){
   #Handle arguments
@@ -701,7 +822,7 @@ q_reliability<-function(ds,subjvar,formula,aatterm=NA){
   q<-(bv-wv)/(bv+wv)
   # alternative: (2*wv)/(bv*wv) -1
 
-  return(invisible(structure(list(q=q,coefs=coefs),class="qreliability")))
+  return(structure(list(q=q,coefs=coefs),class="qreliability"))
 }
 
 #' @export

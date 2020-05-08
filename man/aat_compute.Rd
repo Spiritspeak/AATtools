@@ -14,7 +14,8 @@ aat_compute(
     "aat_dscore_multiblock", "aat_regression", "aat_standardregression",
     "aat_doublemeanquotient", "aat_doublemedianquotient", "aat_singlemeandiff",
     "aat_singlemediandiff"),
-  trialdropfunc = c("prune_nothing", "trial_prune_3SD", "trial_prune_SD_dropcases"),
+  trialdropfunc = c("prune_nothing", "trial_prune_3SD", "trial_prune_SD_dropcases",
+    "trial_prune_percent_subject", "trial_prune_percent_sample"),
   errortrialfunc = c("prune_nothing", "error_replace_blockmeanplus",
     "error_prune_dropcases"),
   ...
@@ -31,13 +32,46 @@ aat_compute(
 
 \item{rtvar}{column name of reaction time variable}
 
-\item{algorithm}{name of preferred computation algorithm, see \link{aat_doublemeandiff}}
+\item{trialdropfunc}{Function (without brackets or quotes) to be used to exclude outlying trials in each half.
+The way you handle outliers for the reliability computation should mimic the way you do it in your regular analyses.
+It is recommended to exclude outlying trials when computing AAT scores using the mean double-dfference scores and regression scoring approaches,
+but not when using d-scores or median double-difference scores.
+\itemize{
+\item \code{prune_nothing} excludes no trials (default)
+\item \code{trial_prune_3SD} excludes trials deviating more than 3SD from the mean per participant.
+\item \code{trial_prune_SD_dropcases} removes trials deviating more than a specific number of standard deviations from the participant's mean,
+and removes participants with an excessive percentage of outliers.
+Required arguments:
+\itemize{
+\item \code{trialsd} - trials deviating more than \code{trialsd} standard deviations from the participant's mean are excluded (optional; default is 3)
+\item \code{maxoutliers} - participants with a higher percentage of outliers are removed from the data. (optional; default is .15)
+}
+\item \code{trial_prune_percent_subject} and \code{trial_prune_percent_sample} remove trials below and/or above certain percentiles,
+on a subject-by-subject basis or sample-wide, respectively. The following arguments are available:
+\itemize{
+\item \code{lowerpercent} and \code{uppperpercent} (optional; defaults are .01 and .99).
+}
+}}
 
-\item{trialdropfunc}{preferred trial exclusion method (if any)}
+\item{errortrialfunc}{Function (without brackets or quotes) to apply to an error trial.
 
-\item{errortrialfunc}{preferred error recoding method (if any)}
+\itemize{
+\item \code{prune_nothing} removes no errors (default).
+\item \code{error_replace_blockmeanplus} replaces error trial reaction times with the block mean, plus an arbitrary extra quantity.
+If used, the following additional arguments are required:
+\itemize{
+\item \code{blockvar} - Quoted name of the block variable (mandatory)
+\item \code{errorvar} - Quoted name of the error variable, where errors are 1 or TRUE and correct trials are 0 or FALSE (mandatory)
+\item \code{errorbonus} - Amount to add to the reaction time of error trials. Default is 0.6 (recommended by \code{Greenwald, Nosek, & Banaji, 2003})
+}
+\item \code{error_prune_dropcases} removes errors and drops participants if they have more errors than a given percentage. The following arguments are available:
+\itemize{
+\item \code{errorvar} - Quoted name of the error variable, where errors are 1 or TRUE and correct trials are 0 or FALSE (mandatory)
+\item \code{maxerrors} - participants with a higher percentage of errors are excluded from the dataset. Default is .15.
+}
+}}
 
-\item{...}{}
+\item{...}{Other arguments, to be passed on to the algorithm or outlier rejection functions (see arguments above)}
 }
 \description{
 Compute simple AAT scores, with optional outlier exclusion and error trial recoding.

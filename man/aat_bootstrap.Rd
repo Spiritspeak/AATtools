@@ -2,6 +2,8 @@
 % Please edit documentation in R/AATtools.R
 \name{aat_bootstrap}
 \alias{aat_bootstrap}
+\alias{print.aat_bootstrap}
+\alias{plot.aat_bootstrap}
 \title{Compute bootstrapped approach-bias scores}
 \usage{
 aat_bootstrap(
@@ -16,11 +18,16 @@ aat_bootstrap(
     "aat_dscore_multiblock", "aat_regression", "aat_standardregression",
     "aat_doublemeanquotient", "aat_doublemedianquotient", "aat_singlemeandiff",
     "aat_singlemediandiff"),
-  trialdropfunc = c("prune_nothing", "trial_prune_3SD", "trial_prune_SD_dropcases"),
+  trialdropfunc = c("prune_nothing", "trial_prune_3SD", "trial_prune_SD_dropcases",
+    "trial_prune_percent_subject", "trial_prune_percent_sample"),
   errortrialfunc = c("prune_nothing", "error_replace_blockmeanplus",
     "error_prune_dropcases"),
   ...
 )
+
+\method{print}{aat_bootstrap}(x)
+
+\method{plot}{aat_bootstrap}(x)
 }
 \arguments{
 \item{ds}{a longformat data.frame}
@@ -42,21 +49,48 @@ Target stimuli should either be represented by 1, or by the second level of a fa
 \item{algorithm}{Function (without brackets or quotes) to be used to compute AAT scores. See \link{aat_doublemeandiff} for a list of usable algorithms.}
 
 \item{trialdropfunc}{Function (without brackets or quotes) to be used to exclude outlying trials in each half.
-\code{prune_nothing} excludes no trials, while \code{trial_prune_3SD} excludes trials deviating more than 3SD from the mean per participant.}
-
-\item{errortrialfunc}{Function (without brackets or quotes) to apply to an error trial.
-\code{error_replace_blockmeanplus} replaces error trial reaction times with the block mean plus an arbitrary extra amount of time.
-If used, the following additional arguments are required:
+The way you handle outliers for the reliability computation should mimic the way you do it in your regular analyses.
+It is recommended to exclude outlying trials when computing AAT scores using the mean double-dfference scores and regression scoring approaches,
+but not when using d-scores or median double-difference scores.
 \itemize{
-\item \code{blockvar} - Quoted name of the block variable
-\item \code{errorvar} - Quoted name of the error variable, where errors are 1 or TRUE and correct trials are 0 or FALSE
-\item \code{errorbonus} - Amount to add to the reaction time of error trials. Default is 0.6 (recommended by \code{Greenwald, Nosek, & Banaji, 2003})
+\item \code{prune_nothing} excludes no trials (default)
+\item \code{trial_prune_3SD} excludes trials deviating more than 3SD from the mean per participant.
+\item \code{trial_prune_SD_dropcases} removes trials deviating more than a specific number of standard deviations from the participant's mean,
+and removes participants with an excessive percentage of outliers.
+Required arguments:
+\itemize{
+\item \code{trialsd} - trials deviating more than \code{trialsd} standard deviations from the participant's mean are excluded (optional; default is 3)
+\item \code{maxoutliers} - participants with a higher percentage of outliers are removed from the data. (optional; default is .15)
+}
+\item \code{trial_prune_percent_subject} and \code{trial_prune_percent_sample} remove trials below and/or above certain percentiles,
+on a subject-by-subject basis or sample-wide, respectively. The following arguments are available:
+\itemize{
+\item \code{lowerpercent} and \code{uppperpercent} (optional; defaults are .01 and .99).
+}
 }}
 
-\item{...}{Other arguments, to be passed on to the algorithm functions (see \code{algorithm} above)}
+\item{errortrialfunc}{Function (without brackets or quotes) to apply to an error trial.
+
+\itemize{
+\item \code{prune_nothing} removes no errors (default).
+\item \code{error_replace_blockmeanplus} replaces error trial reaction times with the block mean, plus an arbitrary extra quantity.
+If used, the following additional arguments are required:
+\itemize{
+\item \code{blockvar} - Quoted name of the block variable (mandatory)
+\item \code{errorvar} - Quoted name of the error variable, where errors are 1 or TRUE and correct trials are 0 or FALSE (mandatory)
+\item \code{errorbonus} - Amount to add to the reaction time of error trials. Default is 0.6 (recommended by \code{Greenwald, Nosek, & Banaji, 2003})
+}
+\item \code{error_prune_dropcases} removes errors and drops participants if they have more errors than a given percentage. The following arguments are available:
+\itemize{
+\item \code{errorvar} - Quoted name of the error variable, where errors are 1 or TRUE and correct trials are 0 or FALSE (mandatory)
+\item \code{maxerrors} - participants with a higher percentage of errors are excluded from the dataset. Default is .15.
+}
+}}
+
+\item{...}{Other arguments, to be passed on to the algorithm or outlier rejection functions (see arguments above)}
 }
 \value{
-A list, containing bootstrapped bias scores, a data frame with bootstrapped 95% confidence intervals,
+A list, containing bootstrapped bias scores, their variance, bootstrapped 95 percent confidence intervals,
 the number of iterations, and a matrix of bias scores for each iteration.
 }
 \description{
