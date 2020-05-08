@@ -2,39 +2,23 @@
 % Please edit documentation in R/AATtools.R
 \name{aat_splithalf}
 \alias{aat_splithalf}
-\alias{aat_splithalf_singlecore}
 \title{Compute the bootstrapped split-half reliability for approach-avoidance task data}
 \usage{
 aat_splithalf(
   ds,
   subjvar,
   pullvar,
-  targetvar,
+  targetvar = NULL,
   rtvar,
   iters,
   plot = T,
   algorithm = c("aat_doublemeandiff", "aat_doublemediandiff", "aat_dscore",
-    "aat_dscore_multiblock", "aat_multilevelscore", "aat_medianquotient",
-    "aat_meanquotient"),
+    "aat_dscore_multiblock", "aat_regression", "aat_standardregression",
+    "aat_doublemedianquotient", "aat_doublemeanquotient", "aat_singlemeandiff",
+    "aat_singlemediandiff"),
   trialdropfunc = c("prune_nothing", "trial_prune_3SD", "trial_prune_SD_dropcases"),
   errortrialfunc = c("prune_nothing", "error_replace_blockmeanplus",
-    "error_prune_SD_dropcases"),
-  casedropfunc = c("prune_nothing", "case_prune_3SD"),
-  ...
-)
-
-aat_splithalf_singlecore(
-  ds,
-  subjvar,
-  pullvar,
-  targetvar,
-  rtvar,
-  iters,
-  plot = T,
-  algorithm = c("aat_doublemeandiff", "aat_doublemediandiff", "aat_dscore",
-    "aat_dscore_multiblock", "aat_multilevelscore"),
-  trialdropfunc = c("prune_nothing", "trial_prune_3SD"),
-  errortrialfunc = c("prune_nothing", "error_replace_blockmeanplus"),
+    "error_prune_dropcases"),
   casedropfunc = c("prune_nothing", "case_prune_3SD"),
   ...
 )
@@ -62,7 +46,7 @@ This is highly recommended, as it helps to identify outliers that can inflate or
 
 \item{trialdropfunc}{Function (without brackets or quotes) to be used to exclude outlying trials in each half.
 The way you handle outliers for the reliability computation should mimic the way you do it in your regular analyses.
-It is recommended to exclude outlying trials when computing AAT scores using the mean double-dfference scores and multilevel scoring approaches,
+It is recommended to exclude outlying trials when computing AAT scores using the mean double-dfference scores and regression scoring approaches,
 but not when using d-scores or median double-difference scores.
 \code{prune_nothing} excludes no trials, \code{trial_prune_3SD} excludes trials deviating more than 3SD from the mean per participant.
 \code{trial_prune_SD_dropcases} allows you to set the maximum standard deviation to include using argument \code{trialsd} (default is 3)
@@ -104,11 +88,11 @@ aat_splithalf(ds=ds2,subjvar="subjectid",pullvar="is_pull",targetvar="is_food",
 #Spearman-Brown-corrected r: 0.6859041
 #95\%CI: [0.4167018, 0.6172474]
 
-#Multilevel Splithalf
+#Regression Splithalf
 aat_splithalf(ds=ds2,subjvar="subjectid",pullvar="is_pull",targetvar="is_food",
               rtvar="rt",iters=100,trialdropfunc=trial_prune_3SD,
-              casedropfunc=case_prune_3SD,plot=T,algorithm=aat_multilevelscore,
-              formula = "rt ~ is_pull * is_food + (is_pull * is_food | subjectid)",
+              casedropfunc=case_prune_3SD,plot=T,algorithm=aat_regression,
+              formula = "rt ~ is_pull * is_food",
               aatterm = "is_pull:is_food")
 #Mean reliability: 0.5313939
 #Spearman-Brown-corrected r: 0.6940003

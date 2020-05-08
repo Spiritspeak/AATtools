@@ -5,10 +5,9 @@ Version: 0.0.1
 Author: Sercan Kahveci
 Authors@R: person("Sercan", "Kahveci", email = "sercan+kahveci@sbg.ac.at", role = c("aut", "cre"))
 Description: Compute approach bias scores using different scoring algorithms, 
-    compute split-half reliability of the AAT using bootstrapping, 
-    and compute confidence intervals for individual AAT scores using bootstrapping.
-Depends: R (>= 3.6.1), magrittr, dplyr, doParallel, lmerTest
-Imports: tidyr
+    compute bootstrapped and exact split-half reliability of the AAT, 
+    and compute confidence intervals for individual AAT scores.
+Depends: R (>= 3.6.1), magrittr, dplyr, doParallel
 License: GPL-3
 Encoding: UTF-8
 BugReports: https://github.com/Spiritspeak/AATtools/issues

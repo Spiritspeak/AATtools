@@ -6,9 +6,12 @@
 \alias{aat_doublemediandiff}
 \alias{aat_dscore}
 \alias{aat_dscore_multiblock}
-\alias{aat_multilevelscore}
-\alias{aat_medianquotient}
-\alias{aat_meanquotient}
+\alias{aat_regression}
+\alias{aat_standardregression}
+\alias{aat_doublemedianquotient}
+\alias{aat_doublemeanquotient}
+\alias{aat_singlemeandiff}
+\alias{aat_singlemediandiff}
 \title{AAT score computation algorithms}
 \usage{
 aat_doublemeandiff(ds, subjvar, pullvar, targetvar, rtvar, ...)
@@ -19,11 +22,17 @@ aat_dscore(ds, subjvar, pullvar, targetvar, rtvar, ...)
 
 aat_dscore_multiblock(ds, subjvar, pullvar, targetvar, rtvar, blockvar, ...)
 
-aat_multilevelscore(ds, subjvar, formula, aatterm, ...)
+aat_regression(ds, subjvar, formula, aatterm, ...)
 
-aat_medianquotient(ds, subjvar, pullvar, targetvar, rtvar, ...)
+aat_standardregression(ds, subjvar, formula, aatterm, ...)
 
-aat_meanquotient(ds, subjvar, pullvar, targetvar, rtvar, ...)
+aat_doublemedianquotient(ds, subjvar, pullvar, targetvar, rtvar, ...)
+
+aat_doublemeanquotient(ds, subjvar, pullvar, targetvar, rtvar, ...)
+
+aat_singlemeandiff(ds, subjvar, pullvar, rtvar, ...)
+
+aat_singlemediandiff(ds, subjvar, pullvar, rtvar, ...)
 }
 \arguments{
 \item{ds}{A long-format data.frame}
@@ -40,9 +49,9 @@ aat_meanquotient(ds, subjvar, pullvar, targetvar, rtvar, ...)
 
 \item{blockvar}{name of the variable indicating block number}
 
-\item{formula}{A character string containing a formula to fit to the data and derive multilevel scores from}
+\item{formula}{A character string containing a regression formula to fit to the data to compute an AAT score}
 
-\item{aatterm}{The random term, grouped under the subject variable, which represents the approach bias. Usually this is the interaction of the pull and target terms.}
+\item{aatterm}{The formula term representing the approach bias. Usually this is the interaction of the movement-direction and stimulus-category terms.}
 }
 \value{
 A data.frame containing participant number and computed AAT score.
@@ -61,7 +70,11 @@ A data.frame containing participant number and computed AAT score.
 \item \code{aat_dscore_multiblock} computes D-scores for pairs of sequential blocks
 and averages the resulting score (see Greenwald, Nosek, and Banaji, 2003).
 Requires extra \code{blockvar} argument, indicating the name of the block variable.
-\item \code{aat_multilevelscore} fits a multilevel model using lme4 and extracts a random effect serving as AAT score. When using this function, additional arguments must be provided:
+\item \code{aat_regression} and \code{aat_standardregression} fit regression models to participants' reaction times and extract a term that serves as AAT score.
+\code{aat_regression} extracts the raw coefficient, equivalent to a mean difference score.
+\code{aat_standardregression} extracts the t-score of the coefficient, standardized on the basis of the variability of the participant's reaction times.
+These algorithms can be used to regress nuisance variables out of the data before computing AAT scores.
+When using these functions, additional arguments must be provided:
 \itemize{
 \item \code{formula} - a quoted formula to fit to the data;
 \item \code{aatterm} the quoted random effect within the subject variable that indicates the approach bias; this is usually the interaction of the pull and target terms.

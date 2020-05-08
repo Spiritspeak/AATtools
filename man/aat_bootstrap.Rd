@@ -8,14 +8,17 @@ aat_bootstrap(
   ds,
   subjvar,
   pullvar,
-  targetvar,
+  targetvar = NULL,
   rtvar,
   iters,
   plot = T,
   algorithm = c("aat_doublemeandiff", "aat_doublemediandiff", "aat_dscore",
-    "aat_dscore_multiblock", "aat_multilevelscore"),
+    "aat_dscore_multiblock", "aat_regression", "aat_standardregression",
+    "aat_doublemeanquotient", "aat_doublemedianquotient", "aat_singlemeandiff",
+    "aat_singlemediandiff"),
   trialdropfunc = c("prune_nothing", "trial_prune_3SD", "trial_prune_SD_dropcases"),
-  errortrialfunc = c("prune_nothing", "error_replace_blockmeanplus"),
+  errortrialfunc = c("prune_nothing", "error_replace_blockmeanplus",
+    "error_prune_dropcases"),
   ...
 )
 }
