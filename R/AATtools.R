@@ -207,7 +207,7 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,inc
                                  casedropfunc=casedropfunc),
                             args),
                itercors=cors,
-               iterdata<-lapply(results,function(x){ x$abds })[ordering]) %>%
+               iterdata=lapply(results,function(x){ x$abds })[ordering]) %>%
     structure(class = "aat_splithalf")
   if(include.raw){
     output$rawiterdata<-lapply(results,function(x){ x$rawdata })[ordering]
@@ -601,7 +601,7 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,inc
 
   statset<-data.frame(ppidx=rownames(results),
                       bias=rowMeans(results,na.rm=T),
-                      var=apply(hm$iterdata,MARGIN = 1,FUN=var,na.rm=T),
+                      var=apply(results,MARGIN = 1,FUN=var,na.rm=T),
                       lowerci=apply(results,MARGIN=1,FUN=function(x){quantile(x,0.025,na.rm=T)}),
                       upperci=apply(results,MARGIN=1,FUN=function(x){quantile(x,0.975,na.rm=T)}))
   statset$ci<-statset$upperci-statset$lowerci
