@@ -20,7 +20,7 @@ aat_bootstrap(
     "aat_doublemeanquotient", "aat_doublemedianquotient", "aat_singlemeandiff",
     "aat_singlemediandiff"),
   trialdropfunc = c("prune_nothing", "trial_prune_3SD", "trial_prune_SD_dropcases",
-    "trial_prune_percent_subject", "trial_prune_percent_sample"),
+    "trial_recode_SD", "trial_prune_percent_subject", "trial_prune_percent_sample"),
   errortrialfunc = c("prune_nothing", "error_replace_blockmeanplus",
     "error_prune_dropcases"),
   ...
@@ -62,6 +62,11 @@ Required arguments:
 \itemize{
 \item \code{trialsd} - trials deviating more than \code{trialsd} standard deviations from the participant's mean are excluded (optional; default is 3)
 \item \code{maxoutliers} - participants with a higher percentage of outliers are removed from the data. (optional; default is .15)
+}
+\item \code{trial_recode_SD} recodes outlying reaction times to the nearest non-outlying value,
+with outliers defined as reaction times deviating more than a certain number of standard deviations from the participant's mean. Required argument:
+\itemize{
+\item \code{trialsd} - trials deviating more than this many standard deviations from the mean are classified as outliers.
 }
 \item \code{trial_prune_percent_subject} and \code{trial_prune_percent_sample} remove trials below and/or above certain percentiles,
 on a subject-by-subject basis or sample-wide, respectively. The following arguments are available:

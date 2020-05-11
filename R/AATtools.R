@@ -15,8 +15,6 @@
 #multicore splithalf
 #' @title Compute the bootstrapped split-half reliability for approach-avoidance task data
 #' @description Compute bootstrapped split-half reliability for approach-avoidance task data.
-#' \code{aat_splithalf()} uses multicore computation, which is fast, but provides no clear output when there are errors.
-#' \code{aat_splithalf_singlecore()} is much slower, but more easily debugged.
 #' @param ds a longformat data.frame
 #' @param subjvar Quoted name of the participant identifier column
 #' @param pullvar Quoted name of the column indicating pull trials.
@@ -45,6 +43,11 @@
 #' \itemize{
 #' \item \code{trialsd} - trials deviating more than \code{trialsd} standard deviations from the participant's mean are excluded (optional; default is 3)
 #' \item \code{maxoutliers} - participants with a higher percentage of outliers are removed from the data. (optional; default is .15)
+#' }
+#' \item \code{trial_recode_SD} recodes outlying reaction times to the nearest non-outlying value,
+#' with outliers defined as reaction times deviating more than a certain number of standard deviations from the participant's mean. Required argument:
+#' \itemize{
+#' \item \code{trialsd} - trials deviating more than this many standard deviations from the mean are classified as outliers.
 #' }
 #' \item \code{trial_prune_percent_subject} and \code{trial_prune_percent_sample} remove trials below and/or above certain percentiles,
 #' on a subject-by-subject basis or sample-wide, respectively. The following arguments are available:
@@ -106,7 +109,7 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,inc
                                     "aat_regression","aat_standardregression",
                                     "aat_doublemedianquotient","aat_doublemeanquotient",
                                     "aat_singlemeandiff","aat_singlemediandiff"),
-                        trialdropfunc=c("prune_nothing","trial_prune_3SD","trial_prune_SD_dropcases",
+                        trialdropfunc=c("prune_nothing","trial_prune_3SD","trial_prune_SD_dropcases","trial_recode_SD",
                                         "trial_prune_percent_subject","trial_prune_percent_sample"),
                         errortrialfunc=c("prune_nothing","error_replace_blockmeanplus","error_prune_dropcases"),
                         casedropfunc=c("prune_nothing","case_prune_3SD"),
@@ -279,22 +282,25 @@ trial_prune_percent_sample<-function(ds,rtvar,lowerpercent=.01,upperpercent=.99,
 }
 
 #' @export
-trial_prune_3SD<-function(ds,subjvar,rtvar,...){
-  ds$ol.rt.var<-ds[[rtvar]]
-  ds%>%group_by(!! sym(subjvar),key)%>%
-    mutate( prune.ol.mean=mean(ol.rt.var,na.rm=T),prune.ol.sd=sd(ol.rt.var,na.rm=T))%>%
-    dplyr::filter((ol.rt.var<prune.ol.mean+3*prune.ol.sd) &
-                    (ol.rt.var>prune.ol.mean-3*prune.ol.sd) ) %>%
-    dplyr::select(-prune.ol.mean,-prune.ol.sd,-ol.rt.var)
+trial_prune_3SD<-function(ds,subjvar,rtvar){
+  ds %>% group_by(subjvar) %>% filter(abs(scale(!!sym(rtvar))) <3) %>% ungroup()
 }
 
 #' @export
 trial_prune_SD_dropcases<-function(ds,subjvar,rtvar,trialsd=3,maxoutliers=.15,...){
-  ds$ol.rt.var<-ds[[rtvar]]
-  ds%>%group_by(!! sym(subjvar),key)%>%
-    mutate( prune.ol.mean=mean(ol.rt.var,na.rm=T),prune.ol.sd=sd(ol.rt.var,na.rm=T))%>%
-    dplyr::filter(abs(scale(ol.rt.var)) < trialsd & (mean(abs(scale(ol.rt.var)) > trialsd)) < maxoutliers) %>%
-    dplyr::select(-prune.ol.mean,-prune.ol.sd,-ol.rt.var)
+  ds %>% group_by(!!sym(subjvar)) %>% mutate(is.ol=as.numeric(abs(scale(!!sym(rtvar))) >=3),avg.ol=mean(is.ol)) %>%
+    ungroup %>% filter(is.ol==0 & avg.ol<maxoutliers)
+}
+
+#' @export
+trial_recode_SD<-function(ds,subjvar,rtvar,trialsd=3){
+  dsa<- ds %>% group_by(subjvar) %>% mutate(ol.z.score=scale(!!sym(rtvar)),
+                                      ol.type=(ol.z.score >= trialsd) - (ol.z.score <= -trialsd),
+                                      is.ol=abs(ol.type),
+                                      ol.max.rt=mean(!!sym(rtvar))+sd(!!sym(rtvar))*trialsd,
+                                      ol.min.rt=mean(!!sym(rtvar))-sd(!!sym(rtvar))*trialsd)
+  dsa[dsa$is.ol!=0,]<-ifelse(dsa$ol.type==1,dsa$ol.max.rt,dsa,ol.min.rt)
+  dsa %>% dplyr::select(-ol.type,-ol.max.rt,-ol.min.rt,ol.z.score)
 }
 
 #' @export
@@ -309,8 +315,9 @@ case_prune_3SD<-function(ds,...){
 
 #' @export
 error_replace_blockmeanplus<-function(ds,subjvar,rtvar,blockvar,errorvar,errorbonus, ...){
+  if(!("is.ol" %in% colnames(ds))){ ds$is.ol<-0; }
   ds%<>%group_by(!!sym(subjvar),!!sym(blockvar), key)%>%
-    mutate(newrt=mean((!!sym(rtvar))[!(!!sym(errorvar))])+errorbonus)%>%ungroup()
+    mutate(newrt=mean((!!sym(rtvar))[!(!!sym(errorvar)) & is.ol==0])+errorbonus)%>%ungroup()
   ds[ds[,errorvar]==1,rtvar]<-ds[ds[,errorvar]==1,]$newrt
   dplyr::select(ds,-newrt)
 }
@@ -504,6 +511,11 @@ aat_singlemediandiff<-function(ds,subjvar,pullvar,rtvar,...){
 #' \item \code{trialsd} - trials deviating more than \code{trialsd} standard deviations from the participant's mean are excluded (optional; default is 3)
 #' \item \code{maxoutliers} - participants with a higher percentage of outliers are removed from the data. (optional; default is .15)
 #' }
+#' \item \code{trial_recode_SD} recodes outlying reaction times to the nearest non-outlying value,
+#' with outliers defined as reaction times deviating more than a certain number of standard deviations from the participant's mean. Required argument:
+#' \itemize{
+#' \item \code{trialsd} - trials deviating more than this many standard deviations from the mean are classified as outliers.
+#' }
 #' \item \code{trial_prune_percent_subject} and \code{trial_prune_percent_sample} remove trials below and/or above certain percentiles,
 #' on a subject-by-subject basis or sample-wide, respectively. The following arguments are available:
 #' \itemize{
@@ -542,7 +554,7 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,inc
                                     "aat_regression","aat_standardregression",
                                     "aat_doublemeanquotient","aat_doublemedianquotient",
                                     "aat_singlemeandiff","aat_singlemediandiff"),
-                        trialdropfunc=c("prune_nothing","trial_prune_3SD","trial_prune_SD_dropcases",
+                        trialdropfunc=c("prune_nothing","trial_prune_3SD","trial_prune_SD_dropcases","trial_recode_SD",
                                         "trial_prune_percent_subject","trial_prune_percent_sample"),
                         errortrialfunc=c("prune_nothing","error_replace_blockmeanplus","error_prune_dropcases"),
                         ...){
@@ -677,6 +689,11 @@ plot.aat_bootstrap <- function(x){
 #' \item \code{trialsd} - trials deviating more than \code{trialsd} standard deviations from the participant's mean are excluded (optional; default is 3)
 #' \item \code{maxoutliers} - participants with a higher percentage of outliers are removed from the data. (optional; default is .15)
 #' }
+#' \item \code{trial_recode_SD} recodes outlying reaction times to the nearest non-outlying value,
+#' with outliers defined as reaction times deviating more than a certain number of standard deviations from the participant's mean. Required argument:
+#' \itemize{
+#' \item \code{trialsd} - trials deviating more than this many standard deviations from the mean are classified as outliers.
+#' }
 #' \item \code{trial_prune_percent_subject} and \code{trial_prune_percent_sample} remove trials below and/or above certain percentiles,
 #' on a subject-by-subject basis or sample-wide, respectively. The following arguments are available:
 #' \itemize{
@@ -710,7 +727,7 @@ aat_compute<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,
                                     "aat_regression","aat_standardregression",
                                     "aat_doublemeanquotient","aat_doublemedianquotient",
                                     "aat_singlemeandiff","aat_singlemediandiff"),
-                        trialdropfunc=c("prune_nothing","trial_prune_3SD","trial_prune_SD_dropcases",
+                        trialdropfunc=c("prune_nothing","trial_prune_3SD","trial_prune_SD_dropcases","trial_recode_SD",
                                         "trial_prune_percent_subject","trial_prune_percent_sample"),
                         errortrialfunc=c("prune_nothing","error_replace_blockmeanplus","error_prune_dropcases"),
                         ...){
