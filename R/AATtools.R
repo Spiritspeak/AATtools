@@ -765,6 +765,8 @@ aat_compute<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,
 
   abds<-do.call(algorithm,c(list(ds=ds,subjvar=subjvar,pullvar=pullvar,
                                  targetvar=targetvar,rtvar=rtvar),args))
+
+  abds <- merge(x=abds,by=subjvar,all=T,y=iterds %>% group_by(!!sym(subjvar)) %>% summarise(trials=n()))
   return(abds)
 }
 
