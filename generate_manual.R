@@ -4,3 +4,4 @@
 # use_data(erotica,overwrite=T)
 devtools::document()
 devtools::build_manual(path=".")
+

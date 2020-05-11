@@ -28,6 +28,9 @@
 #' If you want to see plots of your data, 1 iteration is enough.
 #' @param plot Create a scatterplot of the AAT scores computed from each half of the data from the last iteration.
 #' This is highly recommended, as it helps to identify outliers that can inflate or diminish the reliability.
+#' @param include.raw logical indicating whether raw split-half data should be included in the output object.
+#' @param cluster pre-specified registered multi-core DoParallel cluster that can be used to speed up computations if multiple calls to aat_splithalf are made.
+#' If no cluster is provided, aat_splithalf will start up a cluster each time it is called, which takes some extra time.
 #' @param algorithm Function (without brackets or quotes) to be used to compute AAT scores. See \link{Algorithms} for a list of usable algorithms.
 #' @param trialdropfunc Function (without brackets or quotes) to be used to exclude outlying trials in each half.
 #' The way you handle outliers for the reliability computation should mimic the way you do it in your regular analyses.
@@ -97,7 +100,7 @@
 #' #Spearman-Brown-corrected r: 0.6940003
 #' #95%CI: [0.2687186, 0.6749176]
 #' @export
-aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,
+aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,include.raw=F,cluster=NULL,
                         algorithm=c("aat_doublemeandiff","aat_doublemediandiff",
                                     "aat_dscore","aat_dscore_multiblock",
                                     "aat_regression","aat_standardregression",
@@ -137,8 +140,13 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,
   ds%<>%aat_preparedata(subjvar,pullvar,targetvar,rtvar,...)
 
   #splithalf loop
-  cluster<-makeCluster(detectCores()-1)#,outfile="splithalfmessages.txt")
-  registerDoParallel(cluster)
+  if(is.null(cluster)){
+    cluster<-makeCluster(detectCores()-1)
+    registerDoParallel(cluster)
+    custom.cluster<-F
+  }else{
+    custom.cluster<-T
+  }
   results<-
     foreach(iter = seq_len(iters), .packages=packs) %dopar% {
       #Split data
@@ -174,7 +182,9 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,
       currcorr<-cor(abds$abhalf0,abds$abhalf1,use="complete.obs")
       list(corr=currcorr,abds=abds,rawdata=iterds)
     }
-  stopCluster(cluster)
+  if(!custom.cluster){
+    stopCluster(cluster)
+  }
 
   cors<-sapply(results,FUN=function(x){x$corr})
   ordering<-order(cors)
@@ -185,11 +195,24 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,
                lowerci=cors[round(iters*0.025)],
                upperci=cors[round(iters*0.975)],
                rSB=SpearmanBrown(mean(cors)),
-               iters=iters,
+               parameters=c(list(ds=ds,
+                                 subjvar=subjvar,
+                                 pullvar=pullvar,
+                                 targetvar=targetvar,
+                                 rtvar=rtvar,
+                                 iters=iters,
+                                 algorithm=algorithm,
+                                 trialdropfunc=trialdropfunc,
+                                 errortrialfunc=errortrialfunc,
+                                 casedropfunc=casedropfunc),
+                            args),
                itercors=cors,
-               iterdata=lapply(results,function(x){ x$abds })[ordering],
-               rawiterdata=lapply(results,function(x){ x$rawdata })[ordering]) %>%
+               iterdata<-lapply(results,function(x){ x$abds })[ordering]) %>%
     structure(class = "aat_splithalf")
+  if(include.raw){
+    output$rawiterdata<-lapply(results,function(x){ x$rawdata })[ordering]
+  }
+
   if(plot){ plot(output) }
   return(output)
 }
@@ -217,16 +240,16 @@ plot.aat_splithalf<-function(x,type=c("median","minimum","maximum","random")){
   type<-match.arg(type)
   if(type=="median"){
     title<-"Split-half Scatterplot for Iteration with Median Reliability"
-    idx<-ceiling(x$iters/2)
+    idx<-ceiling(x$parameters$iters/2)
   }else if(type=="minimum"){
     title<-"Split-half Scatterplot for Iteration with the Lowest Reliability"
     idx<-1
   }else if(type=="maximum"){
     title<-"Split-half Scatterplot for Iteration with the Highest Reliability"
-    idx<-x$iters
+    idx<-x$parameters$iters
   }else if(type=="random"){
     title<-"Split-half Scatterplot for Random Iteration"
-    idx<-sample(1:x$iters,1)
+    idx<-sample(1:x$parameters$iters,1)
   }
   abds<-x$iterdata[[idx]]
   plot(abds$abhalf0,abds$abhalf1,pch=20,main=
@@ -513,7 +536,7 @@ aat_singlemediandiff<-function(ds,subjvar,pullvar,rtvar,...){
 #' @author Sercan Kahveci
 #' @examples
 #' @export
-aat_bootstrap<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,
+aat_bootstrap<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,include.raw=F,
                         algorithm=c("aat_doublemeandiff","aat_doublemediandiff",
                                     "aat_dscore","aat_dscore_multiblock",
                                     "aat_regression","aat_standardregression",
@@ -588,8 +611,21 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,
   wv<-mean(statset$var,na.rm=T)
   q<-(bv-wv)/(bv+wv)
 
-  output<-list(bias=statset,iters=iters,reliability=q,iterdata=results) %>%
+  output<-list(bias=statset,
+               reliability=q,
+               parameters=c(list(ds=ds,
+                                 subjvar=subjvar,
+                                 pullvar=pullvar,
+                                 targetvar=targetvar,
+                                 rtvar=rtvar,
+                                 iters=iters,
+                                 algorithm=algorithm,
+                                 trialdropfunc=trialdropfunc,
+                                 errortrialfunc=errortrialfunc),args)) %>%
     structure(class = "aat_bootstrap")
+  if(include.raw){
+    output$iterdata<-results
+  }
   if(plot){ plot(output) }
   return(output)
 }
@@ -601,7 +637,7 @@ print.aat_bootstrap<-function(x){
       "Mean bias score: ", mean(x$bias$bias,na.rm=T),
       "Mean confidence interval: ",mean(x$bias$ci,na.rm=T),
       "reliability: q = ",mean(x$bias$bias,na.rm=T),
-      "Number of iterations: ",x$iters,sep="")
+      "Number of iterations: ",xparameters$iters,sep="")
 }
 
 #' @export

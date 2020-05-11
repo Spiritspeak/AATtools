@@ -14,6 +14,7 @@ aat_bootstrap(
   rtvar,
   iters,
   plot = T,
+  include.raw = F,
   algorithm = c("aat_doublemeandiff", "aat_doublemediandiff", "aat_dscore",
     "aat_dscore_multiblock", "aat_regression", "aat_standardregression",
     "aat_doublemeanquotient", "aat_doublemedianquotient", "aat_singlemeandiff",

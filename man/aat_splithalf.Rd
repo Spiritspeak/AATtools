@@ -14,6 +14,8 @@ aat_splithalf(
   rtvar,
   iters,
   plot = T,
+  include.raw = F,
+  cluster = NULL,
   algorithm = c("aat_doublemeandiff", "aat_doublemediandiff", "aat_dscore",
     "aat_dscore_multiblock", "aat_regression", "aat_standardregression",
     "aat_doublemedianquotient", "aat_doublemeanquotient", "aat_singlemeandiff",
@@ -48,6 +50,11 @@ If you want to see plots of your data, 1 iteration is enough.}
 
 \item{plot}{Create a scatterplot of the AAT scores computed from each half of the data from the last iteration.
 This is highly recommended, as it helps to identify outliers that can inflate or diminish the reliability.}
+
+\item{include.raw}{logical indicating whether raw split-half data should be included in the output object.}
+
+\item{cluster}{pre-specified registered multi-core DoParallel cluster that can be used to speed up computations if multiple calls to aat_splithalf are made.
+If no cluster is provided, aat_splithalf will start up a cluster each time it is called, which takes some extra time.}
 
 \item{algorithm}{Function (without brackets or quotes) to be used to compute AAT scores. See \link{Algorithms} for a list of usable algorithms.}
 
