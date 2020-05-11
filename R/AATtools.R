@@ -282,8 +282,8 @@ trial_prune_percent_sample<-function(ds,rtvar,lowerpercent=.01,upperpercent=.99,
 }
 
 #' @export
-trial_prune_3SD<-function(ds,subjvar,rtvar){
-  ds %>% group_by(subjvar) %>% filter(abs(scale(!!sym(rtvar))) <3) %>% ungroup()
+trial_prune_3SD<-function(ds,subjvar,rtvar,...){
+  ds %>% group_by(!!sym(subjvar)) %>% filter(abs(scale(!!sym(rtvar))) <3) %>% ungroup()
 }
 
 #' @export
@@ -293,14 +293,14 @@ trial_prune_SD_dropcases<-function(ds,subjvar,rtvar,trialsd=3,maxoutliers=.15,..
 }
 
 #' @export
-trial_recode_SD<-function(ds,subjvar,rtvar,trialsd=3){
-  dsa<- ds %>% group_by(subjvar) %>% mutate(ol.z.score=scale(!!sym(rtvar)),
+trial_recode_SD<-function(ds,subjvar,rtvar,trialsd=3,...){
+  dsa<- ds %>% group_by(!!sym(subjvar)) %>% mutate(ol.z.score=scale(!!sym(rtvar)),
                                       ol.type=(ol.z.score >= trialsd) - (ol.z.score <= -trialsd),
                                       is.ol=abs(ol.type),
                                       ol.max.rt=mean(!!sym(rtvar))+sd(!!sym(rtvar))*trialsd,
                                       ol.min.rt=mean(!!sym(rtvar))-sd(!!sym(rtvar))*trialsd)
-  dsa[dsa$is.ol!=0,]<-ifelse(dsa$ol.type==1,dsa$ol.max.rt,dsa,ol.min.rt)
-  dsa %>% dplyr::select(-ol.type,-ol.max.rt,-ol.min.rt,ol.z.score)
+  dsa[dsa$is.ol!=0,]<-ifelse(dsa$ol.type==1,dsa$ol.max.rt,dsa$ol.min.rt)
+  dsa %>% dplyr::select(-ol.type,-ol.max.rt,-ol.min.rt,-ol.z.score)
 }
 
 #' @export
