@@ -133,11 +133,13 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,inc
   }
   stopifnot(!(algorithm=="aat_dscore_multiblock" & is.null(args$blockvar)))
   if(algorithm %in% c("aat_regression","aat_standardregression")){
-    if(!any(c("formula","aatterm") %in% names(args))){
+    if(!("formula" %in% names(args))){
       args$formula<-paste0(rtvar,"~",pullvar,"*",targetvar)
+      warning("No formula provided. Defaulting to formula ",args$formula)
+    }
+    if(!("aatterm" %in% names(args))){
       args$aatterm<-paste0(pullvar,":",targetvar)
-      warning("No regression formula or AAT-term provided. Defaulting to formula ",
-              args$formula," and AAT-term ",args$aatterm)
+      warning("No AAT-term provided. Defaulting to AAT-term ",args$aatterm)
     }
   }
   ds%<>%aat_preparedata(subjvar,pullvar,targetvar,rtvar,...)
@@ -575,12 +577,15 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,inc
     if(is.null(args$errorvar)){ args$errorvar<- 0 }
   }
   stopifnot(!(algorithm=="aat_dscore_multiblock" & is.null(args$blockvar)))
+
   if(algorithm %in% c("aat_regression","aat_standardregression")){
-    if(!any(c("formula","aatterm") %in% names(args))){
+    if(!("formula" %in% names(args))){
       args$formula<-paste0(rtvar,"~",pullvar,"*",targetvar)
+      warning("No formula provided. Defaulting to formula ",args$formula)
+    }
+    if(!("aatterm" %in% names(args))){
       args$aatterm<-paste0(pullvar,":",targetvar)
-      warning("No formula and/or AAT-term provided. Defaulting to formula ",
-              args$formula," and AAT-term ",args$aatterm)
+      warning("No AAT-term provided. Defaulting to AAT-term ",args$aatterm)
     }
   }
   ds %<>% aat_preparedata(subjvar,pullvar,targetvar,rtvar,...) %>% mutate(key=1)
@@ -747,11 +752,13 @@ aat_compute<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,
   }
   stopifnot(!(algorithm=="aat_dscore_multiblock" & is.null(args$blockvar)))
   if(algorithm %in% c("aat_regression","aat_standardregression")){
-    if(!any(c("formula","aatterm") %in% names(args))){
+    if(!("formula" %in% names(args))){
       args$formula<-paste0(rtvar,"~",pullvar,"*",targetvar)
+      warning("No formula provided. Defaulting to formula ",args$formula)
+    }
+    if(!("aatterm" %in% names(args))){
       args$aatterm<-paste0(pullvar,":",targetvar)
-      warning("No regression formula or AAT-term provided. Defaulting to formula ",
-              args$formula," and AAT-term ",args$aatterm)
+      warning("No AAT-term provided. Defaulting to AAT-term ",args$aatterm)
     }
   }
   ds %<>% aat_preparedata(subjvar,pullvar,targetvar,rtvar,...) %>% mutate(key=1)
