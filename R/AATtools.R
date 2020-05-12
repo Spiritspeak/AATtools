@@ -832,7 +832,16 @@ aat_preparedata<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,...){
     ds<-ds[-rmindices,]
     warning("Removed ",length(rmindices)," rows due to presence of NA in critical variable(s)")
   }
-  ds<-ds[,c(subjvar,pullvar,targetvar,rtvar,args$errorvar,args$blockvar)]
+
+  cols<-c(subjvar,pullvar,targetvar,rtvar,args$errorvar,args$blockvar)
+  if("formula" %in% names(args)){
+    formterms <- terms(args$formula) %>% attr("term.labels")
+    if(any(!(formterms %in% colnames(ds)))){
+      stop("Formula term(s) ",paste(formterms[!(formterms %in% colnames(ds))],collapse=", ")," missing from dataset")
+    }
+    cols <- c(cols,formterms)
+  }
+  ds<-ds[,cols]
   return(ds)
 }
 
