@@ -194,12 +194,16 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,inc
   cors<-sapply(results,FUN=function(x){x$corr})
   ordering<-order(cors)
   cors<-cors[ordering]
+  avg_n<-mean(sapply(results,function(x){ sum(!is.na(x$abds$abhalf0) & !is.na(x$abds$abhalf1)) }))
 
   #cat(scan("splithalfmessages.txt",what=character(),quiet=TRUE))
   output<-list(rsplithalf=mean(cors),
                lowerci=cors[round(iters*0.025)],
                upperci=cors[round(iters*0.975)],
+               pval=r2p(mean(cors),avg_n),
                rSB=SpearmanBrown(mean(cors)),
+               pval_rSB=r2p(SpearmanBrown(mean(cors)),avg_n),
+               avg_n=avg_n,
                parameters=c(list(ds=ds,
                                  subjvar=subjvar,
                                  pullvar=pullvar,
@@ -225,8 +229,8 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,inc
 #' @export
 #' @rdname aat_splithalf
 print.aat_splithalf<-function(x){
-  cat("\nr = ",format(x$rsplithalf, digits=2),
-      "\nSpearman-Brown-corrected r = ",format(x$rSB,digits=2),
+  cat("\nr = ",format(x$rsplithalf, digits=2), ", p = ",format(x$pval,digits=3),
+      "\nSpearman-Brown-corrected r = ",format(x$rSB,digits=2),", p = ",format(x$pval_rSB,digits=3),
       "\n95%CI = [", format(x$lowerci,digits=2), ", ", format(x$upperci,digits=2),"]\n",
       sep="")
 }
@@ -804,6 +808,12 @@ SpearmanBrown<-function(corr,ntests=2,fix.negative=c("nullify","bilateral","none
       return(sb)
     }
   }
+}
+
+#' @export
+r2p<-function(corr,n){
+  t<- (corr*sqrt(n-2))/(1-corr^2)
+  2*pt(abs(t),n-2,lower.tail=F)
 }
 
 aat_preparedata<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,...){
