@@ -361,6 +361,9 @@ error_prune_dropcases<-function(ds,subjvar, errorvar, maxerrors = .15, ...){
 #' \item \code{formula} - a quoted formula to fit to the data;
 #' \item \code{aatterm} the quoted random effect within the subject variable that indicates the approach bias; this is usually the interaction of the pull and target terms.
 #' }
+#' \itemize \code{aat_doublemeanquotient} and \code{aat_doublemedianquotient} compute a log-transformed ratio of approach to avoidance for both stimulus categories and subtract these ratios:
+#'
+#' \code{log(mean(pull_target) / mean(push_target)) - log(mean(pull_control) / mean(push_control))}
 #' \item \code{aat_singlemeandiff} and \code{aat_singlemediandiff} subtract the mean or median approach reaction time from the mean or median avoidance reaction time.
 #' These algorithms are only sensible if the supplied data contain a single stimulus category.
 #' }
@@ -457,9 +460,9 @@ aat_standardregression<-function(ds,subjvar,formula,aatterm,...){
 #' @rdname Algorithms
 aat_doublemedianquotient<-function(ds,subjvar,pullvar,targetvar,rtvar,...){
   group_by(ds,!!sym(subjvar)) %>%
-    summarise(ab=(median(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 1),na.rm=T) /
+    summarise(ab=log(median(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 1),na.rm=T) /
                     median(subset(!!sym(rtvar),!!sym(pullvar)==1 & !!sym(targetvar) == 1),na.rm=T)) -
-                (median(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 0),na.rm=T) /
+                log(median(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 0),na.rm=T) /
                    median(subset(!!sym(rtvar),!!sym(pullvar)==1 & !!sym(targetvar) == 0),na.rm=T)))
 }
 
@@ -467,9 +470,9 @@ aat_doublemedianquotient<-function(ds,subjvar,pullvar,targetvar,rtvar,...){
 #' @rdname Algorithms
 aat_doublemeanquotient<-function(ds,subjvar,pullvar,targetvar,rtvar,...){
   group_by(ds,!!sym(subjvar)) %>%
-    summarise(ab=(mean(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 1),na.rm=T) /
+    summarise(ab=log(mean(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 1),na.rm=T) /
                     mean(subset(!!sym(rtvar),!!sym(pullvar)==1 & !!sym(targetvar) == 1),na.rm=T)) -
-                (mean(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 0),na.rm=T) /
+                log(mean(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 0),na.rm=T) /
                    mean(subset(!!sym(rtvar),!!sym(pullvar)==1 & !!sym(targetvar) == 0),na.rm=T)))
 }
 
