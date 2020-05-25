@@ -359,9 +359,9 @@ error_prune_dropcases<-function(ds,subjvar, errorvar, maxerrors = .15, ...){
 #' When using these functions, additional arguments must be provided:
 #' \itemize{
 #' \item \code{formula} - a quoted formula to fit to the data;
-#' \item \code{aatterm} the quoted random effect within the subject variable that indicates the approach bias; this is usually the interaction of the pull and target terms.
+#' \item \code{aatterm} - the quoted random effect within the subject variable that indicates the approach bias; this is usually the interaction of the pull and target terms.
 #' }
-#' \itemize \code{aat_doublemeanquotient} and \code{aat_doublemedianquotient} compute a log-transformed ratio of approach to avoidance for both stimulus categories and subtract these ratios:
+#' \item \code{aat_doublemeanquotient} and \code{aat_doublemedianquotient} compute a log-transformed ratio of approach to avoidance for both stimulus categories and subtract these ratios:
 #'
 #' \code{log(mean(pull_target) / mean(push_target)) - log(mean(pull_control) / mean(push_control))}
 #' \item \code{aat_singlemeandiff} and \code{aat_singlemediandiff} subtract the mean or median approach reaction time from the mean or median avoidance reaction time.

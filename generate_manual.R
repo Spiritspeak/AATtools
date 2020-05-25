@@ -1,7 +1,2 @@
-# library(devtools)
-# erotica<-load("./data/erotica.rda")
-# #write.csv(erotica,"./data/erotica.csv",row.names=F)
-# use_data(erotica,overwrite=T)
 devtools::document()
 devtools::build_manual(path=".")
-
