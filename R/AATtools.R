@@ -859,7 +859,9 @@ aat_preparedata<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,...){
       ds[,targetvar]<-as.numeric(ds[,targetvar])-1
     }
   }
-  rmindices<- which(is.na(ds[[subjvar]]) & is.na(ds[[pullvar]]) & is.na(ds[[targetvar]]) & is.na(ds[[rtvar]]))
+
+  rmindices <- ds[,cols] %>% lapply(FUN=is.na) %>% as.data.frame %>% apply(MARGIN=1,FUN=any) %>% which
+
   if(length(rmindices)>0){
     ds<-ds[-rmindices,]
     warning("Removed ",length(rmindices)," rows due to presence of NA in critical variable(s)")
