@@ -4,6 +4,15 @@
 \alias{aat_splithalf}
 \alias{print.aat_splithalf}
 \alias{plot.aat_splithalf}
+\alias{prune_nothing}
+\alias{trial_prune_percent_subject}
+\alias{trial_prune_percent_sample}
+\alias{trial_prune_3SD}
+\alias{trial_prune_SD_dropcases}
+\alias{trial_recode_SD}
+\alias{case_prune_3SD}
+\alias{error_replace_blockmeanplus}
+\alias{error_prune_dropcases}
 \title{Compute the bootstrapped split-half reliability for approach-avoidance task data}
 \usage{
 aat_splithalf(
@@ -13,8 +22,8 @@ aat_splithalf(
   targetvar = NULL,
   rtvar,
   iters,
-  plot = T,
-  include.raw = F,
+  plot = TRUE,
+  include.raw = FALSE,
   cluster = NULL,
   algorithm = c("aat_doublemeandiff", "aat_doublemediandiff", "aat_dscore",
     "aat_dscore_multiblock", "aat_regression", "aat_standardregression",
@@ -28,9 +37,55 @@ aat_splithalf(
   ...
 )
 
-\method{print}{aat_splithalf}(x)
+\method{print}{aat_splithalf}(x, ...)
 
-\method{plot}{aat_splithalf}(x, type = c("median", "minimum", "maximum", "random"))
+\method{plot}{aat_splithalf}(x, type = c("median", "minimum", "maximum", "random"), ...)
+
+prune_nothing(ds, ...)
+
+trial_prune_percent_subject(
+  ds,
+  subjvar,
+  rtvar,
+  lowerpercent = 0.01,
+  upperpercent = 0.99,
+  ...
+)
+
+trial_prune_percent_sample(
+  ds,
+  rtvar,
+  lowerpercent = 0.01,
+  upperpercent = 0.99,
+  ...
+)
+
+trial_prune_3SD(ds, subjvar, rtvar, ...)
+
+trial_prune_SD_dropcases(
+  ds,
+  subjvar,
+  rtvar,
+  trialsd = 3,
+  maxoutliers = 0.15,
+  ...
+)
+
+trial_recode_SD(ds, subjvar, rtvar, trialsd = 3, ...)
+
+case_prune_3SD(ds, ...)
+
+error_replace_blockmeanplus(
+  ds,
+  subjvar,
+  rtvar,
+  blockvar,
+  errorvar,
+  errorbonus,
+  ...
+)
+
+error_prune_dropcases(ds, subjvar, errorvar, maxerrors = 0.15, ...)
 }
 \arguments{
 \item{ds}{a longformat data.frame}
@@ -124,20 +179,21 @@ a list of data.frames used over each iteration, and a vector containing the spli
 Compute bootstrapped split-half reliability for approach-avoidance task data.
 }
 \examples{
-#Not Run
-aat_splithalf(ds=ds2,subjvar="subjectid",pullvar="is_pull",targetvar="is_food",
-              rtvar="rt",iters=1000,trialdropfunc=trial_prune_3SD,
-              casedropfunc=case_prune_3SD,plot=T,algorithm=aat_dscore)
+aat_splithalf(ds=erotica[erotica$is_irrelevant==0,],
+              subjvar="subject",pullvar="is_pull",targetvar="is_target",
+              rtvar="RT",iters=1000,trialdropfunc="trial_prune_3SD",
+              casedropfunc="case_prune_3SD",plot=TRUE,algorithm="aat_dscore")
 #Mean reliability: 0.521959
 #Spearman-Brown-corrected r: 0.6859041
 #95\%CI: [0.4167018, 0.6172474]
 
 #Regression Splithalf
-aat_splithalf(ds=ds2,subjvar="subjectid",pullvar="is_pull",targetvar="is_food",
-              rtvar="rt",iters=100,trialdropfunc=trial_prune_3SD,
-              casedropfunc=case_prune_3SD,plot=T,algorithm=aat_regression,
-              formula = "rt ~ is_pull * is_food",
-              aatterm = "is_pull:is_food")
+aat_splithalf(ds=erotica[erotica$is_irrelevant==0,],
+              subjvar="subject",pullvar="is_pull",targetvar="is_target",
+              rtvar="RT",iters=100,trialdropfunc="trial_prune_3SD",
+              casedropfunc="case_prune_3SD",plot=TRUE,algorithm="aat_regression",
+              formula = "RT ~ is_pull * is_target",
+              aatterm = "is_pull:is_target")
 #Mean reliability: 0.5313939
 #Spearman-Brown-corrected r: 0.6940003
 #95\%CI: [0.2687186, 0.6749176]

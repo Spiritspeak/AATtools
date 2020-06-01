@@ -13,8 +13,8 @@ aat_bootstrap(
   targetvar = NULL,
   rtvar,
   iters,
-  plot = T,
-  include.raw = F,
+  plot = TRUE,
+  include.raw = FALSE,
   algorithm = c("aat_doublemeandiff", "aat_doublemediandiff", "aat_dscore",
     "aat_dscore_multiblock", "aat_regression", "aat_standardregression",
     "aat_doublemeanquotient", "aat_doublemedianquotient", "aat_singlemeandiff",
@@ -26,9 +26,9 @@ aat_bootstrap(
   ...
 )
 
-\method{print}{aat_bootstrap}(x)
+\method{print}{aat_bootstrap}(x, ...)
 
-\method{plot}{aat_bootstrap}(x)
+\method{plot}{aat_bootstrap}(x, ...)
 }
 \arguments{
 \item{ds}{a longformat data.frame}
@@ -47,7 +47,9 @@ Target stimuli should either be represented by 1, or by the second level of a fa
 
 \item{plot}{Plot the bias scores and their confidence intervals after computation is complete. This gives a good overview of the data.}
 
-\item{algorithm}{Function (without brackets or quotes) to be used to compute AAT scores. See \link{aat_doublemeandiff} for a list of usable algorithms.}
+\item{include.raw}{logical indicating whether raw split-half data should be included in the output object.}
+
+\item{algorithm}{Function (without brackets or quotes) to be used to compute AAT scores. See \link{Algorithms} for a list of usable algorithms.}
 
 \item{trialdropfunc}{Function (without brackets or quotes) to be used to exclude outlying trials in each half.
 The way you handle outliers for the reliability computation should mimic the way you do it in your regular analyses.
@@ -94,6 +96,8 @@ If used, the following additional arguments are required:
 }}
 
 \item{...}{Other arguments, to be passed on to the algorithm or outlier rejection functions (see arguments above)}
+
+\item{x}{An \code{aat_bootstrap} object.}
 }
 \value{
 A list, containing bootstrapped bias scores, their variance, bootstrapped 95 percent confidence intervals,
@@ -101,6 +105,13 @@ the number of iterations, and a matrix of bias scores for each iteration.
 }
 \description{
 Compute bootstrapped approach-bias scores with confidence intervals.
+}
+\examples{
+boot<-aat_bootstrap(ds=erotica[erotica$is_irrelevant==0,], subjvar="subject",
+                    pullvar="is_pull", targetvar="is_target",rtvar="RT",
+                    iters=100,algorithm="aat_doublemediandiff")
+plot(boot)
+print(boot)
 }
 \author{
 Sercan Kahveci

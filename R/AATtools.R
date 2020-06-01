@@ -1,13 +1,39 @@
 #AATtools
 
+#' @import dplyr
+#' @import magrittr
+#' @import doParallel
+#' @import foreach
+#' @importFrom magrittr %>% %<>% %$%
+#' @importFrom dplyr group_by ungroup mutate summarise sample_n n filter select
+#'
+#' @importFrom rlang sym
+#' @importFrom parallel detectCores makeCluster stopCluster
+#' @importFrom stats var median sd lm vcov terms as.formula coef cor quantile pt
+#' @importFrom graphics abline points segments text
 .onLoad<-function(libname, pkgname){
+  #avoid CRAN errors
+  utils::globalVariables(c("abhalf0","abhalf1","ab","key"),"AATtools")
+
+  #register generic functions
   registerS3method("print",class="aat_splithalf",method=print.aat_splithalf)
   registerS3method("plot",class="aat_splithalf",method=plot.aat_splithalf)
   registerS3method("print",class="aat_bootstrap",method=print.aat_bootstrap)
   registerS3method("plot",class="aat_bootstrap",method=plot.aat_bootstrap)
   registerS3method("print",class="qreliability",method=print.qreliability)
   registerS3method("plot",class="qreliability",method=plot.qreliability)
-  packageStartupMessage("Thank you for loading AATtools v0.0.1")
+
+  #set max number of cores to use
+  chk <- Sys.getenv("_R_CHECK_LIMIT_CORES_", "")
+  if (nzchar(chk) && chk == "TRUE") {
+    num_workers <- 2L
+  } else {
+    num_workers <- max(parallel::detectCores(),1)
+  }
+  options(AATtools.workers=num_workers)
+
+  #greet user
+  #packageStartupMessage("Thank you for loading AATtools v0.0.1")
 }
 
 # splithalf engine ####
@@ -85,25 +111,27 @@
 #'
 #' @author Sercan Kahveci
 #' @seealso \link{q_reliability}
-#' @examples #Not Run
-#' aat_splithalf(ds=ds2,subjvar="subjectid",pullvar="is_pull",targetvar="is_food",
-#'               rtvar="rt",iters=1000,trialdropfunc=trial_prune_3SD,
-#'               casedropfunc=case_prune_3SD,plot=T,algorithm=aat_dscore)
+#' @examples
+#' aat_splithalf(ds=erotica[erotica$is_irrelevant==0,],
+#'               subjvar="subject",pullvar="is_pull",targetvar="is_target",
+#'               rtvar="RT",iters=10,trialdropfunc="trial_prune_3SD",
+#'               casedropfunc="case_prune_3SD",plot=TRUE,algorithm="aat_dscore")
 #' #Mean reliability: 0.521959
 #' #Spearman-Brown-corrected r: 0.6859041
 #' #95%CI: [0.4167018, 0.6172474]
 #'
 #' #Regression Splithalf
-#' aat_splithalf(ds=ds2,subjvar="subjectid",pullvar="is_pull",targetvar="is_food",
-#'               rtvar="rt",iters=100,trialdropfunc=trial_prune_3SD,
-#'               casedropfunc=case_prune_3SD,plot=T,algorithm=aat_regression,
-#'               formula = "rt ~ is_pull * is_food",
-#'               aatterm = "is_pull:is_food")
+#' aat_splithalf(ds=erotica[erotica$is_irrelevant==0,],
+#'               subjvar="subject",pullvar="is_pull",targetvar="is_target",
+#'               rtvar="RT",iters=10,trialdropfunc="trial_prune_3SD",
+#'               casedropfunc="case_prune_3SD",plot=TRUE,algorithm="aat_regression",
+#'               formula = "RT ~ is_pull * is_target",
+#'               aatterm = "is_pull:is_target")
 #' #Mean reliability: 0.5313939
 #' #Spearman-Brown-corrected r: 0.6940003
 #' #95%CI: [0.2687186, 0.6749176]
 #' @export
-aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,include.raw=F,cluster=NULL,
+aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=TRUE,include.raw=FALSE,cluster=NULL,
                         algorithm=c("aat_doublemeandiff","aat_doublemediandiff",
                                     "aat_dscore","aat_dscore_multiblock",
                                     "aat_regression","aat_standardregression",
@@ -118,10 +146,10 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,inc
 
   #Handle arguments
   args<-list(...)
+  algorithm<-ifelse(is.function(algorithm),deparse(substitute(algorithm)),match.arg(algorithm))
   if(!(algorithm %in% c("aat_singlemeandiff","aat_singlemediandiff","aat_regression","aat_standardregression")) & is.null(targetvar)){
     stop("Argument targetvar missing but required for algorithm!")
   }
-  algorithm<-ifelse(is.function(algorithm),deparse(substitute(algorithm)),match.arg(algorithm))
   trialdropfunc<-ifelse(is.function(trialdropfunc),deparse(substitute(trialdropfunc)),match.arg(trialdropfunc))
   casedropfunc<-ifelse(is.function(casedropfunc),deparse(substitute(casedropfunc)),match.arg(casedropfunc))
   errortrialfunc<-ifelse(is.function(errortrialfunc),deparse(substitute(errortrialfunc)),match.arg(errortrialfunc))
@@ -146,11 +174,11 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,inc
 
   #splithalf loop
   if(is.null(cluster)){
-    cluster<-makeCluster(detectCores()-1)
+    cluster<-makeCluster(getOption("AATtools.workers"))
     registerDoParallel(cluster)
-    custom.cluster<-F
+    custom.cluster<-FALSE
   }else{
-    custom.cluster<-T
+    custom.cluster<-TRUE
   }
   results<-
     foreach(iter = seq_len(iters), .packages=packs) %dopar% {
@@ -228,7 +256,7 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,inc
 
 #' @export
 #' @rdname aat_splithalf
-print.aat_splithalf<-function(x){
+print.aat_splithalf<-function(x,...){
   cat("\nr = ",format(x$rsplithalf, digits=2), ", p = ",format(x$pval,digits=3),
       "\nSpearman-Brown-corrected r = ",format(x$rSB,digits=2),", p = ",format(x$pval_rSB,digits=3),
       "\n95%CI = [", format(x$lowerci,digits=2), ", ", format(x$upperci,digits=2),"]\n",
@@ -245,7 +273,7 @@ print.aat_splithalf<-function(x){
 #' @rdname aat_splithalf
 #' @examples
 #' #Coming soon
-plot.aat_splithalf<-function(x,type=c("median","minimum","maximum","random")){
+plot.aat_splithalf<-function(x,type=c("median","minimum","maximum","random"),...){
   type<-match.arg(type)
   if(type=="median"){
     title<-"Split-half Scatterplot for Iteration with Median Reliability"
@@ -271,67 +299,76 @@ plot.aat_splithalf<-function(x,type=c("median","minimum","maximum","random")){
 # Outlier removing algorithms ####
 
 #' @export
+#' @rdname aat_splithalf
 prune_nothing<-function(ds,...){
   ds
 }
 
 #' @export
+#' @rdname aat_splithalf
 trial_prune_percent_subject<-function(ds,subjvar,rtvar,lowerpercent=.01,upperpercent=.99,...){
   ds %>% group_by(!!sym(subjvar)) %>% mutate(percentile=rank(!!sym(rtvar))/n()) %>%
-    filter(percentile > lowerpercent & percentile< upperpercent) %>% ungroup()
+    filter(.data$percentile > lowerpercent & .data$percentile< upperpercent) %>% ungroup()
 }
 
 #' @export
+#' @rdname aat_splithalf
 trial_prune_percent_sample<-function(ds,rtvar,lowerpercent=.01,upperpercent=.99,...){
   ds %>% mutate(percentile=rank(!!sym(rtvar))/n()) %>%
-    filter(percentile > lowerpercent & percentile< upperpercent)
+    filter(.data$percentile > lowerpercent & .data$percentile< upperpercent)
 }
 
 #' @export
+#' @rdname aat_splithalf
 trial_prune_3SD<-function(ds,subjvar,rtvar,...){
   ds %>% group_by(!!sym(subjvar)) %>% filter(abs(scale(!!sym(rtvar))) <3) %>% ungroup()
 }
 
 #' @export
+#' @rdname aat_splithalf
 trial_prune_SD_dropcases<-function(ds,subjvar,rtvar,trialsd=3,maxoutliers=.15,...){
-  ds %>% group_by(!!sym(subjvar)) %>% mutate(is.ol=as.numeric(abs(scale(!!sym(rtvar))) >=3),avg.ol=mean(is.ol)) %>%
-    ungroup %>% filter(is.ol==0 & avg.ol<maxoutliers)
+  ds %>% group_by(!!sym(subjvar)) %>% mutate(is.ol=as.numeric(abs(scale(!!sym(rtvar))) >=3),avg.ol=mean(.data$is.ol)) %>%
+    ungroup %>% filter(.data$is.ol==0 & .data$avg.ol<maxoutliers)
 }
 
 #' @export
+#' @rdname aat_splithalf
 trial_recode_SD<-function(ds,subjvar,rtvar,trialsd=3,...){
   dsa<- ds %>% group_by(!!sym(subjvar)) %>% mutate(ol.z.score=scale(!!sym(rtvar)),
-                                      ol.type=(ol.z.score >= trialsd) - (ol.z.score <= -trialsd),
-                                      is.ol=abs(ol.type),
+                                      ol.type=(.data$ol.z.score >= trialsd) - (.data$ol.z.score <= -trialsd),
+                                      is.ol=abs(.data$ol.type),
                                       ol.max.rt=mean(!!sym(rtvar))+sd(!!sym(rtvar))*trialsd,
                                       ol.min.rt=mean(!!sym(rtvar))-sd(!!sym(rtvar))*trialsd)
   dsa[dsa$is.ol!=0,]<-ifelse(dsa$ol.type==1,dsa$ol.max.rt,dsa$ol.min.rt)
-  dsa %>% dplyr::select(-ol.type,-ol.max.rt,-ol.min.rt,-ol.z.score)
+  dsa %>% dplyr::select(-.data$ol.type,-.data$ol.max.rt,-.data$ol.min.rt,-.data$ol.z.score)
 }
 
 #' @export
+#' @rdname aat_splithalf
 case_prune_3SD<-function(ds,...){
-  dplyr::filter(ds,(abhalf0 < mean(abhalf0,na.rm=T)+3*sd(abhalf0,na.rm=T) &
-                      abhalf0 > mean(abhalf0,na.rm=T)-3*sd(abhalf0,na.rm=T)) &
-                  (abhalf1 < mean(abhalf1,na.rm=T)+3*sd(abhalf1,na.rm=T) &
-                     abhalf1 > mean(abhalf1,na.rm=T)-3*sd(abhalf1,na.rm=T)))
+  dplyr::filter(ds,(abhalf0 < mean(abhalf0,na.rm=TRUE)+3*sd(abhalf0,na.rm=TRUE) &
+                      abhalf0 > mean(abhalf0,na.rm=TRUE)-3*sd(abhalf0,na.rm=TRUE)) &
+                  (abhalf1 < mean(abhalf1,na.rm=TRUE)+3*sd(abhalf1,na.rm=TRUE) &
+                     abhalf1 > mean(abhalf1,na.rm=TRUE)-3*sd(abhalf1,na.rm=TRUE)))
 }
 
 #Replace error trial latencies with correct block mean RT + 600
 
 #' @export
+#' @rdname aat_splithalf
 error_replace_blockmeanplus<-function(ds,subjvar,rtvar,blockvar,errorvar,errorbonus, ...){
   if(!("is.ol" %in% colnames(ds))){ ds$is.ol<-0; }
   ds%<>%group_by(!!sym(subjvar),!!sym(blockvar), key)%>%
-    mutate(newrt=mean((!!sym(rtvar))[!(!!sym(errorvar)) & is.ol==0])+errorbonus)%>%ungroup()
+    mutate(newrt=mean((!!sym(rtvar))[!(!!sym(errorvar)) & .data$is.ol==0])+errorbonus)%>%ungroup()
   ds[ds[,errorvar]==1,rtvar]<-ds[ds[,errorvar]==1,]$newrt
-  dplyr::select(ds,-newrt)
+  dplyr::select(ds,-.data$newrt)
 }
 
 #' @export
+#' @rdname aat_splithalf
 error_prune_dropcases<-function(ds,subjvar, errorvar, maxerrors = .15, ...){
   ds%>%group_by(!!sym(subjvar), key)%>%
-    filter(mean(!!sym(errorvar))<maxerrors & !!sym(errorvar) == F)
+    filter(mean(!!sym(errorvar))<maxerrors & !!sym(errorvar) == FALSE)
 }
 
 # Score computation algorithms ####
@@ -381,31 +418,31 @@ NULL
 #' @rdname Algorithms
 aat_doublemeandiff<-function(ds,subjvar,pullvar,targetvar,rtvar,...){
   group_by(ds,!!sym(subjvar)) %>%
-    summarise(ab=(mean(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 1),na.rm=T) -
-                    mean(subset(!!sym(rtvar),!!sym(pullvar)==1 & !!sym(targetvar) == 1),na.rm=T)) -
-                (mean(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 0),na.rm=T) -
-                   mean(subset(!!sym(rtvar),!!sym(pullvar)==1 & !!sym(targetvar) == 0),na.rm=T)))
+    summarise(ab=(mean(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 1),na.rm=TRUE) -
+                    mean(subset(!!sym(rtvar),!!sym(pullvar)==1 & !!sym(targetvar) == 1),na.rm=TRUE)) -
+                (mean(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 0),na.rm=TRUE) -
+                   mean(subset(!!sym(rtvar),!!sym(pullvar)==1 & !!sym(targetvar) == 0),na.rm=TRUE)))
 }
 
 #' @export
 #' @rdname Algorithms
 aat_doublemediandiff<-function(ds,subjvar,pullvar,targetvar,rtvar,...){
   group_by(ds,!!sym(subjvar)) %>%
-    summarise(ab=(median(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 1),na.rm=T) -
-                    median(subset(!!sym(rtvar),!!sym(pullvar)==1 & !!sym(targetvar) == 1),na.rm=T)) -
-                (median(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 0),na.rm=T) -
-                   median(subset(!!sym(rtvar),!!sym(pullvar)==1 & !!sym(targetvar) == 0),na.rm=T)))
+    summarise(ab=(median(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 1),na.rm=TRUE) -
+                    median(subset(!!sym(rtvar),!!sym(pullvar)==1 & !!sym(targetvar) == 1),na.rm=TRUE)) -
+                (median(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 0),na.rm=TRUE) -
+                   median(subset(!!sym(rtvar),!!sym(pullvar)==1 & !!sym(targetvar) == 0),na.rm=TRUE)))
 }
 
 #' @export
 #' @rdname Algorithms
 aat_dscore<-function(ds,subjvar,pullvar,targetvar,rtvar,...){
   group_by(ds,!!sym(subjvar)) %>%
-    summarise(ab=((mean(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 1),na.rm=T) -
-                     mean(subset(!!sym(rtvar),!!sym(pullvar)==1 & !!sym(targetvar) == 1),na.rm=T)) -
-                    (mean(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 0),na.rm=T) -
-                       mean(subset(!!sym(rtvar),!!sym(pullvar)==1 & !!sym(targetvar) == 0),na.rm=T))) /
-                sd(!!sym(rtvar),na.rm=T))
+    summarise(ab=((mean(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 1),na.rm=TRUE) -
+                     mean(subset(!!sym(rtvar),!!sym(pullvar)==1 & !!sym(targetvar) == 1),na.rm=TRUE)) -
+                    (mean(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 0),na.rm=TRUE) -
+                       mean(subset(!!sym(rtvar),!!sym(pullvar)==1 & !!sym(targetvar) == 0),na.rm=TRUE))) /
+                sd(!!sym(rtvar),na.rm=TRUE))
 }
 
 #' @param blockvar name of the variable indicating block number
@@ -414,13 +451,13 @@ aat_dscore<-function(ds,subjvar,pullvar,targetvar,rtvar,...){
 #note: this matches sequential blocks with one another.
 aat_dscore_multiblock<-function(ds,subjvar,pullvar,targetvar,rtvar,blockvar,...){
   ds %>% mutate(.blockset = floor((!!sym(blockvar) - min(!!sym(blockvar)))/2) ) %>%
-    group_by(!!sym(subjvar),.blockset) %>%
-    summarise(ab=((mean(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 1),na.rm=T) -
-                     mean(subset(!!sym(rtvar),!!sym(pullvar)==1 & !!sym(targetvar) == 1),na.rm=T)) -
-                    (mean(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 0),na.rm=T) -
-                       mean(subset(!!sym(rtvar),!!sym(pullvar)==1 & !!sym(targetvar) == 0),na.rm=T))) /
-                sd(!!sym(rtvar),na.rm=T)) %>%
-    group_by(!!sym(subjvar)) %>% summarise(ab=mean(ab,na.rm=T))
+    group_by(!!sym(subjvar),.data$.blockset) %>%
+    summarise(ab=((mean(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 1),na.rm=TRUE) -
+                     mean(subset(!!sym(rtvar),!!sym(pullvar)==1 & !!sym(targetvar) == 1),na.rm=TRUE)) -
+                    (mean(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 0),na.rm=TRUE) -
+                       mean(subset(!!sym(rtvar),!!sym(pullvar)==1 & !!sym(targetvar) == 0),na.rm=TRUE))) /
+                sd(!!sym(rtvar),na.rm=TRUE)) %>%
+    group_by(!!sym(subjvar)) %>% summarise(ab=mean(ab,na.rm=TRUE))
 }
 
 #' @param formula A character string containing a regression formula to fit to the data to compute an AAT score
@@ -460,20 +497,20 @@ aat_standardregression<-function(ds,subjvar,formula,aatterm,...){
 #' @rdname Algorithms
 aat_doublemedianquotient<-function(ds,subjvar,pullvar,targetvar,rtvar,...){
   group_by(ds,!!sym(subjvar)) %>%
-    summarise(ab=log(median(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 1),na.rm=T) /
-                    median(subset(!!sym(rtvar),!!sym(pullvar)==1 & !!sym(targetvar) == 1),na.rm=T)) -
-                log(median(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 0),na.rm=T) /
-                   median(subset(!!sym(rtvar),!!sym(pullvar)==1 & !!sym(targetvar) == 0),na.rm=T)))
+    summarise(ab=log(median(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 1),na.rm=TRUE) /
+                    median(subset(!!sym(rtvar),!!sym(pullvar)==1 & !!sym(targetvar) == 1),na.rm=TRUE)) -
+                log(median(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 0),na.rm=TRUE) /
+                   median(subset(!!sym(rtvar),!!sym(pullvar)==1 & !!sym(targetvar) == 0),na.rm=TRUE)))
 }
 
 #' @export
 #' @rdname Algorithms
 aat_doublemeanquotient<-function(ds,subjvar,pullvar,targetvar,rtvar,...){
   group_by(ds,!!sym(subjvar)) %>%
-    summarise(ab=log(mean(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 1),na.rm=T) /
-                    mean(subset(!!sym(rtvar),!!sym(pullvar)==1 & !!sym(targetvar) == 1),na.rm=T)) -
-                log(mean(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 0),na.rm=T) /
-                   mean(subset(!!sym(rtvar),!!sym(pullvar)==1 & !!sym(targetvar) == 0),na.rm=T)))
+    summarise(ab=log(mean(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 1),na.rm=TRUE) /
+                    mean(subset(!!sym(rtvar),!!sym(pullvar)==1 & !!sym(targetvar) == 1),na.rm=TRUE)) -
+                log(mean(subset(!!sym(rtvar),!!sym(pullvar)==0 & !!sym(targetvar) == 0),na.rm=TRUE) /
+                   mean(subset(!!sym(rtvar),!!sym(pullvar)==1 & !!sym(targetvar) == 0),na.rm=TRUE)))
 }
 
 #' @export
@@ -505,7 +542,8 @@ aat_singlemediandiff<-function(ds,subjvar,pullvar,rtvar,...){
 #' @param rtvar Name of the reaction time column.
 #' @param iters Total number of desired iterations. At least 200 are required to get confidence intervals that make sense.
 #' @param plot Plot the bias scores and their confidence intervals after computation is complete. This gives a good overview of the data.
-#' @param algorithm Function (without brackets or quotes) to be used to compute AAT scores. See \link{aat_doublemeandiff} for a list of usable algorithms.
+#' @param algorithm Function (without brackets or quotes) to be used to compute AAT scores. See \link{Algorithms} for a list of usable algorithms.
+#' @param include.raw logical indicating whether raw split-half data should be included in the output object.
 #' @param trialdropfunc Function (without brackets or quotes) to be used to exclude outlying trials in each half.
 #' The way you handle outliers for the reliability computation should mimic the way you do it in your regular analyses.
 #' It is recommended to exclude outlying trials when computing AAT scores using the mean double-dfference scores and regression scoring approaches,
@@ -548,6 +586,7 @@ aat_singlemediandiff<-function(ds,subjvar,pullvar,rtvar,...){
 #' \item \code{maxerrors} - participants with a higher percentage of errors are excluded from the dataset. Default is .15.
 #' }
 #' }
+#'
 #' @param ... Other arguments, to be passed on to the algorithm or outlier rejection functions (see arguments above)
 #'
 #'
@@ -556,8 +595,13 @@ aat_singlemediandiff<-function(ds,subjvar,pullvar,rtvar,...){
 #'
 #' @author Sercan Kahveci
 #' @examples
+#' boot<-aat_bootstrap(ds=erotica[erotica$is_irrelevant==0,], subjvar="subject",
+#'                     pullvar="is_pull", targetvar="is_target",rtvar="RT",
+#'                     iters=10,algorithm="aat_doublemediandiff")
+#' plot(boot)
+#' print(boot)
 #' @export
-aat_bootstrap<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,include.raw=F,
+aat_bootstrap<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=TRUE,include.raw=FALSE,
                         algorithm=c("aat_doublemeandiff","aat_doublemediandiff",
                                     "aat_dscore","aat_dscore_multiblock",
                                     "aat_regression","aat_standardregression",
@@ -571,10 +615,10 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,inc
 
   #Handle arguments
   args<-list(...)
+  algorithm<-ifelse(is.function(algorithm),deparse(substitute(algorithm)),match.arg(algorithm))
   if(!(algorithm %in% c("aat_singlemeandiff","aat_singlemediandiff","aat_regression","aat_standardregression")) & is.null(targetvar)){
     stop("Argument targetvar missing but required for algorithm!")
   }
-  algorithm<-ifelse(is.function(algorithm),deparse(substitute(algorithm)),match.arg(algorithm))
   trialdropfunc<-ifelse(is.function(trialdropfunc),deparse(substitute(trialdropfunc)),match.arg(trialdropfunc))
   errortrialfunc<-ifelse(is.function(errortrialfunc),deparse(substitute(errortrialfunc)),match.arg(errortrialfunc))
   if(errortrialfunc=="error_replace_blockmeanplus"){
@@ -598,13 +642,13 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,inc
   ds %<>% aat_preparedata(subjvar,pullvar,targetvar,rtvar,...) %>% mutate(key=1)
 
   #bootstrap loop
-  cluster<-makeCluster(detectCores()-1)
+  cluster<-makeCluster(getOption("AATtools.workers"))
   registerDoParallel(cluster)
   results<-
     foreach(iter = seq_len(iters), .packages=packs, .combine=cbind) %dopar% {
       #Split data
       iterds<-ds %>% group_by(!!sym(subjvar), !!sym(pullvar), !!sym(targetvar)) %>%
-        sample_n(size=n(),replace=T) %>% ungroup()
+        sample_n(size=n(),replace=TRUE) %>% ungroup()
 
       #Handle outlying trials
       iterds<-do.call(trialdropfunc,list(ds=iterds,subjvar=subjvar,rtvar=rtvar))
@@ -624,15 +668,15 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,inc
   stopCluster(cluster)
 
   statset<-data.frame(ppidx=rownames(results),
-                      bias=rowMeans(results,na.rm=T),
-                      var=apply(results,MARGIN = 1,FUN=var,na.rm=T),
-                      lowerci=apply(results,MARGIN=1,FUN=function(x){quantile(x,0.025,na.rm=T)}),
-                      upperci=apply(results,MARGIN=1,FUN=function(x){quantile(x,0.975,na.rm=T)}))
+                      bias=rowMeans(results,na.rm=TRUE),
+                      var=apply(results,MARGIN = 1,FUN=var,na.rm=TRUE),
+                      lowerci=apply(results,MARGIN=1,FUN=function(x){quantile(x,0.025,na.rm=TRUE)}),
+                      upperci=apply(results,MARGIN=1,FUN=function(x){quantile(x,0.975,na.rm=TRUE)}))
   statset$ci<-statset$upperci-statset$lowerci
 
   #q-reliability
-  bv<-var(statset$bias,na.rm=T)
-  wv<-mean(statset$var,na.rm=T)
+  bv<-var(statset$bias,na.rm=TRUE)
+  wv<-mean(statset$var,na.rm=TRUE)
   q<-(bv-wv)/(bv+wv)
 
   output<-list(bias=statset,
@@ -656,17 +700,19 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=T,inc
 
 #' @export
 #' @rdname aat_bootstrap
-print.aat_bootstrap<-function(x){
+#' @param x An \code{aat_bootstrap} object.
+print.aat_bootstrap<-function(x,...){
   cat("Bootstrapped bias scores and confidence intervals",
-      "Mean bias score: ", mean(x$bias$bias,na.rm=T),
-      "Mean confidence interval: ",mean(x$bias$ci,na.rm=T),
-      "reliability: q = ",mean(x$bias$bias,na.rm=T),
-      "Number of iterations: ",xparameters$iters,sep="")
+      "Mean bias score: ", mean(x$bias$bias,na.rm=TRUE),
+      "Mean confidence interval: ",mean(x$bias$ci,na.rm=TRUE),
+      "reliability: q = ",mean(x$bias$bias,na.rm=TRUE),
+      "Number of iterations: ",x$parameters$iters,sep="")
 }
 
 #' @export
 #' @rdname aat_bootstrap
-plot.aat_bootstrap <- function(x){
+#' @param x An \code{aat_bootstrap} object.
+plot.aat_bootstrap <- function(x,...){
   statset<-x$bias
   statset<-statset[!is.na(statset$bias) & !is.na(statset$upperci) & !is.na(statset$lowerci),]
   rank<-rank(statset$bias)
@@ -687,6 +733,7 @@ plot.aat_bootstrap <- function(x){
 #' @param pullvar column name of pull/push indicator variable, must be numeric or logical (where pull is 1 or TRUE)
 #' @param targetvar column name of target stimulus indicator, must be numeric or logical (where target is 1 or TRUE)
 #' @param rtvar column name of reaction time variable
+#' @param algorithm Function (without brackets or quotes) to be used to compute AAT scores. See \link{Algorithms} for a list of usable algorithms.
 #' @param trialdropfunc Function (without brackets or quotes) to be used to exclude outlying trials in each half.
 #' The way you handle outliers for the reliability computation should mimic the way you do it in your regular analyses.
 #' It is recommended to exclude outlying trials when computing AAT scores using the mean double-dfference scores and regression scoring approaches,
@@ -745,10 +792,10 @@ aat_compute<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,
                         ...){
   #Handle arguments
   args<-list(...)
+  algorithm<-ifelse(is.function(algorithm),deparse(substitute(algorithm)),match.arg(algorithm))
   if(!(algorithm %in% c("aat_singlemeandiff","aat_singlemediandiff","aat_regression","aat_standardregression")) & is.null(targetvar)){
     stop("Argument targetvar missing but required for algorithm!")
   }
-  algorithm<-ifelse(is.function(algorithm),deparse(substitute(algorithm)),match.arg(algorithm))
   trialdropfunc<-ifelse(is.function(trialdropfunc),deparse(substitute(trialdropfunc)),match.arg(trialdropfunc))
   errortrialfunc<-ifelse(is.function(errortrialfunc),deparse(substitute(errortrialfunc)),match.arg(errortrialfunc))
   if(errortrialfunc=="error_replace_blockmeanplus"){
@@ -780,7 +827,7 @@ aat_compute<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,
   abds<-do.call(algorithm,c(list(ds=ds,subjvar=subjvar,pullvar=pullvar,
                                  targetvar=targetvar,rtvar=rtvar),args))
 
-  abds <- merge(x=abds,by=subjvar,all=T,y=iterds %>% group_by(!!sym(subjvar)) %>% summarise(trials=n()))
+  abds <- merge(x=abds,by=subjvar,all=TRUE,y=iterds %>% group_by(!!sym(subjvar)) %>% summarise(trials=n()))
   return(abds)
 }
 
@@ -813,10 +860,9 @@ SpearmanBrown<-function(corr,ntests=2,fix.negative=c("nullify","bilateral","none
   }
 }
 
-#' @export
 r2p<-function(corr,n){
   t<- (corr*sqrt(n-2))/(1-corr^2)
-  2*pt(abs(t),n-2,lower.tail=F)
+  2*pt(abs(t),n-2,lower.tail=FALSE)
 }
 
 aat_preparedata<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,...){
@@ -889,7 +935,8 @@ drop_empty_cases<-function(iterds,subjvar){
 #' @export
 #' @author Sercan Kahveci
 #' @examples
-#' q_reliability(ds=dataset,subjvar="subjectid",formula= rt ~ is_pull * is_food, aatterm = "is_pull:is_food")
+#' q_reliability(ds=dataset,subjvar="subjectid",
+#'               formula= rt ~ is_pull * is_food, aatterm = "is_pull:is_food")
 #'
 q_reliability<-function(ds,subjvar,formula,aatterm=NA){
   # argument checks
@@ -906,8 +953,8 @@ q_reliability<-function(ds,subjvar,formula,aatterm=NA){
     coefs[u,]$var <- (diag(vcov(mod)))[ifelse(is.na(aatterm),length(coef(mod)),aatterm)] # squared standard error
   }
 
-  bv<-var(coefs$ab,na.rm=T)
-  wv<-mean(coefs$var,na.rm=T)
+  bv<-var(coefs$ab,na.rm=TRUE)
+  wv<-mean(coefs$var,na.rm=TRUE)
   q<-(bv-wv)/(bv+wv)
   # alternative: (2*wv)/(bv*wv) -1
 
@@ -915,15 +962,20 @@ q_reliability<-function(ds,subjvar,formula,aatterm=NA){
 }
 
 #' @export
-print.qreliability<-function(x){
+#' @rdname q_reliability
+#' @param x a \code{qreliability} object
+#' @param ... Other arguments passed to the generic \code{print} and \code{plot} functions.
+print.qreliability<-function(x,...){
   cat("q = ",x$q,"\n",sep="")
 }
 
 #' @export
 #' @rdname q_reliability
-plot.qreliability<-function(x){
-  bv<-var(x$coefs$ab,na.rm=T) / nrow(x$coefs)*1.96 *2
-  wv<-mean(x$coefs$var,na.rm=T) / nrow(x$coefs)*1.96 *2
+#' @param x a \code{qreliability} object
+#' @param ... Other arguments passed to the generic \code{print} and \code{plot} functions.
+plot.qreliability<-function(x,...){
+  bv<-var(x$coefs$ab,na.rm=TRUE) / nrow(x$coefs)*1.96 *2
+  wv<-mean(x$coefs$var,na.rm=TRUE) / nrow(x$coefs)*1.96 *2
   plotset<-data.frame(x=mean(x$coefs$ab) + cos(0:100 / 100 * 2*pi)*bv * 1/2*sqrt(2) - sin(0:100 / 100 * 2*pi)*wv * 1/2*sqrt(2),
                       y=mean(x$coefs$ab) + cos(0:100 / 100 * 2*pi)*bv * 1/2*sqrt(2) + sin(0:100 / 100 * 2*pi)*wv * 1/2*sqrt(2))
   plot(plotset$x,plotset$y,type="l",main=paste0("Reliability\n","q = ",round(x$q,digits=2)),xlab="Participants' scores",ylab="Participants' scores")

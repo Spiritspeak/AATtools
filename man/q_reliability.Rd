@@ -2,12 +2,15 @@
 % Please edit documentation in R/AATtools.R
 \name{q_reliability}
 \alias{q_reliability}
+\alias{print.qreliability}
 \alias{plot.qreliability}
 \title{Compute psychological experiment reliability}
 \usage{
 q_reliability(ds, subjvar, formula, aatterm = NA)
 
-\method{plot}{qreliability}(x)
+\method{print}{qreliability}(x, ...)
+
+\method{plot}{qreliability}(x, ...)
 }
 \arguments{
 \item{ds}{a long-format data.frame}
@@ -17,6 +20,10 @@ q_reliability(ds, subjvar, formula, aatterm = NA)
 \item{formula}{a formula predicting the participant's reaction time using trial-level variables such as movement direction and stimulus category}
 
 \item{aatterm}{a string denoting the term in the formula that contains the participant's approach bias}
+
+\item{x}{a \code{qreliability} object}
+
+\item{...}{Other arguments passed to the generic \code{print} and \code{plot} functions.}
 }
 \value{
 a qreliability object, containing the reliability coefficient, and a data.frame with participants' bias scores and score variance.
@@ -26,7 +33,8 @@ This function can be used to compute an exact reliability score for a psychologi
 The resulting q coefficient is equivalent to the average all possible split-half reliability scores.
 }
 \examples{
-q_reliability(ds=dataset,subjvar="subjectid",formula= rt ~ is_pull * is_food, aatterm = "is_pull:is_food")
+q_reliability(ds=dataset,subjvar="subjectid",
+              formula= rt ~ is_pull * is_food, aatterm = "is_pull:is_food")
 
 }
 \author{

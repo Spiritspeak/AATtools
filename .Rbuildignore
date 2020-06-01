@@ -1,2 +1,8 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\.travis\.yml$
+^\.git$
+^generate_manual\.R$
+^.*\.pdf$
+^README\.md$
+^LICENSE\.md$

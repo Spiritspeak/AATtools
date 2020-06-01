@@ -32,6 +32,8 @@ aat_compute(
 
 \item{rtvar}{column name of reaction time variable}
 
+\item{algorithm}{Function (without brackets or quotes) to be used to compute AAT scores. See \link{Algorithms} for a list of usable algorithms.}
+
 \item{trialdropfunc}{Function (without brackets or quotes) to be used to exclude outlying trials in each half.
 The way you handle outliers for the reliability computation should mimic the way you do it in your regular analyses.
 It is recommended to exclude outlying trials when computing AAT scores using the mean double-dfference scores and regression scoring approaches,
