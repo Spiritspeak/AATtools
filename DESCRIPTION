@@ -2,11 +2,10 @@ Package: AATtools
 Type: Package
 Title: Tools for Analyzing the Approach-Avoidance Task
 Version: 0.0.1
-Author: Sercan Kahveci
 Authors@R: person("Sercan", "Kahveci", email = "sercan.kahveci@sbg.ac.at", role = c("aut", "cre"))
 Description: Compute approach bias scores using different scoring algorithms, 
-    compute bootstrapped and exact split-half reliability of the AAT, 
-    and compute confidence intervals for individual AAT scores.
+    compute bootstrapped and exact split-half reliability estimates, 
+    and compute confidence intervals for individual participant scores.
 Depends: R (>= 3.6.0)
 Imports: magrittr, dplyr, doParallel, foreach, rlang
 License: GPL-3

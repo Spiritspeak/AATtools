@@ -24,16 +24,20 @@
   registerS3method("plot",class="qreliability",method=plot.qreliability)
 
   #set max number of cores to use
-  chk <- Sys.getenv("_R_CHECK_LIMIT_CORES_", "")
-  if (nzchar(chk) && chk == "TRUE") {
+  if (r_check_limit_cores()) {
     num_workers <- 2L
   } else {
-    num_workers <- max(parallel::detectCores(),1)
+    num_workers <- max(parallel::detectCores()-1,1)
   }
   options(AATtools.workers=num_workers)
 
   #greet user
   #packageStartupMessage("Thank you for loading AATtools v0.0.1")
+}
+
+r_check_limit_cores <- function() {
+  Rcheck <- tolower(Sys.getenv("_R_CHECK_LIMIT_CORES_", ""))
+  return((nchar(Rcheck[1]) > 0) & (Rcheck != "false"))
 }
 
 # splithalf engine ####
