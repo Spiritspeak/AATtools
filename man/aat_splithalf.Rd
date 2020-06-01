@@ -181,7 +181,7 @@ Compute bootstrapped split-half reliability for approach-avoidance task data.
 \examples{
 aat_splithalf(ds=erotica[erotica$is_irrelevant==0,],
               subjvar="subject",pullvar="is_pull",targetvar="is_target",
-              rtvar="RT",iters=1000,trialdropfunc="trial_prune_3SD",
+              rtvar="RT",iters=10,trialdropfunc="trial_prune_3SD",
               casedropfunc="case_prune_3SD",plot=TRUE,algorithm="aat_dscore")
 #Mean reliability: 0.521959
 #Spearman-Brown-corrected r: 0.6859041
@@ -190,7 +190,7 @@ aat_splithalf(ds=erotica[erotica$is_irrelevant==0,],
 #Regression Splithalf
 aat_splithalf(ds=erotica[erotica$is_irrelevant==0,],
               subjvar="subject",pullvar="is_pull",targetvar="is_target",
-              rtvar="RT",iters=100,trialdropfunc="trial_prune_3SD",
+              rtvar="RT",iters=10,trialdropfunc="trial_prune_3SD",
               casedropfunc="case_prune_3SD",plot=TRUE,algorithm="aat_regression",
               formula = "RT ~ is_pull * is_target",
               aatterm = "is_pull:is_target")

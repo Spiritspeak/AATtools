@@ -109,7 +109,7 @@ Compute bootstrapped approach-bias scores with confidence intervals.
 \examples{
 boot<-aat_bootstrap(ds=erotica[erotica$is_irrelevant==0,], subjvar="subject",
                     pullvar="is_pull", targetvar="is_target",rtvar="RT",
-                    iters=100,algorithm="aat_doublemediandiff")
+                    iters=10,algorithm="aat_doublemediandiff")
 plot(boot)
 print(boot)
 }

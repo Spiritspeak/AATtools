@@ -4,9 +4,7 @@
 \name{erotica}
 \alias{erotica}
 \title{AAT examining approach bias for erotic stimuli}
-\format{
-An object of class \code{"data.frame"}
-}
+\format{An object of class \code{"data.frame"}}
 \source{
 \href{https://osf.io/6h2rj/}{osf.io repository}
 }
