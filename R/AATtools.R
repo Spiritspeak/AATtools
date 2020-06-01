@@ -124,6 +124,7 @@ r_check_limit_cores <- function() {
 #' #Spearman-Brown-corrected r: 0.6859041
 #' #95%CI: [0.4167018, 0.6172474]
 #'
+#' \dontrun{
 #' #Regression Splithalf
 #' aat_splithalf(ds=erotica[erotica$is_irrelevant==0,],
 #'               subjvar="subject",pullvar="is_pull",targetvar="is_target",
@@ -134,6 +135,7 @@ r_check_limit_cores <- function() {
 #' #Mean reliability: 0.5313939
 #' #Spearman-Brown-corrected r: 0.6940003
 #' #95%CI: [0.2687186, 0.6749176]
+#' }
 #' @export
 aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=TRUE,include.raw=FALSE,cluster=NULL,
                         algorithm=c("aat_doublemeandiff","aat_doublemediandiff",

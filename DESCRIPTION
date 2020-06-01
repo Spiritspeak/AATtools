@@ -3,8 +3,8 @@ Type: Package
 Title: Tools for Analyzing the Approach-Avoidance Task
 Version: 0.0.1
 Authors@R: person("Sercan", "Kahveci", email = "sercan.kahveci@sbg.ac.at", role = c("aut", "cre"))
-Description: Compute approach bias scores using different scoring algorithms, 
-    compute bootstrapped and exact split-half reliability estimates, 
+Description: Compute approach bias scores using different scoring algorithms,
+    compute bootstrapped and exact split-half reliability estimates,
     and compute confidence intervals for individual participant scores.
 Depends: R (>= 3.6.0)
 Imports: magrittr, dplyr, doParallel, foreach, rlang
