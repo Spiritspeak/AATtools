@@ -33,8 +33,8 @@ This function can be used to compute an exact reliability score for a psychologi
 The resulting q coefficient is equivalent to the average all possible split-half reliability scores.
 }
 \examples{
-q_reliability(ds=dataset,subjvar="subjectid",
-              formula= rt ~ is_pull * is_food, aatterm = "is_pull:is_food")
+q_reliability(ds=erotica,subjvar="subject",
+              formula= RT ~ is_pull * is_target, aatterm = "is_pull:is_target")
 
 }
 \author{

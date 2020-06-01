@@ -6,3 +6,4 @@
 ^.*\.pdf$
 ^README\.md$
 ^LICENSE\.md$
+^\.Rd2pdf240$

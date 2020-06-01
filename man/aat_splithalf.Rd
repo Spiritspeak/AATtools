@@ -4,15 +4,6 @@
 \alias{aat_splithalf}
 \alias{print.aat_splithalf}
 \alias{plot.aat_splithalf}
-\alias{prune_nothing}
-\alias{trial_prune_percent_subject}
-\alias{trial_prune_percent_sample}
-\alias{trial_prune_3SD}
-\alias{trial_prune_SD_dropcases}
-\alias{trial_recode_SD}
-\alias{case_prune_3SD}
-\alias{error_replace_blockmeanplus}
-\alias{error_prune_dropcases}
 \title{Compute the bootstrapped split-half reliability for approach-avoidance task data}
 \usage{
 aat_splithalf(
@@ -40,52 +31,6 @@ aat_splithalf(
 \method{print}{aat_splithalf}(x, ...)
 
 \method{plot}{aat_splithalf}(x, type = c("median", "minimum", "maximum", "random"), ...)
-
-prune_nothing(ds, ...)
-
-trial_prune_percent_subject(
-  ds,
-  subjvar,
-  rtvar,
-  lowerpercent = 0.01,
-  upperpercent = 0.99,
-  ...
-)
-
-trial_prune_percent_sample(
-  ds,
-  rtvar,
-  lowerpercent = 0.01,
-  upperpercent = 0.99,
-  ...
-)
-
-trial_prune_3SD(ds, subjvar, rtvar, ...)
-
-trial_prune_SD_dropcases(
-  ds,
-  subjvar,
-  rtvar,
-  trialsd = 3,
-  maxoutliers = 0.15,
-  ...
-)
-
-trial_recode_SD(ds, subjvar, rtvar, trialsd = 3, ...)
-
-case_prune_3SD(ds, ...)
-
-error_replace_blockmeanplus(
-  ds,
-  subjvar,
-  rtvar,
-  blockvar,
-  errorvar,
-  errorbonus,
-  ...
-)
-
-error_prune_dropcases(ds, subjvar, errorvar, maxerrors = 0.15, ...)
 }
 \arguments{
 \item{ds}{a longformat data.frame}
