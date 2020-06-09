@@ -7,7 +7,6 @@
 #' @importFrom magrittr %>% %<>% %$%
 #' @importFrom dplyr group_by ungroup mutate summarise sample_n n filter select
 #'
-#' @importFrom rlang sym
 #' @importFrom parallel detectCores makeCluster stopCluster
 #' @importFrom stats var median sd lm vcov terms as.formula coef cor quantile pt
 #' @importFrom graphics abline points segments text plot
@@ -116,21 +115,25 @@ r_check_limit_cores <- function() {
 #' @author Sercan Kahveci
 #' @seealso \link{q_reliability}
 #' @examples
-#' aat_splithalf(ds=erotica[erotica$is_irrelevant==0,],
-#'               subjvar="subject",pullvar="is_pull",targetvar="is_target",
-#'               rtvar="RT",iters=10,trialdropfunc="trial_prune_3SD",
-#'               casedropfunc="case_prune_3SD",plot=TRUE,algorithm="aat_dscore")
+#' split <- aat_splithalf(ds=erotica[erotica$is_irrelevant==0,],
+#'                        subjvar="subject",pullvar="is_pull",targetvar="is_target",
+#'                        rtvar="RT",iters=10,trialdropfunc="trial_prune_3SD",
+#'                        casedropfunc="case_prune_3SD",plot=TRUE,algorithm="aat_dscore")
+#'
+#' print(split)
 #' #Mean reliability: 0.521959
 #' #Spearman-Brown-corrected r: 0.6859041
 #' #95%CI: [0.4167018, 0.6172474]
 #'
-#' \dontrun{
+#' plot(split)
+#'
+#' \donttest{
 #' #Regression Splithalf
 #' aat_splithalf(ds=erotica[erotica$is_irrelevant==0,],
 #'               subjvar="subject",pullvar="is_pull",targetvar="is_target",
 #'               rtvar="RT",iters=10,trialdropfunc="trial_prune_3SD",
 #'               casedropfunc="case_prune_3SD",plot=TRUE,algorithm="aat_regression",
-#'               formula = "RT ~ is_pull * is_target",
+#'               formula = RT ~ is_pull * is_target,
 #'               aatterm = "is_pull:is_target")
 #' #Mean reliability: 0.5313939
 #' #Spearman-Brown-corrected r: 0.6940003
@@ -168,8 +171,10 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=TRUE,
   stopifnot(!(algorithm=="aat_dscore_multiblock" & is.null(args$blockvar)))
   if(algorithm %in% c("aat_regression","aat_standardregression")){
     if(!("formula" %in% names(args))){
-      args$formula<-paste0(rtvar,"~",pullvar,"*",targetvar)
-      warning("No formula provided. Defaulting to formula ",args$formula)
+      args$formula<-as.formula(paste0(rtvar,"~",pullvar,"*",targetvar))
+      warning("No formula provided. Defaulting to formula ",form2char(args$formula))
+    }else if(is.character(args$formula)){
+      args$formula<-as.formula(args$formula)
     }
     if(!("aatterm" %in% names(args))){
       args$aatterm<-paste0(pullvar,":",targetvar)
@@ -277,8 +282,6 @@ print.aat_splithalf<-function(x,...){
 #'
 #' @export
 #' @rdname aat_splithalf
-#' @examples
-#' #Coming soon
 plot.aat_splithalf<-function(x,type=c("median","minimum","maximum","random"),...){
   type<-match.arg(type)
   if(type=="median"){
@@ -303,7 +306,6 @@ plot.aat_splithalf<-function(x,type=c("median","minimum","maximum","random"),...
 }
 
 # Outlier removing algorithms ####
-
 #' @title Pre-processing rules
 #' @description These are pre-processing rules that can be used in \link{aat_splithalf}, \link{aat_bootstrap}, and \link{aat_compute}.
 #'
@@ -432,7 +434,6 @@ case_prune_3SD<-function(ds,...){
 }
 
 #Replace error trial latencies with correct block mean RT + 600
-
 #' @export
 #' @rdname Preprocessing
 error_replace_blockmeanplus<-function(ds,subjvar,rtvar,blockvar,errorvar,errorbonus, ...){
@@ -474,8 +475,8 @@ error_prune_dropcases<-function(ds,subjvar, errorvar, maxerrors = .15, ...){
 #' These algorithms can be used to regress nuisance variables out of the data before computing AAT scores.
 #' When using these functions, additional arguments must be provided:
 #' \itemize{
-#' \item \code{formula} - a quoted formula to fit to the data;
-#' \item \code{aatterm} - the quoted random effect within the subject variable that indicates the approach bias; this is usually the interaction of the pull and target terms.
+#' \item \code{formula} - a formula to fit to the data
+#' \item \code{aatterm} - the term within the formula that indicates the approach bias; this is usually the interaction of the pull and target terms.
 #' }
 #' \item \code{aat_doublemeanquotient} and \code{aat_doublemedianquotient} compute a log-transformed ratio of approach to avoidance for both stimulus categories and subtract these ratios:
 #'
@@ -539,14 +540,15 @@ aat_dscore_multiblock<-function(ds,subjvar,pullvar,targetvar,rtvar,blockvar,...)
     group_by(!!sym(subjvar)) %>% summarise(ab=mean(ab,na.rm=TRUE))
 }
 
-#' @param formula A character string containing a regression formula to fit to the data to compute an AAT score
-#' @param aatterm The formula term representing the approach bias. Usually this is the interaction of the movement-direction and stimulus-category terms.
+#' @param formula A regression formula to fit to the data to compute an AAT score
+#' @param aatterm A character naming the formula term representing the approach bias.
+#' Usually this is the interaction of the movement-direction and stimulus-category terms.
 #' @export
 #' @rdname Algorithms
 aat_regression<-function(ds,subjvar,formula,aatterm,...){
   output<-data.frame(pp=unique(ds[[subjvar]]),ab=NA,var=NA)
   for(i in seq_len(nrow(output))){
-    mod<-coef(summary(lm(as.formula(formula),data=ds[ds[[subjvar]]==output[i,"pp"],])))
+    mod<-coef(summary(lm(formula,data=ds[ds[[subjvar]]==output[i,"pp"],])))
     if(aatterm %in% rownames(mod)){
       output[i,"ab"]<- -mod[rownames(mod)==aatterm,1]
       output[i,"var"]<- mod[rownames(mod)==aatterm,2]
@@ -561,7 +563,7 @@ aat_regression<-function(ds,subjvar,formula,aatterm,...){
 aat_standardregression<-function(ds,subjvar,formula,aatterm,...){
   output<-data.frame(pp=unique(ds[[subjvar]]),ab=NA,var=NA)
   for(i in seq_len(nrow(output))){
-    mod<-coef(summary(lm(as.formula(formula),data=ds[ds[[subjvar]]==output[i,"pp"],])))
+    mod<-coef(summary(lm(formula,data=ds[ds[[subjvar]]==output[i,"pp"],])))
     if(aatterm %in% rownames(mod)){
       output[i,"ab"]<- -mod[rownames(mod)==aatterm,1]
       output[i,"var"]<- mod[rownames(mod)==aatterm,2]
@@ -674,11 +676,14 @@ aat_singlemediandiff<-function(ds,subjvar,pullvar,rtvar,...){
 #'
 #' @author Sercan Kahveci
 #' @examples
+#' # Compute 10 bootstrapped AAT scores.
 #' boot<-aat_bootstrap(ds=erotica[erotica$is_irrelevant==0,], subjvar="subject",
 #'                     pullvar="is_pull", targetvar="is_target",rtvar="RT",
-#'                     iters=10,algorithm="aat_doublemediandiff")
+#'                     iters=10,algorithm="aat_doublemediandiff",
+#'                     trialdropfunc="trial_prune_3SD")
 #' plot(boot)
 #' print(boot)
+#'
 #' @export
 aat_bootstrap<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=TRUE,include.raw=FALSE,
                         algorithm=c("aat_doublemeandiff","aat_doublemediandiff",
@@ -710,8 +715,10 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=TRUE,
 
   if(algorithm %in% c("aat_regression","aat_standardregression")){
     if(!("formula" %in% names(args))){
-      args$formula<-paste0(rtvar,"~",pullvar,"*",targetvar)
-      warning("No formula provided. Defaulting to formula ",args$formula)
+      args$formula<-as.formula(paste0(rtvar,"~",pullvar,"*",targetvar))
+      warning("No formula provided. Defaulting to formula ",form2char(args$formula))
+    }else if(is.character(args$formula)){
+      args$formula<-as.formula(args$formula)
     }
     if(!("aatterm" %in% names(args))){
       args$aatterm<-paste0(pullvar,":",targetvar)
@@ -857,8 +864,26 @@ plot.aat_bootstrap <- function(x,...){
 #' }
 #' @param ... Other arguments, to be passed on to the algorithm or outlier rejection functions (see arguments above)
 #'
-#'
 #' @export
+#'
+#' @examples
+#' #Compute the correlation between relevant-feature and irrelevant-feature AAT scores
+#' ds<-erotica[erotica$correct==1,]
+#' relevant <- aat_compute(ds=ds[ds$is_irrelevant==0,],
+#'                         pullvar="is_pull",targetvar="is_target",
+#'                         rtvar="RT",subjvar="subject",
+#'                         trialdropfunc="trial_prune_3SD",
+#'                         algorithm="aat_doublemediandiff")
+#'
+#' irrelevant <- aat_compute(ds=ds[ds$is_irrelevant==1,],
+#'                         pullvar="is_pull",targetvar="is_target",
+#'                         rtvar="RT",subjvar="subject",
+#'                         trialdropfunc="trial_prune_3SD",
+#'                         algorithm="aat_doublemediandiff")
+#'
+#' comparison.df <- merge(relevant, irrelevant, by = "subject")
+#' cor(comparison.df$ab.x, comparison.df$ab.y)
+#' # 0.1145726
 aat_compute<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,
                         algorithm=c("aat_doublemeandiff","aat_doublemediandiff",
                                     "aat_dscore","aat_dscore_multiblock",
@@ -886,8 +911,10 @@ aat_compute<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,
   stopifnot(!(algorithm=="aat_dscore_multiblock" & is.null(args$blockvar)))
   if(algorithm %in% c("aat_regression","aat_standardregression")){
     if(!("formula" %in% names(args))){
-      args$formula<-paste0(rtvar,"~",pullvar,"*",targetvar)
-      warning("No formula provided. Defaulting to formula ",args$formula)
+      args$formula<-as.formula(paste0(rtvar,"~",pullvar,"*",targetvar))
+      warning("No formula provided. Defaulting to formula ",form2char(args$formula))
+    }else if(is.character(args$formula)){
+      args$formula<-as.formula(args$formula)
     }
     if(!("aatterm" %in% names(args))){
       args$aatterm<-paste0(pullvar,":",targetvar)
@@ -909,6 +936,90 @@ aat_compute<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,
   abds <- merge(x=abds,by=subjvar,all=TRUE,y=iterds %>% group_by(!!sym(subjvar)) %>% summarise(trials=n()))
   return(abds)
 }
+
+
+#' Compute psychological experiment reliability
+#' @description This function can be used to compute an exact reliability score for a psychological task whose results involve a difference score.
+#' The resulting intraclass correlation coefficient is equivalent to the average all possible split-half reliability scores.
+#' It ranges from -1 to 1, with -1 implying that all variance in the data is explained by within-subjects variability,
+#' 1 implying that all variance is explained by between-subjects variability,
+#' and 0 implying that within-subjects and between-subjects variability contribute equally to the total variance in the sample.
+#' @param ds a long-format data.frame
+#' @param subjvar name of the subject variable
+#' @param formula a formula predicting the participant's reaction time using trial-level variables such as movement direction and stimulus category
+#' @param aatterm a string denoting the term in the formula that contains the participant's approach bias
+#'
+#' @return a qreliability object, containing the reliability coefficient, and a data.frame with participants' bias scores and score variance.
+#' @export
+#' @author Sercan Kahveci
+#' @examples
+#' # Double-difference score reliability
+#' q_reliability(ds=erotica,subjvar="subject",
+#'               formula= RT ~ is_pull * is_target, aatterm = "is_pull:is_target")
+#'
+#' # Single-difference reliability for target stimuli
+#' q_reliability(ds=erotica[erotica$is_target ==1,],subjvar="subject",
+#'               formula= RT ~ is_pull, aatterm = "is_pull")
+#'
+#' # Reliability of the mean reaction time of approaching target stimuli (no difference score)
+#' q_reliability(ds=erotica[erotica$is_target ==1 & erotica$is_pull ==1,],subjvar="subject",
+#'               formula= RT ~ 1, aatterm = "1")
+#'
+q_reliability<-function(ds,subjvar,formula,aatterm=NA){
+  # argument checks
+  cols<-c(subjvar,as.character(attr(terms(formula),"variables"))[-1])
+  stopifnot(all(cols %in% colnames(ds)))
+  ds<-ds[apply(!is.na(ds[,cols]),MARGIN=1,FUN=all),]
+  if(aatterm=="1"){ aatterm<-NA }
+
+  # functional part
+  coefs<-data.frame(pp=unique(ds[[subjvar]]),ab=NA,var=NA)
+  for(u in 1:nrow(coefs)){
+    iterset<-ds[ds[[subjvar]]==coefs[u,]$pp,]
+    mod<-lm(formula,data=iterset)
+    coefs[u,]$ab <- -coef(mod)[ifelse(is.na(aatterm),length(coef(mod)),aatterm)]
+    coefs[u,]$var <- (diag(vcov(mod)))[ifelse(is.na(aatterm),length(coef(mod)),aatterm)] # squared standard error
+  }
+
+  bv<-var(coefs$ab,na.rm=TRUE)
+  wv<-mean(coefs$var,na.rm=TRUE)
+  q<-(bv-wv)/(bv+wv)
+  # alternative: (2*wv)/(bv*wv) -1
+
+  return(structure(list(q=q,coefs=coefs),class="qreliability"))
+}
+
+#' @export
+#' @rdname q_reliability
+#' @param x a \code{qreliability} object
+#' @param ... Other arguments passed to the generic \code{print} and \code{plot} functions.
+print.qreliability<-function(x,...){
+  cat("q = ",x$q,"\n",sep="")
+}
+
+#' @export
+#' @rdname q_reliability
+#' @param x a \code{qreliability} object
+#' @param ... Other arguments passed to the generic \code{print} and \code{plot} functions.
+plot.qreliability<-function(x,...){
+  bv<-var(x$coefs$ab,na.rm=TRUE) / nrow(x$coefs)*1.96 *2
+  wv<-mean(x$coefs$var,na.rm=TRUE) / nrow(x$coefs)*1.96 *2
+  plotset<-data.frame(x=mean(x$coefs$ab) + cos(0:100 / 100 * 2*pi)*bv * 1/2*sqrt(2) - sin(0:100 / 100 * 2*pi)*wv * 1/2*sqrt(2),
+                      y=mean(x$coefs$ab) + cos(0:100 / 100 * 2*pi)*bv * 1/2*sqrt(2) + sin(0:100 / 100 * 2*pi)*wv * 1/2*sqrt(2))
+  plot(plotset$x,plotset$y,type="l",main=paste0("Reliability\n","q = ",round(x$q,digits=2)),xlab="Participants' scores",ylab="Participants' scores")
+  points(x$coefs$ab,x$coefs$ab)
+  dispval<-(bv+wv)/100
+  plotset<-data.frame(xstart=c(x$coefs$ab+dispval,x$coefs$ab-dispval),
+                      ystart=c(x$coefs$ab-dispval,x$coefs$ab+dispval),
+                      xend=c(x$coefs$ab+sqrt(x$coefs$var) *1/2*sqrt(2),
+                             x$coefs$ab-sqrt(x$coefs$var) *1/2*sqrt(2)),
+                      yend=c(x$coefs$ab-sqrt(x$coefs$var) *1/2*sqrt(2),
+                             x$coefs$ab+sqrt(x$coefs$var) *1/2*sqrt(2)))
+  segments(plotset$xstart,plotset$ystart,plotset$xend,plotset$yend)
+}
+
+
+
 
 # utils ####
 #' Correct a correlation coefficient for being based on only a subset of the data.
@@ -1001,76 +1112,16 @@ drop_empty_cases<-function(iterds,subjvar){
   iterds%>%group_by(!!sym(subjvar))%>%filter(val_between(mean(key),0,1))
 }
 
-
-#' Compute psychological experiment reliability
-#' @description This function can be used to compute an exact reliability score for a psychological task whose results involve a difference score.
-#' The resulting q coefficient is equivalent to the average all possible split-half reliability scores.
-#' @param ds a long-format data.frame
-#' @param subjvar name of the subject variable
-#' @param formula a formula predicting the participant's reaction time using trial-level variables such as movement direction and stimulus category
-#' @param aatterm a string denoting the term in the formula that contains the participant's approach bias
-#'
-#' @return a qreliability object, containing the reliability coefficient, and a data.frame with participants' bias scores and score variance.
-#' @export
-#' @author Sercan Kahveci
-#' @examples
-#' q_reliability(ds=erotica,subjvar="subject",
-#'               formula= RT ~ is_pull * is_target, aatterm = "is_pull:is_target")
-#'
-q_reliability<-function(ds,subjvar,formula,aatterm=NA){
-  # argument checks
-  cols<-c(subjvar,rownames(attr(terms(formula),"factors")))
-  stopifnot(all(cols %in% colnames(ds)))
-  ds<-ds[apply(!is.na(ds[,cols]),MARGIN=1,FUN=all),]
-
-  # functional part
-  coefs<-data.frame(pp=unique(ds[[subjvar]]),ab=NA,var=NA)
-  for(u in 1:nrow(coefs)){
-    iterset<-ds[ds[[subjvar]]==coefs[u,]$pp,]
-    mod<-lm(formula,data=iterset)
-    coefs[u,]$ab <- -coef(mod)[ifelse(is.na(aatterm),length(coef(mod)),aatterm)]
-    coefs[u,]$var <- (diag(vcov(mod)))[ifelse(is.na(aatterm),length(coef(mod)),aatterm)] # squared standard error
-  }
-
-  bv<-var(coefs$ab,na.rm=TRUE)
-  wv<-mean(coefs$var,na.rm=TRUE)
-  q<-(bv-wv)/(bv+wv)
-  # alternative: (2*wv)/(bv*wv) -1
-
-  return(structure(list(q=q,coefs=coefs),class="qreliability"))
+form2char<-function(x){
+  if(is.character(x)){ return(x) }
+  fs<-as.character(x)
+  fs<-paste(fs[2],fs[1],fs[3])
+  return(fs)
 }
 
-#' @export
-#' @rdname q_reliability
-#' @param x a \code{qreliability} object
-#' @param ... Other arguments passed to the generic \code{print} and \code{plot} functions.
-print.qreliability<-function(x,...){
-  cat("q = ",x$q,"\n",sep="")
+is.formula <- function(x){
+  inherits(x,"formula")
 }
-
-#' @export
-#' @rdname q_reliability
-#' @param x a \code{qreliability} object
-#' @param ... Other arguments passed to the generic \code{print} and \code{plot} functions.
-plot.qreliability<-function(x,...){
-  bv<-var(x$coefs$ab,na.rm=TRUE) / nrow(x$coefs)*1.96 *2
-  wv<-mean(x$coefs$var,na.rm=TRUE) / nrow(x$coefs)*1.96 *2
-  plotset<-data.frame(x=mean(x$coefs$ab) + cos(0:100 / 100 * 2*pi)*bv * 1/2*sqrt(2) - sin(0:100 / 100 * 2*pi)*wv * 1/2*sqrt(2),
-                      y=mean(x$coefs$ab) + cos(0:100 / 100 * 2*pi)*bv * 1/2*sqrt(2) + sin(0:100 / 100 * 2*pi)*wv * 1/2*sqrt(2))
-  plot(plotset$x,plotset$y,type="l",main=paste0("Reliability\n","q = ",round(x$q,digits=2)),xlab="Participants' scores",ylab="Participants' scores")
-  points(x$coefs$ab,x$coefs$ab)
-  dispval<-(bv+wv)/100
-  plotset<-data.frame(xstart=c(x$coefs$ab+dispval,x$coefs$ab-dispval),
-                      ystart=c(x$coefs$ab-dispval,x$coefs$ab+dispval),
-                      xend=c(x$coefs$ab+sqrt(x$coefs$var)*1.96 *1/2*sqrt(2),
-                             x$coefs$ab-sqrt(x$coefs$var)*1.96 *1/2*sqrt(2)),
-                      yend=c(x$coefs$ab-sqrt(x$coefs$var)*1.96 *1/2*sqrt(2),
-                             x$coefs$ab+sqrt(x$coefs$var)*1.96 *1/2*sqrt(2)))
-  segments(plotset$xstart,plotset$ystart,plotset$xend,plotset$yend)
-}
-
-
-
 
 
 

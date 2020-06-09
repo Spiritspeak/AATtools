@@ -83,3 +83,22 @@ If used, the following additional arguments are required:
 \description{
 Compute simple AAT scores, with optional outlier exclusion and error trial recoding.
 }
+\examples{
+#Compute the correlation between relevant-feature and irrelevant-feature AAT scores
+ds<-erotica[erotica$correct==1,]
+relevant <- aat_compute(ds=ds[ds$is_irrelevant==0,],
+                        pullvar="is_pull",targetvar="is_target",
+                        rtvar="RT",subjvar="subject",
+                        trialdropfunc="trial_prune_3SD",
+                        algorithm="aat_doublemediandiff")
+
+irrelevant <- aat_compute(ds=ds[ds$is_irrelevant==1,],
+                        pullvar="is_pull",targetvar="is_target",
+                        rtvar="RT",subjvar="subject",
+                        trialdropfunc="trial_prune_3SD",
+                        algorithm="aat_doublemediandiff")
+
+comparison.df <- merge(relevant, irrelevant, by = "subject")
+cor(comparison.df$ab.x, comparison.df$ab.y)
+# 0.1145726
+}

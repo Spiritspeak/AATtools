@@ -30,11 +30,23 @@ a qreliability object, containing the reliability coefficient, and a data.frame 
 }
 \description{
 This function can be used to compute an exact reliability score for a psychological task whose results involve a difference score.
-The resulting q coefficient is equivalent to the average all possible split-half reliability scores.
+The resulting intraclass correlation coefficient is equivalent to the average all possible split-half reliability scores.
+It ranges from -1 to 1, with -1 implying that all variance in the data is explained by within-subjects variability,
+1 implying that all variance is explained by between-subjects variability,
+and 0 implying that within-subjects and between-subjects variability contribute equally to the total variance in the sample.
 }
 \examples{
+# Double-difference score reliability
 q_reliability(ds=erotica,subjvar="subject",
               formula= RT ~ is_pull * is_target, aatterm = "is_pull:is_target")
+
+# Single-difference reliability for target stimuli
+q_reliability(ds=erotica[erotica$is_target ==1,],subjvar="subject",
+              formula= RT ~ is_pull, aatterm = "is_pull")
+
+# Reliability of the mean reaction time of approaching target stimuli (no difference score)
+q_reliability(ds=erotica[erotica$is_target ==1 & erotica$is_pull ==1,],subjvar="subject",
+              formula= RT ~ 1, aatterm = "1")
 
 }
 \author{

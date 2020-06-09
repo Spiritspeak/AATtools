@@ -107,11 +107,14 @@ the number of iterations, and a matrix of bias scores for each iteration.
 Compute bootstrapped approach-bias scores with confidence intervals.
 }
 \examples{
+# Compute 10 bootstrapped AAT scores.
 boot<-aat_bootstrap(ds=erotica[erotica$is_irrelevant==0,], subjvar="subject",
                     pullvar="is_pull", targetvar="is_target",rtvar="RT",
-                    iters=10,algorithm="aat_doublemediandiff")
+                    iters=10,algorithm="aat_doublemediandiff",
+                    trialdropfunc="trial_prune_3SD")
 plot(boot)
 print(boot)
+
 }
 \author{
 Sercan Kahveci

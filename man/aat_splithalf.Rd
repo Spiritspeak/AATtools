@@ -124,27 +124,30 @@ a list of data.frames used over each iteration, and a vector containing the spli
 Compute bootstrapped split-half reliability for approach-avoidance task data.
 }
 \examples{
-aat_splithalf(ds=erotica[erotica$is_irrelevant==0,],
-              subjvar="subject",pullvar="is_pull",targetvar="is_target",
-              rtvar="RT",iters=10,trialdropfunc="trial_prune_3SD",
-              casedropfunc="case_prune_3SD",plot=TRUE,algorithm="aat_dscore")
+split <- aat_splithalf(ds=erotica[erotica$is_irrelevant==0,],
+                       subjvar="subject",pullvar="is_pull",targetvar="is_target",
+                       rtvar="RT",iters=10,trialdropfunc="trial_prune_3SD",
+                       casedropfunc="case_prune_3SD",plot=TRUE,algorithm="aat_dscore")
+
+print(split)
 #Mean reliability: 0.521959
 #Spearman-Brown-corrected r: 0.6859041
 #95\%CI: [0.4167018, 0.6172474]
 
-\dontrun{
+plot(split)
+
+\donttest{
 #Regression Splithalf
 aat_splithalf(ds=erotica[erotica$is_irrelevant==0,],
               subjvar="subject",pullvar="is_pull",targetvar="is_target",
               rtvar="RT",iters=10,trialdropfunc="trial_prune_3SD",
               casedropfunc="case_prune_3SD",plot=TRUE,algorithm="aat_regression",
-              formula = "RT ~ is_pull * is_target",
+              formula = RT ~ is_pull * is_target,
               aatterm = "is_pull:is_target")
 #Mean reliability: 0.5313939
 #Spearman-Brown-corrected r: 0.6940003
 #95\%CI: [0.2687186, 0.6749176]
 }
-#Coming soon
 }
 \seealso{
 \link{q_reliability}

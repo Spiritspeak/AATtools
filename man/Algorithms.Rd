@@ -49,9 +49,10 @@ aat_singlemediandiff(ds, subjvar, pullvar, rtvar, ...)
 
 \item{blockvar}{name of the variable indicating block number}
 
-\item{formula}{A character string containing a regression formula to fit to the data to compute an AAT score}
+\item{formula}{A regression formula to fit to the data to compute an AAT score}
 
-\item{aatterm}{The formula term representing the approach bias. Usually this is the interaction of the movement-direction and stimulus-category terms.}
+\item{aatterm}{A character naming the formula term representing the approach bias.
+Usually this is the interaction of the movement-direction and stimulus-category terms.}
 }
 \value{
 A data.frame containing participant number and computed AAT score.
@@ -76,8 +77,8 @@ Requires extra \code{blockvar} argument, indicating the name of the block variab
 These algorithms can be used to regress nuisance variables out of the data before computing AAT scores.
 When using these functions, additional arguments must be provided:
 \itemize{
-\item \code{formula} - a quoted formula to fit to the data;
-\item \code{aatterm} - the quoted random effect within the subject variable that indicates the approach bias; this is usually the interaction of the pull and target terms.
+\item \code{formula} - a formula to fit to the data
+\item \code{aatterm} - the term within the formula that indicates the approach bias; this is usually the interaction of the pull and target terms.
 }
 \item \code{aat_doublemeanquotient} and \code{aat_doublemedianquotient} compute a log-transformed ratio of approach to avoidance for both stimulus categories and subtract these ratios:
 
