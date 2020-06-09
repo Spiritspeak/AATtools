@@ -13,8 +13,6 @@ aat_bootstrap(
   targetvar = NULL,
   rtvar,
   iters,
-  plot = TRUE,
-  include.raw = FALSE,
   algorithm = c("aat_doublemeandiff", "aat_doublemediandiff", "aat_dscore",
     "aat_dscore_multiblock", "aat_regression", "aat_standardregression",
     "aat_doublemeanquotient", "aat_doublemedianquotient", "aat_singlemeandiff",
@@ -23,6 +21,9 @@ aat_bootstrap(
     "trial_recode_SD", "trial_prune_percent_subject", "trial_prune_percent_sample"),
   errortrialfunc = c("prune_nothing", "error_replace_blockmeanplus",
     "error_prune_dropcases"),
+  plot = TRUE,
+  include.raw = FALSE,
+  parallel = TRUE,
   ...
 )
 
@@ -44,10 +45,6 @@ Target stimuli should either be represented by 1, or by the second level of a fa
 \item{rtvar}{Name of the reaction time column.}
 
 \item{iters}{Total number of desired iterations. At least 200 are required to get confidence intervals that make sense.}
-
-\item{plot}{Plot the bias scores and their confidence intervals after computation is complete. This gives a good overview of the data.}
-
-\item{include.raw}{logical indicating whether raw split-half data should be included in the output object.}
 
 \item{algorithm}{Function (without brackets or quotes) to be used to compute AAT scores. See \link{Algorithms} for a list of usable algorithms.}
 
@@ -95,6 +92,14 @@ If used, the following additional arguments are required:
 }
 }}
 
+\item{plot}{Plot the bias scores and their confidence intervals after computation is complete. This gives a good overview of the data.}
+
+\item{include.raw}{logical indicating whether raw split-half data should be included in the output object.}
+
+\item{parallel}{If TRUE (default), will use parallel computing to compute results faster.
+If a doParallel backend has not been registered beforehand,
+this function will register a cluster and stop it after finishing, which takes some extra time.}
+
 \item{...}{Other arguments, to be passed on to the algorithm or outlier rejection functions (see arguments above)}
 
 \item{x}{An \code{aat_bootstrap} object.}
@@ -111,7 +116,8 @@ Compute bootstrapped approach-bias scores with confidence intervals.
 boot<-aat_bootstrap(ds=erotica[erotica$is_irrelevant==0,], subjvar="subject",
                     pullvar="is_pull", targetvar="is_target",rtvar="RT",
                     iters=10,algorithm="aat_doublemediandiff",
-                    trialdropfunc="trial_prune_3SD")
+                    trialdropfunc="trial_prune_3SD",
+                    plot=FALSE, parallel=FALSE)
 plot(boot)
 print(boot)
 

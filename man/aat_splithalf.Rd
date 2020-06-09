@@ -13,9 +13,6 @@ aat_splithalf(
   targetvar = NULL,
   rtvar,
   iters,
-  plot = TRUE,
-  include.raw = FALSE,
-  cluster = NULL,
   algorithm = c("aat_doublemeandiff", "aat_doublemediandiff", "aat_dscore",
     "aat_dscore_multiblock", "aat_regression", "aat_standardregression",
     "aat_doublemedianquotient", "aat_doublemeanquotient", "aat_singlemeandiff",
@@ -25,6 +22,9 @@ aat_splithalf(
   errortrialfunc = c("prune_nothing", "error_replace_blockmeanplus",
     "error_prune_dropcases"),
   casedropfunc = c("prune_nothing", "case_prune_3SD"),
+  plot = TRUE,
+  include.raw = FALSE,
+  parallel = TRUE,
   ...
 )
 
@@ -47,14 +47,6 @@ Target stimuli should either be represented by 1, or by the second level of a fa
 
 \item{iters}{Total number of desired iterations. At least 200 are recommended for reasonable confidence intervals;
 If you want to see plots of your data, 1 iteration is enough.}
-
-\item{plot}{Create a scatterplot of the AAT scores computed from each half of the data from the last iteration.
-This is highly recommended, as it helps to identify outliers that can inflate or diminish the reliability.}
-
-\item{include.raw}{logical indicating whether raw split-half data should be included in the output object.}
-
-\item{cluster}{pre-specified registered multi-core DoParallel cluster that can be used to speed up computations if multiple calls to aat_splithalf are made.
-If no cluster is provided, aat_splithalf will start up a cluster each time it is called, which takes some extra time.}
 
 \item{algorithm}{Function (without brackets or quotes) to be used to compute AAT scores. See \link{Algorithms} for a list of usable algorithms.}
 
@@ -109,6 +101,15 @@ The way you handle outliers here should mimic the way you do it in your regular 
 \item \code{case_prune_3SD} excludes participants deviating more than 3SD from the sample mean.
 }}
 
+\item{plot}{Create a scatterplot of the AAT scores computed from each half of the data from the last iteration.
+This is highly recommended, as it helps to identify outliers that can inflate or diminish the reliability.}
+
+\item{include.raw}{logical indicating whether raw split-half data should be included in the output object.}
+
+\item{parallel}{If TRUE (default), will use parallel computing to compute results faster.
+If a doParallel backend has not been registered beforehand,
+this function will register a cluster and stop it after finishing, which takes some extra time.}
+
 \item{...}{Other arguments, to be passed on to the algorithm or outlier rejection functions (see arguments above)}
 
 \item{x}{an \code{aat_splithalf} object}
@@ -127,7 +128,8 @@ Compute bootstrapped split-half reliability for approach-avoidance task data.
 split <- aat_splithalf(ds=erotica[erotica$is_irrelevant==0,],
                        subjvar="subject",pullvar="is_pull",targetvar="is_target",
                        rtvar="RT",iters=10,trialdropfunc="trial_prune_3SD",
-                       casedropfunc="case_prune_3SD",plot=TRUE,algorithm="aat_dscore")
+                       casedropfunc="case_prune_3SD",algorithm="aat_dscore",
+                       plot=FALSE,parallel=FALSE)
 
 print(split)
 #Mean reliability: 0.521959
@@ -139,11 +141,11 @@ plot(split)
 \donttest{
 #Regression Splithalf
 aat_splithalf(ds=erotica[erotica$is_irrelevant==0,],
-              subjvar="subject",pullvar="is_pull",targetvar="is_target",
-              rtvar="RT",iters=10,trialdropfunc="trial_prune_3SD",
-              casedropfunc="case_prune_3SD",plot=TRUE,algorithm="aat_regression",
-              formula = RT ~ is_pull * is_target,
-              aatterm = "is_pull:is_target")
+              subjvar="subject", pullvar="is_pull", targetvar="is_target",
+              rtvar="RT", iters=10, trialdropfunc="trial_prune_3SD",
+              casedropfunc="case_prune_3SD", algorithm="aat_regression",
+              formula = RT ~ is_pull * is_target, aatterm = "is_pull:is_target",
+              plot=FALSE, parallel=FALSE)
 #Mean reliability: 0.5313939
 #Spearman-Brown-corrected r: 0.6940003
 #95\%CI: [0.2687186, 0.6749176]

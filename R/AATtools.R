@@ -8,6 +8,7 @@
 #' @importFrom dplyr group_by ungroup mutate summarise sample_n n filter select
 #'
 #' @importFrom parallel detectCores makeCluster stopCluster
+#' @importFrom foreach getDoParRegistered registerDoSEQ
 #' @importFrom stats var median sd lm vcov terms as.formula coef cor quantile pt
 #' @importFrom graphics abline points segments text plot
 .onLoad<-function(libname, pkgname){
@@ -53,11 +54,6 @@ r_check_limit_cores <- function() {
 #' @param rtvar Name of the reaction time column.
 #' @param iters Total number of desired iterations. At least 200 are recommended for reasonable confidence intervals;
 #' If you want to see plots of your data, 1 iteration is enough.
-#' @param plot Create a scatterplot of the AAT scores computed from each half of the data from the last iteration.
-#' This is highly recommended, as it helps to identify outliers that can inflate or diminish the reliability.
-#' @param include.raw logical indicating whether raw split-half data should be included in the output object.
-#' @param cluster pre-specified registered multi-core DoParallel cluster that can be used to speed up computations if multiple calls to aat_splithalf are made.
-#' If no cluster is provided, aat_splithalf will start up a cluster each time it is called, which takes some extra time.
 #' @param algorithm Function (without brackets or quotes) to be used to compute AAT scores. See \link{Algorithms} for a list of usable algorithms.
 #' @param trialdropfunc Function (without brackets or quotes) to be used to exclude outlying trials in each half.
 #' The way you handle outliers for the reliability computation should mimic the way you do it in your regular analyses.
@@ -107,6 +103,12 @@ r_check_limit_cores <- function() {
 #' \item \code{prune_nothing} excludes no participants (default)
 #' \item \code{case_prune_3SD} excludes participants deviating more than 3SD from the sample mean.
 #' }
+#' @param plot Create a scatterplot of the AAT scores computed from each half of the data from the last iteration.
+#' This is highly recommended, as it helps to identify outliers that can inflate or diminish the reliability.
+#' @param include.raw logical indicating whether raw split-half data should be included in the output object.
+#' @param parallel If TRUE (default), will use parallel computing to compute results faster.
+#' If a doParallel backend has not been registered beforehand,
+#' this function will register a cluster and stop it after finishing, which takes some extra time.
 #' @param ... Other arguments, to be passed on to the algorithm or outlier rejection functions (see arguments above)
 #'
 #' @return A list, containing the mean bootstrapped split-half reliability, bootstrapped 95% confidence intervals,
@@ -118,7 +120,8 @@ r_check_limit_cores <- function() {
 #' split <- aat_splithalf(ds=erotica[erotica$is_irrelevant==0,],
 #'                        subjvar="subject",pullvar="is_pull",targetvar="is_target",
 #'                        rtvar="RT",iters=10,trialdropfunc="trial_prune_3SD",
-#'                        casedropfunc="case_prune_3SD",plot=TRUE,algorithm="aat_dscore")
+#'                        casedropfunc="case_prune_3SD",algorithm="aat_dscore",
+#'                        plot=FALSE,parallel=FALSE)
 #'
 #' print(split)
 #' #Mean reliability: 0.521959
@@ -130,17 +133,17 @@ r_check_limit_cores <- function() {
 #' \donttest{
 #' #Regression Splithalf
 #' aat_splithalf(ds=erotica[erotica$is_irrelevant==0,],
-#'               subjvar="subject",pullvar="is_pull",targetvar="is_target",
-#'               rtvar="RT",iters=10,trialdropfunc="trial_prune_3SD",
-#'               casedropfunc="case_prune_3SD",plot=TRUE,algorithm="aat_regression",
-#'               formula = RT ~ is_pull * is_target,
-#'               aatterm = "is_pull:is_target")
+#'               subjvar="subject", pullvar="is_pull", targetvar="is_target",
+#'               rtvar="RT", iters=10, trialdropfunc="trial_prune_3SD",
+#'               casedropfunc="case_prune_3SD", algorithm="aat_regression",
+#'               formula = RT ~ is_pull * is_target, aatterm = "is_pull:is_target",
+#'               plot=FALSE, parallel=FALSE)
 #' #Mean reliability: 0.5313939
 #' #Spearman-Brown-corrected r: 0.6940003
 #' #95%CI: [0.2687186, 0.6749176]
 #' }
 #' @export
-aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=TRUE,include.raw=FALSE,cluster=NULL,
+aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,
                         algorithm=c("aat_doublemeandiff","aat_doublemediandiff",
                                     "aat_dscore","aat_dscore_multiblock",
                                     "aat_regression","aat_standardregression",
@@ -149,7 +152,7 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=TRUE,
                         trialdropfunc=c("prune_nothing","trial_prune_3SD","trial_prune_SD_dropcases","trial_recode_SD",
                                         "trial_prune_percent_subject","trial_prune_percent_sample"),
                         errortrialfunc=c("prune_nothing","error_replace_blockmeanplus","error_prune_dropcases"),
-                        casedropfunc=c("prune_nothing","case_prune_3SD"),
+                        casedropfunc=c("prune_nothing","case_prune_3SD"),plot=TRUE,include.raw=FALSE,parallel=TRUE,
                         ...){
   packs<-c("magrittr","dplyr","AATtools")
 
@@ -183,16 +186,22 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=TRUE,
   }
   ds<-do.call(aat_preparedata,c(list(ds=ds,subjvar=subjvar,pullvar=pullvar,targetvar=targetvar,rtvar=rtvar),args))
 
-  #splithalf loop
-  if(is.null(cluster)){
-    cluster<-makeCluster(getOption("AATtools.workers"))
-    registerDoParallel(cluster)
-    custom.cluster<-FALSE
+  #Prepare the cluster
+  if(parallel){
+    `%dofunc%` <- `%dopar%`
+    hasCluster<-getDoParRegistered()
+    if(!hasCluster){
+      cluster<-makeCluster(getOption("AATtools.workers"))
+      registerDoParallel(cluster)
+      on.exit(unregisterDoParallel(cluster))
+    }
   }else{
-    custom.cluster<-TRUE
+    `%dofunc%` <- `%do%`
   }
+
+  #splithalf loop
   results<-
-    foreach(iter = seq_len(iters), .packages=packs) %dopar% {
+    foreach(iter = seq_len(iters), .packages=packs) %dofunc% {
       #Split data
       if(is.null(targetvar)){
         iterds<-ds%>%group_by(!! sym(subjvar), !! sym(pullvar))%>%
@@ -226,9 +235,6 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=TRUE,
       currcorr<-cor(abds$abhalf0,abds$abhalf1,use="complete.obs")
       list(corr=currcorr,abds=abds,rawdata=iterds)
     }
-  if(!custom.cluster){
-    stopCluster(cluster)
-  }
 
   cors<-sapply(results,FUN=function(x){x$corr})
   ordering<-order(cors)
@@ -418,7 +424,7 @@ trial_recode_SD<-function(ds,subjvar,rtvar,trialsd=3,...){
                                       is.ol=abs(.data$ol.type),
                                       ol.max.rt=mean(!!sym(rtvar))+sd(!!sym(rtvar))*trialsd,
                                       ol.min.rt=mean(!!sym(rtvar))-sd(!!sym(rtvar))*trialsd)
-  dsa[which(dsa$is.ol!=0),]<-ifelse(dsa[which(dsa$is.ol!=0),]$ol.type==1,
+  dsa[which(dsa$is.ol!=0),rtvar]<-ifelse(dsa[which(dsa$is.ol!=0),]$ol.type==1,
                                     dsa[which(dsa$is.ol!=0),]$ol.max.rt,
                                     dsa[which(dsa$is.ol!=0),]$ol.min.rt)
   dsa %>% dplyr::select(-.data$ol.type,-.data$ol.max.rt,-.data$ol.min.rt,-.data$ol.z.score)
@@ -622,9 +628,7 @@ aat_singlemediandiff<-function(ds,subjvar,pullvar,rtvar,...){
 #' Target stimuli should either be represented by 1, or by the second level of a factor.
 #' @param rtvar Name of the reaction time column.
 #' @param iters Total number of desired iterations. At least 200 are required to get confidence intervals that make sense.
-#' @param plot Plot the bias scores and their confidence intervals after computation is complete. This gives a good overview of the data.
 #' @param algorithm Function (without brackets or quotes) to be used to compute AAT scores. See \link{Algorithms} for a list of usable algorithms.
-#' @param include.raw logical indicating whether raw split-half data should be included in the output object.
 #' @param trialdropfunc Function (without brackets or quotes) to be used to exclude outlying trials in each half.
 #' The way you handle outliers for the reliability computation should mimic the way you do it in your regular analyses.
 #' It is recommended to exclude outlying trials when computing AAT scores using the mean double-dfference scores and regression scoring approaches,
@@ -667,7 +671,11 @@ aat_singlemediandiff<-function(ds,subjvar,pullvar,rtvar,...){
 #' \item \code{maxerrors} - participants with a higher percentage of errors are excluded from the dataset. Default is .15.
 #' }
 #' }
-#'
+#' @param plot Plot the bias scores and their confidence intervals after computation is complete. This gives a good overview of the data.
+#' @param include.raw logical indicating whether raw split-half data should be included in the output object.
+#' @param parallel If TRUE (default), will use parallel computing to compute results faster.
+#' If a doParallel backend has not been registered beforehand,
+#' this function will register a cluster and stop it after finishing, which takes some extra time.
 #' @param ... Other arguments, to be passed on to the algorithm or outlier rejection functions (see arguments above)
 #'
 #'
@@ -680,12 +688,13 @@ aat_singlemediandiff<-function(ds,subjvar,pullvar,rtvar,...){
 #' boot<-aat_bootstrap(ds=erotica[erotica$is_irrelevant==0,], subjvar="subject",
 #'                     pullvar="is_pull", targetvar="is_target",rtvar="RT",
 #'                     iters=10,algorithm="aat_doublemediandiff",
-#'                     trialdropfunc="trial_prune_3SD")
+#'                     trialdropfunc="trial_prune_3SD",
+#'                     plot=FALSE, parallel=FALSE)
 #' plot(boot)
 #' print(boot)
 #'
 #' @export
-aat_bootstrap<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=TRUE,include.raw=FALSE,
+aat_bootstrap<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,
                         algorithm=c("aat_doublemeandiff","aat_doublemediandiff",
                                     "aat_dscore","aat_dscore_multiblock",
                                     "aat_regression","aat_standardregression",
@@ -694,7 +703,7 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=TRUE,
                         trialdropfunc=c("prune_nothing","trial_prune_3SD","trial_prune_SD_dropcases","trial_recode_SD",
                                         "trial_prune_percent_subject","trial_prune_percent_sample"),
                         errortrialfunc=c("prune_nothing","error_replace_blockmeanplus","error_prune_dropcases"),
-                        ...){
+                        plot=TRUE,include.raw=FALSE,parallel=TRUE,...){
   packs<-c("magrittr","dplyr","AATtools")
 
   #Handle arguments
@@ -727,11 +736,22 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=TRUE,
   }
   ds<-do.call(aat_preparedata,c(list(ds=ds,subjvar=subjvar,pullvar=pullvar,targetvar=targetvar,rtvar=rtvar),args)) %>% mutate(key=1)
 
+  #Prepare the cluster
+  if(parallel){
+    `%dofunc%` <- `%dopar%`
+    hasCluster<-getDoParRegistered()
+    if(!hasCluster){
+      cluster<-makeCluster(getOption("AATtools.workers"))
+      registerDoParallel(cluster)
+      on.exit(unregisterDoParallel(cluster))
+    }
+  }else{
+    `%dofunc%` <- `%do%`
+  }
+
   #bootstrap loop
-  cluster<-makeCluster(getOption("AATtools.workers"))
-  registerDoParallel(cluster)
   results<-
-    foreach(iter = seq_len(iters), .packages=packs, .combine=cbind) %dopar% {
+    foreach(iter = seq_len(iters), .packages=packs, .combine=cbind) %dofunc% {
       #Split data
       iterds<-ds %>% group_by(!!sym(subjvar), !!sym(pullvar), !!sym(targetvar)) %>%
         sample_n(size=n(),replace=TRUE) %>% ungroup()
@@ -751,13 +771,14 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=TRUE,
       names(outvar)<-abds[[subjvar]]
       outvar
     }
-  stopCluster(cluster)
 
+  #results<-results[!is.na(rownames(results)),]
   statset<-data.frame(ppidx=rownames(results),
                       bias=rowMeans(results,na.rm=TRUE),
                       var=apply(results,MARGIN = 1,FUN=var,na.rm=TRUE),
                       lowerci=apply(results,MARGIN=1,FUN=function(x){quantile(x,0.025,na.rm=TRUE)}),
-                      upperci=apply(results,MARGIN=1,FUN=function(x){quantile(x,0.975,na.rm=TRUE)}))
+                      upperci=apply(results,MARGIN=1,FUN=function(x){quantile(x,0.975,na.rm=TRUE)}),
+                      stringsAsFactors=F)
   statset$ci<-statset$upperci-statset$lowerci
 
   #q-reliability
@@ -789,10 +810,10 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,plot=TRUE,
 #' @param x An \code{aat_bootstrap} object.
 print.aat_bootstrap<-function(x,...){
   cat("Bootstrapped bias scores and confidence intervals",
-      "Mean bias score: ", mean(x$bias$bias,na.rm=TRUE),
-      "Mean confidence interval: ",mean(x$bias$ci,na.rm=TRUE),
-      "reliability: q = ",mean(x$bias$bias,na.rm=TRUE),
-      "Number of iterations: ",x$parameters$iters,sep="")
+      "\nMean bias score: ", mean(x$bias$bias,na.rm=TRUE),
+      "\nMean confidence interval: ",mean(x$bias$ci,na.rm=TRUE),
+      "\nreliability: q = ",mean(x$bias$bias,na.rm=TRUE),
+      "\nNumber of iterations: ",x$parameters$iters,sep="")
 }
 
 #' @export
@@ -1102,7 +1123,6 @@ aat_preparedata<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,...){
     ds<-ds[-rmindices,]
     warning("Removed ",length(rmindices)," rows due to presence of NA in critical variable(s)")
   }
-
   return(ds)
 }
 
@@ -1123,7 +1143,12 @@ is.formula <- function(x){
   inherits(x,"formula")
 }
 
-
+unregisterDoParallel <- function(cluster) {
+  stopCluster(cluster)
+  registerDoSEQ()
+  #env <- foreach:::.foreachGlobals
+  #rm(list=ls(name=env), pos=env)
+}
 
 
 
