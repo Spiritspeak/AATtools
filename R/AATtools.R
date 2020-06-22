@@ -274,9 +274,9 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,
 #' @export
 #' @rdname aat_splithalf
 print.aat_splithalf<-function(x,...){
-  cat("\nr = ",format(x$rsplithalf, digits=2), ", p = ",format(x$pval,digits=3),
-      "\nSpearman-Brown-corrected r = ",format(x$rSB,digits=2),", p = ",format(x$pval_rSB,digits=3),
-      "\n95%CI = [", format(x$lowerci,digits=2), ", ", format(x$upperci,digits=2),"]\n",
+  cat("\nr (",format(x$avg_n,digits=2),") = ",format(x$rsplithalf, digits=2), ", p = ",format(x$pval,digits=3),
+      ", 95%CI = [", format(x$lowerci,digits=2), ", ", format(x$upperci,digits=2),"]",
+      "\nSpearman-Brown-corrected r (",format(x$avg_n,digits=2),") = ",format(x$rSB,digits=2),", p = ",format(x$pval_rSB,digits=3),"\n",
       sep="")
 }
 
