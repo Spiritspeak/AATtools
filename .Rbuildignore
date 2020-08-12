@@ -7,3 +7,6 @@
 ^README\.md$
 ^LICENSE\.md$
 ^\.Rd2pdf240$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
