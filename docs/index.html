@@ -6,6 +6,12 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reliability and Scoring Routines for the Approach-Avoidance Task • AATtools</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
@@ -15,6 +21,7 @@
 <meta property="og:description" content="Compute approach bias scores using different scoring algorithms,
     compute bootstrapped and exact split-half reliability estimates,
     and compute confidence intervals for individual participant scores.">
+<meta property="og:image" content="/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -68,46 +75,122 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-
-
-<div id="introduction" class="section level1">
+<div id="aattools-" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#introduction" class="anchor"></a>Introduction</h1></div>
+<a href="#aattools-" class="anchor"></a>AATtools <img src="reference/figures/logo.png" align="right">
+</h1></div>
+<!-- badges: start -->
+
+<div id="introduction" class="section level2">
+<h2 class="hasAnchor">
+<a href="#introduction" class="anchor"></a>Introduction</h2>
 <p>AATtools provides tools to deal with data from implicit psychological tasks. It provides methods to compute reliability and aggregate data into bias scores.</p>
-<p>Install it this way: <code>{r install, eval=FALSE} install.packages("AATtools")</code></p>
+<p>Install it this way:</p>
+<div class="sourceCode" id="cb1"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"AATtools"</span>)</pre></div>
 </div>
-<div id="rationale" class="section level1">
-<h1 class="hasAnchor">
-<a href="#rationale" class="anchor"></a>Rationale</h1>
+<div id="rationale" class="section level2">
+<h2 class="hasAnchor">
+<a href="#rationale" class="anchor"></a>Rationale</h2>
 <p>Reliability scores are typically not computed for psychological tasks that produce a sum score. This has led to a literature full of inconsistent results and methodological decisions that have been guided by intuition rather than empirical decisionmaking. AATtools tries to solve these problems by providing multiple methods of computing the reliability of the Approach-Avoidance task as well as other implicit psychological tasks. Importantly, it enables researchers to compute the reliability of their entire data processing pipeline, factoring in the influence of decisions to remove or keep outliers in the final reliability score. This gives the researcher a clear overview over how reliable the data are that have actually been used in the study’s analyses and enables them to explore the best ways to deal with non-normality, outliers and error trials.</p>
 </div>
-<div id="getting-started" class="section level1">
-<h1 class="hasAnchor">
-<a href="#getting-started" class="anchor"></a>Getting Started</h1>
 <div id="getting-your-data-in-the-right-format" class="section level2">
 <h2 class="hasAnchor">
 <a href="#getting-your-data-in-the-right-format" class="anchor"></a>Getting your data in the right format</h2>
 <p>AATtools works with long-format <code>data.frames</code> that follow a specific format. Your <code>data.frame</code> should contain one row per trial, and it should contain variables that designate the relevant conditions (approach/avoidance, control/target stimuli) with 0’s and 1’s.</p>
 </div>
-<div id="compute-reliability" class="section level2">
+<div id="computing-reliability" class="section level2">
 <h2 class="hasAnchor">
-<a href="#compute-reliability" class="anchor"></a>Compute reliability</h2>
-<p>If your data is in the right format, you can get started right away.</p>
-<pre><code>dataset &lt;- erotica[erotica$is_irrelevant==0,]
-split &lt;- aat_splithalf(ds=dataset, #our dataset
-                       subjvar="subject", #the column designating participant IDs
-                       pullvar="is_pull", #the column designating approach (1) and avoidance (0) trials
-                       targetvar="is_target", #the column designating target (1) and control (0) stimulus trials
-                       rtvar="RT", #the column designating reaction times
-                       iters=10000, #Set the number of bootstrapping iterations (more is better)
-                       trialdropfunc="trial_prune_3SD", #Indicate whether outliers should be removed, and if so, how
-                       casedropfunc="case_prune_3SD", #Indicate whether outlying approach bias scores should be removed
-                       algorithm="aat_dscore" #The algorithm by which approach bias scores should be computed
-                       )
-                       </code></pre>
-</div>
-</div>
+<a href="#computing-reliability" class="anchor"></a>Computing reliability</h2>
+<p>If your data is in the right format, you can get started right away. The <code>aat_splithalf</code> function allows you to approximate the reliability of any kind of summary score and data cleaning pipeline.</p>
+<div class="sourceCode" id="cb2"><pre class="r"><span class="co">#This is a built-in dataset </span>
+<span class="no">dataset</span> <span class="kw">&lt;-</span> <span class="no">erotica</span>[<span class="no">erotica</span>$<span class="no">is_irrelevant</span><span class="kw">==</span><span class="fl">0</span>,]
 
+<span class="no">split</span> <span class="kw">&lt;-</span>
+  <span class="fu"><a href="reference/aat_splithalf.html">aat_splithalf</a></span>(<span class="kw">ds</span><span class="kw">=</span><span class="no">dataset</span>, <span class="co">#our dataset</span>
+                <span class="kw">subjvar</span><span class="kw">=</span><span class="st">"subject"</span>, <span class="co">#the column designating participant IDs</span>
+                <span class="kw">pullvar</span><span class="kw">=</span><span class="st">"is_pull"</span>, <span class="co">#the column designating approach (1) and avoidance (0) trials</span>
+                <span class="kw">targetvar</span><span class="kw">=</span><span class="st">"is_target"</span>, <span class="co">#the column designating target (1) and control (0) stimulus trials</span>
+                <span class="kw">rtvar</span><span class="kw">=</span><span class="st">"RT"</span>, <span class="co">#the column designating reaction times</span>
+                <span class="kw">iters</span><span class="kw">=</span><span class="fl">1000</span>, <span class="co">#Set the number of bootstrapping iterations (more is better)</span>
+                <span class="kw">trialdropfunc</span><span class="kw">=</span><span class="st">"trial_prune_3SD"</span>, <span class="co">#Indicate whether outliers should be removed, and if so, how</span>
+                <span class="kw">casedropfunc</span><span class="kw">=</span><span class="st">"case_prune_3SD"</span>, <span class="co">#Indicate whether outlying approach bias scores should be removed</span>
+                <span class="kw">algorithm</span><span class="kw">=</span><span class="st">"aat_dscore"</span>, <span class="co">#The algorithm by which approach bias scores should be computed</span>
+                <span class="kw">plot</span><span class="kw">=</span><span class="no">F</span> <span class="co">#Should the results be plotted immediately?</span>
+                )
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">split</span>)</pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co">## </span></span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="co">## r (58) = 0.52, p = 2.14e-06, 95%CI = [0.39, 0.65]</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="co">## Spearman-Brown-corrected r (58) = 0.68, p = 2.51e-13</span></span></code></pre></div>
+<p>Alternatively, you can use <code>q_reliability</code> to compute an exact reliability score for your data.</p>
+<p>This function performs a linear regression to the data of each participant, and derives the unstandardized beta and variance of one of the predictors. If this predictor is the intercept, the resulting beta is functionally equivalent to the simple mean reaction time of the participant; if it is a binary main effect, the beta is equivalent to the difference between condition 1 and condition 0; and if it’s an interaction term, the beta is equivalent to a double-difference score. The variance among betas is then compared to the overall variance within betas. The reliability computed by <code>q_reliability</code> thus represents the ratio between between-subjects variance and within-subjects variance, where 0 means there is equal variance within and between subjects, and 1 means the bias scores are entirely accurate. Despite its exact nature, <code>q_reliability</code> is less representative of your actual experimental data, because it does not use the exact algorithms and outlier rejection rules that the researcher used - it does not model, for example, the inherent variability that is caused by outlier rejection.</p>
+<div class="sourceCode" id="cb4"><pre class="r"><span class="no">dataset_relevant</span> <span class="kw">&lt;-</span> <span class="no">erotica</span>[<span class="no">erotica</span>$<span class="no">is_irrelevant</span><span class="kw">==</span><span class="fl">0</span>,]
+<span class="no">dataset_irrelevant</span> <span class="kw">&lt;-</span> <span class="no">erotica</span>[<span class="no">erotica</span>$<span class="no">is_irrelevant</span><span class="kw">==</span><span class="fl">1</span>,]
+
+<span class="co"># Reliability of the relevant-feature AAT</span>
+<span class="no">qreliability_relevant</span> <span class="kw">&lt;-</span>
+  <span class="fu"><a href="reference/q_reliability.html">q_reliability</a></span>(<span class="kw">ds</span><span class="kw">=</span><span class="no">dataset_relevant</span>, <span class="co">#the data</span>
+                <span class="kw">subjvar</span><span class="kw">=</span><span class="st">"subject"</span>, <span class="co">#the name of the column containing participant IDs</span>
+                <span class="kw">formula</span><span class="kw">=</span><span class="no">RT</span>~<span class="no">is_pull</span>*<span class="no">is_target</span>, <span class="co">#Here we specify the way bias scores are to be computed (see above)</span>
+                <span class="kw">aatterm</span><span class="kw">=</span><span class="st">"is_pull:is_target"</span> <span class="co">#The term in the regression formula which represents the bias score</span>
+                )
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">qreliability_relevant</span>)</pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co">## q = 0.5010847</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="r"><span class="co"># Reliability of the irrelevant-feature AAT</span>
+<span class="no">qreliability_irrelevant</span> <span class="kw">&lt;-</span>
+  <span class="fu"><a href="reference/q_reliability.html">q_reliability</a></span>(<span class="kw">ds</span><span class="kw">=</span><span class="no">dataset_irrelevant</span>,
+                <span class="kw">subjvar</span><span class="kw">=</span><span class="st">"subject"</span>,
+                <span class="kw">formula</span><span class="kw">=</span><span class="no">RT</span>~<span class="no">is_pull</span>*<span class="no">is_target</span>,
+                <span class="kw">aatterm</span><span class="kw">=</span><span class="st">"is_pull:is_target"</span>
+                )
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">qreliability_irrelevant</span>)</pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co">## q = -0.1108101</span></span></code></pre></div>
+</div>
+<div id="computing-confidence-intervals-for-bias-scores" class="section level2">
+<h2 class="hasAnchor">
+<a href="#computing-confidence-intervals-for-bias-scores" class="anchor"></a>Computing confidence intervals for bias scores</h2>
+<p>The <code>aat_bootstrap</code> function can be used to compute bias scores from random permutations of the data, and derive per-participant confidence intervals from these bootstrapped bias scores. This lets users quantify for which participants the bias scores are accurate and for which participants they are not.</p>
+<div class="sourceCode" id="cb8"><pre class="r"><span class="no">dataset</span> <span class="kw">&lt;-</span> <span class="no">erotica</span>
+
+<span class="no">boot</span> <span class="kw">&lt;-</span>
+  <span class="fu"><a href="reference/aat_bootstrap.html">aat_bootstrap</a></span>(<span class="kw">ds</span><span class="kw">=</span><span class="no">dataset</span>,
+                <span class="kw">subjvar</span><span class="kw">=</span><span class="st">"subject"</span>,
+                <span class="kw">pullvar</span><span class="kw">=</span><span class="st">"is_pull"</span>,
+                <span class="kw">targetvar</span><span class="kw">=</span><span class="st">"is_target"</span>,
+                <span class="kw">rtvar</span><span class="kw">=</span><span class="st">"RT"</span>,
+                <span class="kw">iters</span><span class="kw">=</span><span class="fl">1000</span>,
+                <span class="kw">trialdropfunc</span><span class="kw">=</span><span class="st">"trial_prune_3SD"</span>,
+                <span class="kw">algorithm</span><span class="kw">=</span><span class="st">"aat_dscore"</span>,
+                <span class="kw">plot</span><span class="kw">=</span><span class="no">F</span>
+                )
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">boot</span>)</pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co">## Bootstrapped bias scores and confidence intervals</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a><span class="co">## Mean bias score: 0.1373764</span></span>
+<span id="cb9-3"><a href="#cb9-3"></a><span class="co">## Mean confidence interval: 0.8843781</span></span>
+<span id="cb9-4"><a href="#cb9-4"></a><span class="co">## reliability: q = 0.1373764</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a><span class="co">## Number of iterations: 1000</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="no">boot</span>)</pre></div>
+<p><img src="reference/figures/bootstrap-1.png"><!-- --></p>
+</div>
+<div id="computing-bias-scores" class="section level2">
+<h2 class="hasAnchor">
+<a href="#computing-bias-scores" class="anchor"></a>Computing bias scores</h2>
+<p>The <code>aat_compute</code> function can be used to compute bias scores. This can save a lot of coding time.</p>
+<div class="sourceCode" id="cb11"><pre class="r"><span class="no">dataset_relevant</span> <span class="kw">&lt;-</span> <span class="no">erotica</span>[<span class="no">erotica</span>$<span class="no">is_irrelevant</span><span class="kw">==</span><span class="fl">0</span>,]
+<span class="no">dataset_irrelevant</span> <span class="kw">&lt;-</span> <span class="no">erotica</span>[<span class="no">erotica</span>$<span class="no">is_irrelevant</span><span class="kw">==</span><span class="fl">1</span>,]
+
+<span class="no">relevant_scores</span> <span class="kw">&lt;-</span>
+  <span class="fu"><a href="reference/aat_compute.html">aat_compute</a></span>(<span class="kw">ds</span><span class="kw">=</span><span class="no">dataset_relevant</span>, <span class="kw">subjvar</span><span class="kw">=</span><span class="st">"subject"</span>, <span class="kw">pullvar</span><span class="kw">=</span><span class="st">"is_pull"</span>, <span class="kw">targetvar</span><span class="kw">=</span><span class="st">"is_target"</span>,
+              <span class="kw">rtvar</span><span class="kw">=</span><span class="st">"RT"</span>, <span class="kw">trialdropfunc</span><span class="kw">=</span><span class="st">"trial_prune_3SD"</span>, <span class="kw">algorithm</span><span class="kw">=</span><span class="st">"aat_dscore"</span>)
+<span class="no">irrelevant_scores</span> <span class="kw">&lt;-</span>
+  <span class="fu"><a href="reference/aat_compute.html">aat_compute</a></span>(<span class="kw">ds</span><span class="kw">=</span><span class="no">dataset_irrelevant</span>, <span class="kw">subjvar</span><span class="kw">=</span><span class="st">"subject"</span>, <span class="kw">pullvar</span><span class="kw">=</span><span class="st">"is_pull"</span>, <span class="kw">targetvar</span><span class="kw">=</span><span class="st">"is_target"</span>,
+              <span class="kw">rtvar</span><span class="kw">=</span><span class="st">"RT"</span>, <span class="kw">trialdropfunc</span><span class="kw">=</span><span class="st">"trial_prune_3SD"</span>, <span class="kw">algorithm</span><span class="kw">=</span><span class="st">"aat_dscore"</span>)
+
+<span class="no">all_scores</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">relevant_scores</span>,<span class="no">irrelevant_scores</span>, <span class="kw">by</span><span class="kw">=</span><span class="st">"subject"</span>, <span class="kw">all</span><span class="kw">=</span><span class="no">T</span>)
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="no">all_scores</span>$<span class="no">ab.x</span>,<span class="no">all_scores</span>$<span class="no">ab.y</span>)</pre></div>
+<p><img src="reference/figures/compute-1.png"><!-- --></p>
+<p>Evidently, there is no relationship between relevant-feature and irrelevant-feature bias scores in this dataset.</p>
+</div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
