@@ -1,5 +1,5 @@
 
-<!-- This document is generated from README.Rmd - edit that file, not this one -->
+<!-- header -->
 
 # AATtools <img src="man/figures/logo.png" align="right" />
 
@@ -71,8 +71,8 @@ print(split)
 ```
 
     ## 
-    ## r (58) = 0.52, p = 2.14e-06, 95%CI = [0.39, 0.65]
-    ## Spearman-Brown-corrected r (58) = 0.68, p = 2.51e-13
+    ## r (58) = 0.52, p = 1.58e-06, 95%CI = [0.38, 0.66]
+    ## Spearman-Brown-corrected r (58) = 0.69, p = 1.42e-13
 
 Alternatively, you can use `q_reliability` to compute an exact
 reliability score for your data.
@@ -149,9 +149,9 @@ print(boot)
 ```
 
     ## Bootstrapped bias scores and confidence intervals
-    ## Mean bias score: 0.1373764
-    ## Mean confidence interval: 0.8843781
-    ## reliability: q = 0.1373764
+    ## Mean bias score: 0.1390729
+    ## Mean confidence interval: 0.8823275
+    ## reliability: q = 0.1390729
     ## Number of iterations: 1000
 
 ``` r

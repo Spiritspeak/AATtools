@@ -1,7 +1,7 @@
 ---
 output: github_document
 ---
-<!-- This document is generated from README.Rmd - edit that file, not this one -->
+<!-- header -->
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE,
