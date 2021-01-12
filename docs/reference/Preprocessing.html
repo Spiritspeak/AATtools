@@ -125,7 +125,7 @@ case_prune_3SD excludes participants deviating more than 3SD from the sample mea
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">AATtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.2</span>
       </span>
     </div>
 
@@ -215,51 +215,51 @@ The way you handle outliers here should mimic the way you do it in your regular 
 
     </div>
 
-    <pre class="usage"><span class='fu'>prune_nothing</span>(<span class='no'>ds</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>prune_nothing</span>(<span class='kw'>ds</span>, <span class='kw'>...</span>)
 
 <span class='fu'>trial_prune_percent_subject</span>(
-  <span class='no'>ds</span>,
-  <span class='no'>subjvar</span>,
-  <span class='no'>rtvar</span>,
-  <span class='kw'>lowerpercent</span> <span class='kw'>=</span> <span class='fl'>0.01</span>,
-  <span class='kw'>upperpercent</span> <span class='kw'>=</span> <span class='fl'>0.99</span>,
-  <span class='no'>...</span>
+  <span class='kw'>ds</span>,
+  <span class='kw'>subjvar</span>,
+  <span class='kw'>rtvar</span>,
+  lowerpercent = <span class='fl'>0.01</span>,
+  upperpercent = <span class='fl'>0.99</span>,
+  <span class='kw'>...</span>
 )
 
 <span class='fu'>trial_prune_percent_sample</span>(
-  <span class='no'>ds</span>,
-  <span class='no'>rtvar</span>,
-  <span class='kw'>lowerpercent</span> <span class='kw'>=</span> <span class='fl'>0.01</span>,
-  <span class='kw'>upperpercent</span> <span class='kw'>=</span> <span class='fl'>0.99</span>,
-  <span class='no'>...</span>
+  <span class='kw'>ds</span>,
+  <span class='kw'>rtvar</span>,
+  lowerpercent = <span class='fl'>0.01</span>,
+  upperpercent = <span class='fl'>0.99</span>,
+  <span class='kw'>...</span>
 )
 
-<span class='fu'>trial_prune_3SD</span>(<span class='no'>ds</span>, <span class='no'>subjvar</span>, <span class='no'>rtvar</span>, <span class='no'>...</span>)
+<span class='fu'>trial_prune_3SD</span>(<span class='kw'>ds</span>, <span class='kw'>subjvar</span>, <span class='kw'>rtvar</span>, <span class='kw'>...</span>)
 
 <span class='fu'>trial_prune_SD_dropcases</span>(
-  <span class='no'>ds</span>,
-  <span class='no'>subjvar</span>,
-  <span class='no'>rtvar</span>,
-  <span class='kw'>trialsd</span> <span class='kw'>=</span> <span class='fl'>3</span>,
-  <span class='kw'>maxoutliers</span> <span class='kw'>=</span> <span class='fl'>0.15</span>,
-  <span class='no'>...</span>
+  <span class='kw'>ds</span>,
+  <span class='kw'>subjvar</span>,
+  <span class='kw'>rtvar</span>,
+  trialsd = <span class='fl'>3</span>,
+  maxoutliers = <span class='fl'>0.15</span>,
+  <span class='kw'>...</span>
 )
 
-<span class='fu'>trial_recode_SD</span>(<span class='no'>ds</span>, <span class='no'>subjvar</span>, <span class='no'>rtvar</span>, <span class='kw'>trialsd</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='no'>...</span>)
+<span class='fu'>trial_recode_SD</span>(<span class='kw'>ds</span>, <span class='kw'>subjvar</span>, <span class='kw'>rtvar</span>, trialsd = <span class='fl'>3</span>, <span class='kw'>...</span>)
 
-<span class='fu'>case_prune_3SD</span>(<span class='no'>ds</span>, <span class='no'>...</span>)
+<span class='fu'>case_prune_3SD</span>(<span class='kw'>ds</span>, <span class='kw'>...</span>)
 
 <span class='fu'>error_replace_blockmeanplus</span>(
-  <span class='no'>ds</span>,
-  <span class='no'>subjvar</span>,
-  <span class='no'>rtvar</span>,
-  <span class='no'>blockvar</span>,
-  <span class='no'>errorvar</span>,
-  <span class='no'>errorbonus</span>,
-  <span class='no'>...</span>
+  <span class='kw'>ds</span>,
+  <span class='kw'>subjvar</span>,
+  <span class='kw'>rtvar</span>,
+  <span class='kw'>blockvar</span>,
+  <span class='kw'>errorvar</span>,
+  <span class='kw'>errorbonus</span>,
+  <span class='kw'>...</span>
 )
 
-<span class='fu'>error_prune_dropcases</span>(<span class='no'>ds</span>, <span class='no'>subjvar</span>, <span class='no'>errorvar</span>, <span class='kw'>maxerrors</span> <span class='kw'>=</span> <span class='fl'>0.15</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>error_prune_dropcases</span>(<span class='kw'>ds</span>, <span class='kw'>subjvar</span>, <span class='kw'>errorvar</span>, maxerrors = <span class='fl'>0.15</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -328,7 +328,7 @@ and use as a replacement for error trial reaction times (default is 0.6).</p></t
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

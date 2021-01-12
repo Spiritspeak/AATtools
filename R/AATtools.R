@@ -9,8 +9,8 @@
 #'
 #' @importFrom parallel detectCores makeCluster stopCluster
 #' @importFrom foreach getDoParRegistered registerDoSEQ
-#' @importFrom stats var median sd lm vcov terms as.formula coef cor quantile pt
-#' @importFrom graphics abline points segments text plot
+#' @importFrom stats var median sd lm vcov terms as.formula coef cor cov setNames quantile pt
+#' @importFrom graphics abline points segments text plot par
 .onLoad<-function(libname, pkgname){
   #avoid CRAN errors
   utils::globalVariables(c("abhalf0","abhalf1","ab","key"),"AATtools")
@@ -22,6 +22,10 @@
   registerS3method("plot",class="aat_bootstrap",method=plot.aat_bootstrap)
   registerS3method("print",class="qreliability",method=print.qreliability)
   registerS3method("plot",class="qreliability",method=plot.qreliability)
+  registerS3method("print",class="aat_alpha",method=print.aat_alpha)
+  registerS3method("plot",class="aat_alpha",method=plot.aat_alpha)
+  registerS3method("print",class="aat_alpha_jackknife",method=print.aat_alpha_jackknife)
+  registerS3method("plot",class="aat_alpha_jackknife",method=plot.aat_alpha_jackknife)
 
   #set max number of cores to use
   if (r_check_limit_cores()) {
@@ -149,11 +153,13 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,
                                     "aat_regression","aat_standardregression",
                                     "aat_doublemedianquotient","aat_doublemeanquotient",
                                     "aat_singlemeandiff","aat_singlemediandiff"),
-                        trialdropfunc=c("prune_nothing","trial_prune_3SD","trial_prune_SD_dropcases","trial_recode_SD",
-                                        "trial_prune_percent_subject","trial_prune_percent_sample"),
-                        errortrialfunc=c("prune_nothing","error_replace_blockmeanplus","error_prune_dropcases"),
-                        casedropfunc=c("prune_nothing","case_prune_3SD"),plot=TRUE,include.raw=FALSE,parallel=TRUE,
-                        ...){
+                        trialdropfunc=c("prune_nothing","trial_prune_3SD","trial_prune_SD_dropcases",
+                                        "trial_recode_SD","trial_prune_percent_subject",
+                                        "trial_prune_percent_sample"),
+                        errortrialfunc=c("prune_nothing","error_replace_blockmeanplus",
+                                         "error_prune_dropcases"),
+                        casedropfunc=c("prune_nothing","case_prune_3SD"),
+                        plot=TRUE,include.raw=FALSE,parallel=TRUE,...){
   packs<-c("magrittr","dplyr","AATtools")
 
   #Handle arguments
@@ -1076,12 +1082,37 @@ r2p<-function(corr,n){
   2*pt(abs(t),n-2,lower.tail=FALSE)
 }
 
+val_between<-function(x,lb,ub){x>lb & x<ub}
+
+drop_empty_cases<-function(iterds,subjvar){
+  iterds%>%group_by(!!sym(subjvar))%>%filter(val_between(mean(key),0,1))
+}
+
+form2char<-function(x){
+  if(is.character(x)){ return(x) }
+  fs<-as.character(x)
+  fs<-paste(fs[2],fs[1],fs[3])
+  return(fs)
+}
+
+is.formula <- function(x){
+  inherits(x,"formula")
+}
+
+unregisterDoParallel <- function(cluster) {
+  stopCluster(cluster)
+  registerDoSEQ()
+  #env <- foreach:::.foreachGlobals
+  #rm(list=ls(name=env), pos=env)
+}
+
 aat_preparedata<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,...){
   args<-list(...)
 
-  cols<-c(subjvar,pullvar,targetvar,rtvar,args$errorvar,args$blockvar)
+  cols<-c(subjvar,pullvar,targetvar,rtvar,args$errorvar,args$blockvar,args$stimvar)
   if("formula" %in% names(args)){
-    formterms <- args$formula %>% as.formula() %>% terms() %>% attr("variables") %>% as.character()
+    formterms <- args$formula %>% as.formula() %>% terms() %>%
+      attr("variables") %>% as.character()
     formterms <- formterms[-1]
     if(any(!(formterms %in% colnames(ds)))){
       stop("Formula term(s) ",paste(formterms[!(formterms %in% colnames(ds))],collapse=", ")," missing from dataset")
@@ -1111,44 +1142,24 @@ aat_preparedata<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,...){
     }
     if(is.factor(ds[,targetvar])){
       warning("Recoded ",targetvar," from factor to numeric. Please make sure that ",
-              levels(ds[,targetvar])[1], " represents control/neutral stimuli and ",levels(ds[,targetvar])[2],
-              " represents target stimuli")
+              levels(ds[,targetvar])[1], " represents control/neutral stimuli and ",
+              levels(ds[,targetvar])[2], " represents target stimuli")
       ds[,targetvar]<-as.numeric(ds[,targetvar])-1
     }
   }
 
-  rmindices <- ds[,cols] %>% lapply(FUN=is.na) %>% as.data.frame %>% apply(MARGIN=1,FUN=any) %>% which
+  rmindices <- ds[,cols] %>% lapply(FUN=is.na) %>% as.data.frame %>%
+    apply(MARGIN=1,FUN=any) %>% which
 
   if(length(rmindices)>0){
     ds<-ds[-rmindices,]
-    warning("Removed ",length(rmindices)," rows due to presence of NA in critical variable(s)")
+    warning("Removed ",length(rmindices),
+            " rows due to presence of NA in critical variable(s)")
   }
   return(ds)
 }
 
-val_between<-function(x,lb,ub){x>lb & x<ub}
 
-drop_empty_cases<-function(iterds,subjvar){
-  iterds%>%group_by(!!sym(subjvar))%>%filter(val_between(mean(key),0,1))
-}
-
-form2char<-function(x){
-  if(is.character(x)){ return(x) }
-  fs<-as.character(x)
-  fs<-paste(fs[2],fs[1],fs[3])
-  return(fs)
-}
-
-is.formula <- function(x){
-  inherits(x,"formula")
-}
-
-unregisterDoParallel <- function(cluster) {
-  stopCluster(cluster)
-  registerDoSEQ()
-  #env <- foreach:::.foreachGlobals
-  #rm(list=ls(name=env), pos=env)
-}
 
 
 

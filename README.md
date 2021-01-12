@@ -41,9 +41,12 @@ non-normality, outliers and error trials.
 ## Getting your data in the right format
 
 AATtools works with long-format `data.frames` that follow a specific
-format. Your `data.frame` should contain one row per trial, and it
+format. Your `data.frame` should contain one trial per row, and it
 should contain variables that designate the relevant conditions
-(approach/avoidance, control/target stimuli) with 0’s and 1’s.
+(approach/avoidance, control/target stimuli). For best results, approach
+and approach-associated stimulus categories should be indicated with a 1
+while avoidance and avoidance-associated stimulus categories should be
+labelled with a 0.
 
 ## Computing reliability
 
@@ -71,11 +74,19 @@ print(split)
 ```
 
     ## 
-    ## r (58) = 0.52, p = 1.58e-06, 95%CI = [0.38, 0.66]
-    ## Spearman-Brown-corrected r (58) = 0.69, p = 1.42e-13
+    ## r (58) = 0.53, p = 1.31e-06, 95%CI = [0.38, 0.65]
+    ## Spearman-Brown-corrected r (58) = 0.69, p = 1e-13
+
+``` r
+plot(split)
+```
+
+![](man/figures/splithalf-1.png)<!-- -->
 
 Alternatively, you can use `q_reliability` to compute an exact
 reliability score for your data.
+
+## An exact reliability score for all implicit tasks with difference scores: `q_reliability()`
 
 This function performs a linear regression to the data of each
 participant, and derives the unstandardized beta and variance of one of
@@ -123,6 +134,46 @@ print(qreliability_irrelevant)
 
     ## q = -0.1108101
 
+## Computing Cronbach’s alpha for your experiment
+
+Cronbach’s alpha is a common, but suboptimal method to compute the
+reliability of psychological experiments. In the context of the AAT,
+approach bias scores are computed per stimulus for each participant,
+after which Cronbach’s alpha is computed by treating each stimulus
+approach bias score as a separate item in a questionnaire. This method
+is heavily dependent on the number of stimuli included in the
+experiment, rather than the number of trials as a whole. Additionally,
+it does not tolerate missing trials, meaning either outliers need to be
+included or winsorized, or entire stimuli or participants must be
+excluded. It has been included for the sake of completeness.
+
+``` r
+dataset <- erotica
+#This dataset is unfortunately not suitable for the application of this method. We artificially make it compatible by pretending there are only 10 stimuli per category rather than 40.
+dataset$stimulus<- substr(as.character(dataset$stimulus),5,5)
+
+#We use the special jackknife function, which allows us to diagnose flaws in the experiment by computing Cronbach's alpha while single stimuli or participants are excluded.
+alpha<-aat_alpha_jackknife(ds=dataset, #The dataset
+                           subjvar="subject", #Name of the column with participant IDs
+                           stimvar="stimulus",#Name of the column with stimulus IDs
+                           pullvar="is_pull", #Name of the column indicating approach or avoid trial
+                           rtvar="RT",        #Name of the column indicating reaction time
+                           algorithm="aat_singlemeandiff") #Method to compute stimulus-specific approach bias scores with. Currently limited to mean and median difference scores.
+
+print(alpha)
+```
+
+    ## Alpha = 0.21
+    ## Based on 10 valid stimuli and 58 valid participants.
+    ## Largest alpha achieveable through single stimulus omission = 0.28 (3)
+    ## Largest alpha achieveable through single participant omission = 0.27 (subject-56)
+
+``` r
+plot(alpha)
+```
+
+![](man/figures/alpha-1.png)<!-- -->
+
 ## Computing confidence intervals for bias scores
 
 The `aat_bootstrap` function can be used to compute bias scores from
@@ -149,9 +200,9 @@ print(boot)
 ```
 
     ## Bootstrapped bias scores and confidence intervals
-    ## Mean bias score: 0.1390729
-    ## Mean confidence interval: 0.8823275
-    ## reliability: q = 0.1390729
+    ## Mean bias score: 0.1372585
+    ## Mean confidence interval: 0.8993591
+    ## reliability: q = 0.1372585
     ## Number of iterations: 1000
 
 ``` r

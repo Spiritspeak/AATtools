@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">AATtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.2</span>
       </span>
     </div>
 
@@ -126,20 +126,20 @@
     </div>
 
     <pre class="usage"><span class='fu'>aat_compute</span>(
-  <span class='no'>ds</span>,
-  <span class='no'>subjvar</span>,
-  <span class='no'>pullvar</span>,
-  <span class='kw'>targetvar</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>rtvar</span>,
-  <span class='kw'>algorithm</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"aat_doublemeandiff"</span>, <span class='st'>"aat_doublemediandiff"</span>, <span class='st'>"aat_dscore"</span>,
+  <span class='kw'>ds</span>,
+  <span class='kw'>subjvar</span>,
+  <span class='kw'>pullvar</span>,
+  targetvar = <span class='kw'>NULL</span>,
+  <span class='kw'>rtvar</span>,
+  algorithm = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"aat_doublemeandiff"</span>, <span class='st'>"aat_doublemediandiff"</span>, <span class='st'>"aat_dscore"</span>,
     <span class='st'>"aat_dscore_multiblock"</span>, <span class='st'>"aat_regression"</span>, <span class='st'>"aat_standardregression"</span>,
     <span class='st'>"aat_doublemeanquotient"</span>, <span class='st'>"aat_doublemedianquotient"</span>, <span class='st'>"aat_singlemeandiff"</span>,
     <span class='st'>"aat_singlemediandiff"</span>),
-  <span class='kw'>trialdropfunc</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"prune_nothing"</span>, <span class='st'>"trial_prune_3SD"</span>, <span class='st'>"trial_prune_SD_dropcases"</span>,
+  trialdropfunc = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"prune_nothing"</span>, <span class='st'>"trial_prune_3SD"</span>, <span class='st'>"trial_prune_SD_dropcases"</span>,
     <span class='st'>"trial_recode_SD"</span>, <span class='st'>"trial_prune_percent_subject"</span>, <span class='st'>"trial_prune_percent_sample"</span>),
-  <span class='kw'>errortrialfunc</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"prune_nothing"</span>, <span class='st'>"error_replace_blockmeanplus"</span>,
+  errortrialfunc = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"prune_nothing"</span>, <span class='st'>"error_replace_blockmeanplus"</span>,
     <span class='st'>"error_prune_dropcases"</span>),
-  <span class='no'>...</span>
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -219,21 +219,22 @@ If used, the following additional arguments are required:</p><ul>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>#Compute the correlation between relevant-feature and irrelevant-feature AAT scores</span>
-<span class='no'>ds</span><span class='kw'>&lt;-</span><span class='no'>erotica</span>[<span class='no'>erotica</span>$<span class='no'>correct</span><span class='kw'>==</span><span class='fl'>1</span>,]
-<span class='no'>relevant</span> <span class='kw'>&lt;-</span> <span class='fu'>aat_compute</span>(<span class='kw'>ds</span><span class='kw'>=</span><span class='no'>ds</span>[<span class='no'>ds</span>$<span class='no'>is_irrelevant</span><span class='kw'>==</span><span class='fl'>0</span>,],
-                        <span class='kw'>pullvar</span><span class='kw'>=</span><span class='st'>"is_pull"</span>,<span class='kw'>targetvar</span><span class='kw'>=</span><span class='st'>"is_target"</span>,
-                        <span class='kw'>rtvar</span><span class='kw'>=</span><span class='st'>"RT"</span>,<span class='kw'>subjvar</span><span class='kw'>=</span><span class='st'>"subject"</span>,
-                        <span class='kw'>trialdropfunc</span><span class='kw'>=</span><span class='st'>"trial_prune_3SD"</span>,
-                        <span class='kw'>algorithm</span><span class='kw'>=</span><span class='st'>"aat_doublemediandiff"</span>)
+<span class='kw'>ds</span><span class='op'>&lt;-</span><span class='kw'>erotica</span>[<span class='kw'>erotica</span><span class='op'>$</span><span class='kw'>correct</span><span class='op'>==</span><span class='fl'>1</span>,]
+<span class='kw'>relevant</span> <span class='op'>&lt;-</span> <span class='fu'>aat_compute</span>(ds=<span class='kw'>ds</span>[<span class='kw'>ds</span><span class='op'>$</span><span class='kw'>is_irrelevant</span><span class='op'>==</span><span class='fl'>0</span>,],
+                        pullvar=<span class='st'>"is_pull"</span>,targetvar=<span class='st'>"is_target"</span>,
+                        rtvar=<span class='st'>"RT"</span>,subjvar=<span class='st'>"subject"</span>,
+                        trialdropfunc=<span class='st'>"trial_prune_3SD"</span>,
+                        algorithm=<span class='st'>"aat_doublemediandiff"</span>)
 
-<span class='no'>irrelevant</span> <span class='kw'>&lt;-</span> <span class='fu'>aat_compute</span>(<span class='kw'>ds</span><span class='kw'>=</span><span class='no'>ds</span>[<span class='no'>ds</span>$<span class='no'>is_irrelevant</span><span class='kw'>==</span><span class='fl'>1</span>,],
-                        <span class='kw'>pullvar</span><span class='kw'>=</span><span class='st'>"is_pull"</span>,<span class='kw'>targetvar</span><span class='kw'>=</span><span class='st'>"is_target"</span>,
-                        <span class='kw'>rtvar</span><span class='kw'>=</span><span class='st'>"RT"</span>,<span class='kw'>subjvar</span><span class='kw'>=</span><span class='st'>"subject"</span>,
-                        <span class='kw'>trialdropfunc</span><span class='kw'>=</span><span class='st'>"trial_prune_3SD"</span>,
-                        <span class='kw'>algorithm</span><span class='kw'>=</span><span class='st'>"aat_doublemediandiff"</span>)
+<span class='kw'>irrelevant</span> <span class='op'>&lt;-</span> <span class='fu'>aat_compute</span>(ds=<span class='kw'>ds</span>[<span class='kw'>ds</span><span class='op'>$</span><span class='kw'>is_irrelevant</span><span class='op'>==</span><span class='fl'>1</span>,],
+                        pullvar=<span class='st'>"is_pull"</span>,targetvar=<span class='st'>"is_target"</span>,
+                        rtvar=<span class='st'>"RT"</span>,subjvar=<span class='st'>"subject"</span>,
+                        trialdropfunc=<span class='st'>"trial_prune_3SD"</span>,
+                        algorithm=<span class='st'>"aat_doublemediandiff"</span>)
 
-<span class='no'>comparison.df</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/merge.html'>merge</a></span>(<span class='no'>relevant</span>, <span class='no'>irrelevant</span>, <span class='kw'>by</span> <span class='kw'>=</span> <span class='st'>"subject"</span>)
-<span class='fu'><a href='https://rdrr.io/r/stats/cor.html'>cor</a></span>(<span class='no'>comparison.df</span>$<span class='no'>ab.x</span>, <span class='no'>comparison.df</span>$<span class='no'>ab.y</span>)</div><div class='output co'>#&gt; [1] 0.1082213</div><div class='input'># 0.1145726
+<span class='kw'>comparison.df</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/merge.html'>merge</a></span>(<span class='kw'>relevant</span>, <span class='kw'>irrelevant</span>, by = <span class='st'>"subject"</span>)
+<span class='fu'><a href='https://rdrr.io/r/stats/cor.html'>cor</a></span>(<span class='kw'>comparison.df</span><span class='op'>$</span><span class='kw'>ab.x</span>, <span class='kw'>comparison.df</span><span class='op'>$</span><span class='kw'>ab.y</span>)
+</div><div class='output co'>#&gt; [1] 0.1082213</div><div class='input'><span class='co'># 0.1145726</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -250,7 +251,7 @@ If used, the following additional arguments are required:</p><ul>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

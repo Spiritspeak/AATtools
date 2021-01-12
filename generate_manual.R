@@ -4,7 +4,7 @@ devtools::document()
 devtools::build_manual(path=".")
 #build pkgdown manual
 devtools::build_site()
-devtools::build_site(path="Y:\\Sercan\\homepage\\spiritspeak.github.io\\content\\packages")
+pkgdown::build_site(path="Y:\\Sercan\\homepage\\spiritspeak.github.io\\content\\packages")
 #Check package
 devtools::check(args="--as-cran")
 #devtools::check_win_devel()
