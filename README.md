@@ -8,6 +8,10 @@
 ![CRAN status](https://www.r-pkg.org/badges/version/AATtools) [![Travis
 build
 status](https://travis-ci.org/Spiritspeak/AATtools.svg?branch=master)](https://travis-ci.org/Spiritspeak/AATtools)
+[![metacran
+downloads](https://cranlogs.r-pkg.org/badges/grand-total/AATtools)](https://cran.r-project.org/package=AATtools)
+[![metacran
+downloads](https://cranlogs.r-pkg.org/badges/AATtools)](https://cran.r-project.org/package=AATtools)
 <!-- badges: end -->
 
 ## Introduction
@@ -74,8 +78,8 @@ print(split)
 ```
 
     ## 
-    ## r (58) = 0.53, p = 1.31e-06, 95%CI = [0.38, 0.65]
-    ## Spearman-Brown-corrected r (58) = 0.69, p = 1e-13
+    ## r (58) = 0.52, p = 1.54e-06, 95%CI = [0.38, 0.65]
+    ## Spearman-Brown-corrected r (58) = 0.69, p = 1.35e-13
 
 ``` r
 plot(split)
@@ -200,9 +204,9 @@ print(boot)
 ```
 
     ## Bootstrapped bias scores and confidence intervals
-    ## Mean bias score: 0.1372585
-    ## Mean confidence interval: 0.8993591
-    ## reliability: q = 0.1372585
+    ## Mean bias score: 0.1385118
+    ## Mean confidence interval: 0.8995987
+    ## reliability: q = 0.1385118
     ## Number of iterations: 1000
 
 ``` r

@@ -117,7 +117,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Compute the bootstrapped split-half reliability for approach-avoidance task data</h1>
-    <small class="dont-index">Source: <a href='https://github.com/Spiritspeak/AATtools/blob/master/R/AATtools.R'><code>R/AATtools.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/Spiritspeak/AATtools/blob/master/R/aat_splithalf.R'><code>R/aat_splithalf.R</code></a></small>
     <div class="hidden name"><code>aat_splithalf.Rd</code></div>
     </div>
 
@@ -286,8 +286,8 @@ a list of data.frames used over each iteration, and a vector containing the spli
 
 <span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>split</span>)
 </div><div class='output co'>#&gt; 
-#&gt; r (58) = 0.54, p = 6.29e-07, 95%CI = [, 0.65]
-#&gt; Spearman-Brown-corrected r (58) = 0.7, p = 2.63e-14</div><div class='input'><span class='co'>#Mean reliability: 0.521959</span>
+#&gt; Uncorrected r (58) = .48, 95%CI [, .59]p = 0
+#&gt; Spearman-Brown-corrected r (58) = .65, 95%CI [, .74], p = 0</div><div class='input'><span class='co'>#Mean reliability: 0.521959</span>
 <span class='co'>#Spearman-Brown-corrected r: 0.6859041</span>
 <span class='co'>#95%CI: [0.4167018, 0.6172474]</span>
 
@@ -302,8 +302,8 @@ a list of data.frames used over each iteration, and a vector containing the spli
               formula = <span class='kw'>RT</span> <span class='op'>~</span> <span class='kw'>is_pull</span> <span class='op'>*</span> <span class='kw'>is_target</span>, aatterm = <span class='st'>"is_pull:is_target"</span>,
               plot=<span class='fl'>FALSE</span>, parallel=<span class='fl'>FALSE</span>)
 </div><div class='output co'>#&gt; 
-#&gt; r (57) = 0.46, p = 8.19e-05, 95%CI = [, 0.55]
-#&gt; Spearman-Brown-corrected r (57) = 0.63, p = 3.69e-10</div><div class='input'><span class='co'>#Mean reliability: 0.5313939</span>
+#&gt; Uncorrected r (56.9) = .43, 95%CI [, .53]p = 0
+#&gt; Spearman-Brown-corrected r (56.9) = .6, 95%CI [, .7], p = 0</div><div class='input'><span class='co'>#Mean reliability: 0.5313939</span>
 <span class='co'>#Spearman-Brown-corrected r: 0.6940003</span>
 <span class='co'>#95%CI: [0.2687186, 0.6749176]</span>
 <span class='co'># }</span>

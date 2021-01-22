@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • AATtools</title>
+<title>Correct a correlation coefficient for being based on only a subset of the data — reliability-corrections • AATtools</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,7 +46,8 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Correct a correlation coefficient for being based on only a subset of the data — reliability-corrections" />
+<meta property="og:description" content="Correct a correlation coefficient for being based on only a subset of the data" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -66,7 +67,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -113,97 +114,81 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Correct a correlation coefficient for being based on only a subset of the data</h1>
+    <small class="dont-index">Source: <a href='https://github.com/Spiritspeak/AATtools/blob/master/R/relcorrections.R'><code>R/relcorrections.R</code></a></small>
+    <div class="hidden name"><code>reliability-corrections.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    <p>Correct a correlation coefficient for being based on only a subset of the data</p>
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
+    <pre class="usage"><span class='fu'>SpearmanBrown</span>(
+  <span class='kw'>corr</span>,
+  ntests = <span class='fl'>2</span>,
+  fix.negative = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"nullify"</span>, <span class='st'>"bilateral"</span>, <span class='st'>"none"</span>)
+)
 
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="aat_alpha.html">aat_alpha()</a></code> <code><a href="aat_alpha.html">aat_alpha_jackknife()</a></code> <code><a href="aat_alpha.html">print(<i>&lt;aat_alpha&gt;</i>)</a></code> <code><a href="aat_alpha.html">plot(<i>&lt;aat_alpha&gt;</i>)</a></code> <code><a href="aat_alpha.html">print(<i>&lt;aat_alpha_jackknife&gt;</i>)</a></code> <code><a href="aat_alpha.html">plot(<i>&lt;aat_alpha_jackknife&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Compute reliability using Cronbach's Alpha</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="aat_bootstrap.html">aat_bootstrap()</a></code> <code><a href="aat_bootstrap.html">print(<i>&lt;aat_bootstrap&gt;</i>)</a></code> <code><a href="aat_bootstrap.html">plot(<i>&lt;aat_bootstrap&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Compute bootstrapped approach-bias scores</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="aat_compute.html">aat_compute()</a></code> </p>
-        </td>
-        <td><p>Compute simple AAT scores</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="aat_simulate.html">aat_simulate()</a></code> </p>
-        </td>
-        <td><p>Simulate AAT datasets and predict parameters
-<code>aat_simulate()</code> generates approach-avoidance task datasets.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="aat_splithalf.html">aat_splithalf()</a></code> <code><a href="aat_splithalf.html">print(<i>&lt;aat_splithalf&gt;</i>)</a></code> <code><a href="aat_splithalf.html">plot(<i>&lt;aat_splithalf&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Compute the bootstrapped split-half reliability for approach-avoidance task data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="Algorithms.html">aat_doublemeandiff()</a></code> <code><a href="Algorithms.html">aat_doublemediandiff()</a></code> <code><a href="Algorithms.html">aat_dscore()</a></code> <code><a href="Algorithms.html">aat_dscore_multiblock()</a></code> <code><a href="Algorithms.html">aat_regression()</a></code> <code><a href="Algorithms.html">aat_standardregression()</a></code> <code><a href="Algorithms.html">aat_doublemedianquotient()</a></code> <code><a href="Algorithms.html">aat_doublemeanquotient()</a></code> <code><a href="Algorithms.html">aat_singlemeandiff()</a></code> <code><a href="Algorithms.html">aat_singlemediandiff()</a></code> </p>
-        </td>
-        <td><p>AAT score computation algorithms</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="erotica.html">erotica</a></code> </p>
-        </td>
-        <td><p>AAT examining approach bias for erotic stimuli</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="Preprocessing.html">prune_nothing()</a></code> <code><a href="Preprocessing.html">trial_prune_percent_subject()</a></code> <code><a href="Preprocessing.html">trial_prune_percent_sample()</a></code> <code><a href="Preprocessing.html">trial_prune_3SD()</a></code> <code><a href="Preprocessing.html">trial_prune_SD_dropcases()</a></code> <code><a href="Preprocessing.html">trial_recode_SD()</a></code> <code><a href="Preprocessing.html">case_prune_3SD()</a></code> <code><a href="Preprocessing.html">error_replace_blockmeanplus()</a></code> <code><a href="Preprocessing.html">error_prune_dropcases()</a></code> </p>
-        </td>
-        <td><p>Pre-processing rules</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="q_reliability.html">q_reliability()</a></code> <code><a href="q_reliability.html">q_reliability2()</a></code> <code><a href="q_reliability.html">print(<i>&lt;qreliability&gt;</i>)</a></code> <code><a href="q_reliability.html">plot(<i>&lt;qreliability&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Compute psychological experiment reliability</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="reliability-corrections.html">SpearmanBrown()</a></code> <code><a href="reliability-corrections.html">FlanaganRulon()</a></code> </p>
-        </td>
-        <td><p>Correct a correlation coefficient for being based on only a subset of the data</p></td>
-      </tr>
-    </tbody>
+<span class='fu'>FlanaganRulon</span>(
+  <span class='kw'>x1</span>,
+  <span class='kw'>x2</span>,
+  x = <span class='kw'>NULL</span>,
+  fix.negative = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"nullify"</span>, <span class='st'>"bilateral"</span>, <span class='st'>"none"</span>)
+)</pre>
+
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>corr</th>
+      <td><p>To-be-corrected correlation coefficient</p></td>
+    </tr>
+    <tr>
+      <th>ntests</th>
+      <td><p>An integer indicating how many times larger the full test is, for which the corrected correlation coefficient is being computed.
+When <code>ntests=2</code>, the formula will compute what the correlation coefficient would be if the test were twice as long.</p></td>
+    </tr>
+    <tr>
+      <th>fix.negative</th>
+      <td><p>Determines how to deal with a negative value. "nullify" sets it to zero,
+"bilateral" applies the correction as if it were a positive number, and then sets it to negative.
+"none" gives the raw value. It should be noted that negative values are not supposed to occur,
+and there is no commonly accepted way to deal with them when they do occur.</p></td>
+    </tr>
+    <tr>
+      <th>x1</th>
+      <td><p>scores from half 1</p></td>
+    </tr>
+    <tr>
+      <th>x2</th>
+      <td><p>scores from half 2</p></td>
+    </tr>
+    <tr>
+      <th>x</th>
+      <td><p>scores from the full sample (more accurate if provided)</p></td>
+    </tr>
     </table>
-  </div>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>Spearman-Brown-corrected correlation coefficient.</p>
+    <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
+
+    
+<ul>
+<li><p><code>SpearmanBrown</code>: Perform a Spearman-Brown correction on the provided correlation score.</p></li>
+<li><p><code>FlanaganRulon</code>: Compute the true reliability using the Flanagan-Rulon formula,
+which takes into account inequal variances between split halves</p></li>
+</ul>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'>
+<span class='fu'>SpearmanBrown</span>(<span class='fl'>.5</span>)
+</div><div class='output co'>#&gt; [1] 0.6666667</div><div class='input'><span class='fu'>FlanaganRulon</span>(<span class='kw'>a</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>50</span>),<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>50</span>)<span class='op'>+</span><span class='kw'>a</span><span class='op'>*</span><span class='fl'>.5</span>,fix.negative=<span class='st'>"bilateral"</span>)
+</div><div class='output co'>#&gt; [1] 0.6234119</div></pre>
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
