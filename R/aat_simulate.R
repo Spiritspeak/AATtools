@@ -1,4 +1,5 @@
 #' Simulate AAT datasets and predict parameters
+#'
 #' \code{aat_simulate()} generates approach-avoidance task datasets.
 #'
 #' @param npps Number of participants
@@ -62,7 +63,7 @@ aat_simulate<-function(npps=40,nstims=32,stimreps=2,
   #set properties
   subjprops<-data.frame(subj=1:npps,
                         meanrt=meanrt+meanrt_jitter*rnorm(npps),
-                        sdrt=sdrt+sdrt_jitter*rnorm(npps),
+                        sdrt=sdrt+sdrt_jitter*rgamma2(n=npps,shape=3),
                         pullfx=pullfx+pullfx_jitter*rnorm(npps),
                         stimfx=stimfx+stimfx_jitter*rnorm(npps),
                         biasfx=biasfx+biasfx_jitter*rnorm(npps))
@@ -87,4 +88,92 @@ aat_simulate<-function(npps=40,nstims=32,stimreps=2,
   return(ds)
 }
 
+rgamma2<-function(n,shape,m=0,s=1){
+  m + (rgamma(n=n,shape=shape,scale=1) - shape*1) *s/(sqrt(shape)*1)
+}
+
+
+
+#'
+#' \code{aat_simulate2} offers defaults taken from different studies and allows inserting outliers.
+#'
+#' @param ... Any parameters of \code{aat_simulate} provided here will override the defaults
+#' from the defaults parameter.
+#' @param defaults Which set of default values should be used?
+#' @param slowols Number of slow outliers to insert per participant
+#' @param fastols Number of fats outliers to insert per participant
+#' @param olsd Number of standard deviations by which (slow) outliers deviate
+#'
+#' @details "Lender2018" parameters are taken from the relevant-feature AAT of
+#' Lender, Meule, Rinck, Brockmeyer, & Blechert (2018). "Kahveci2021" parameters
+#' are taken from Kahveci, Van Alebeek, Berking, & Blechert (in review).
+#'
+#' Lender, A., Meule, A., Rinck, M., Brockmeyer, T., & Blechert, J. (2018).
+#' Measurement of food-related approach–avoidance biases:
+#' Larger biases when food stimuli are task relevant. Appetite, 125, 42-47.
+#'
+#' Kahveci, S., Van Alebeek, H., Berking, M., & Blechert, J. (in review).
+#' Touchscreen based assessment of food approach biases: investigation of
+#' reliability and stimulus-specific effects.
+#' @export
+#'
+#' @examples
+#' hist(aat_simulate2(defaults="Lender2018_raw",slowols=10,fastols=10)$rt)
+#' @rdname aat_simulate
+aat_simulate2<-function(..., defaults=c("none","Lender2018_raw","Lender2018_clean",
+                                        "Kahveci2021_raw","Kahveci2021_clean"),
+                        slowols=0,fastols=0,olsd=3){
+  defaults<-match.arg(defaults)
+  override.args<-list(...)
+
+  if(defaults=="none"){
+    args<-override.args
+  }else if(defaults=="Lender2018_raw"){
+    args<-list(npps=37,nstims=16,stimreps=4,
+               meanrt=627,meanrt_jitter=97,
+               sdrt=197,sdrt_jitter=78,
+               pullfx=9,pullfx_jitter=49,
+               stimfx=7,stimfx_jitter=68,
+               biasfx=-76,biasfx_jitter=119)
+  }else if(defaults=="Lender2018_clean"){
+    args<-list(npps=37,nstims=16,stimreps=4,
+               meanrt=621,meanrt_jitter=84,
+               sdrt=134,sdrt_jitter=47,
+               pullfx=2,pullfx_jitter=38,
+               stimfx=3,stimfx_jitter=53,
+               biasfx=-56,biasfx_jitter=96)
+  }else if(defaults=="Kahveci2021_raw"){
+    args<-list(npps=40,nstims=32,stimreps=2,
+               mean=757,mean_jitter=67,
+               sdrt=197,sdrt_jitter=93,
+               pullfx=30,pullfx_jitter=40,
+               stimfx=09,stimfx_jitter=41,
+               biasfx=39,biasfx_jitter=79)
+  }else if(defaults=="Kahveci2021_clean"){
+    args<-list(npps=40,nstims=32,stimreps=2,
+               mean=743,mean_jitter=66,
+               sdrt=133,sdrt_jitter=38,
+               pullfx=27,pullfx_jitter=38,
+               stimfx=08,stimfx_jitter=35,
+               biasfx=36,biasfx_jitter=73)
+  }
+  args[names(override.args)]<-override.args
+
+  ds<-do.call(aat_simulate,args)
+
+  gshape<-3
+  gscale<-1
+
+  #slow OLs
+  ds<-ds%>%group_by(.data$subj)%>%mutate(rownum=1:n())%>%
+    mutate(rt = ifelse(!(.data$rownum %in% sample(.data$rownum,slowols)),.data$rt,
+                       .data$rt+.data$sdrt*olsd))
+  #fast OLs
+  if(fastols>0){
+    ds<-ds%>%group_by(.data$subj)%>%mutate(rownum=1:n(),eligible=.data$rt>.data$sdrt*olsd)%>%
+      mutate(rt = ifelse(!(.data$rownum %in% sample(which(.data$eligible),fastols)),
+                         .data$rt,.data$rt-.data$sdrt*olsd))
+  }
+  return(ds)
+}
 

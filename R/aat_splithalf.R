@@ -189,36 +189,57 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,
         do.call(algorithm,c(list(ds=half1set,subjvar=subjvar,pullvar=pullvar,
                                  targetvar=targetvar,rtvar=rtvar),args)),
         by=subjvar,suffixes=c("half0","half1"))
+
       #Remove outlying participants
       abds<-do.call(casedropfunc,list(ds=abds))
+
       #Compute reliability
       currcorr<-cor(abds$abhalf0,abds$abhalf1,use="complete.obs")
       frcorr<-FlanaganRulonBilateral(abds$abhalf0,abds$abhalf1)
-      list(corr=currcorr,frcorr=frcorr,abds=abds,rawdata=iterds)
+      rjcorr<-RajuBilateral(abds$abhalf0,abds$abhalf1,mean(iterds$key))
+
+      #produce output
+      c(list(corr=currcorr,frcorr=frcorr,rjcorr=rjcorr,abds=abds),
+        ifelse(include.raw,list(rawdata=iterds),list()))
     }
 
+  #extract coefs from output
+  rjcors<-sapply(results,FUN=function(x){x$rjcorr})
   cors<-sapply(results,FUN=function(x){x$corr})
-  ordering<-order(cors)
-  cors<-cors[ordering]
-  avg_n<-mean(sapply(results,function(x){ sum(!is.na(x$abds$abhalf0) & !is.na(x$abds$abhalf1)) }))
+  sbcors<-SpearmanBrown(cors,fix.negative="bilateral")
   frcorrs<-sapply(results,FUN=function(x){x$frcorr})
+
+  #sort the cors
+  ordering<-order(rjcors)
+  rjcors<-rjcors[ordering]
+  cors<-cors[ordering]
+  sbcors<-sbcors[ordering]
   frcorrs<-frcorrs[ordering]
-  #cat(scan("splithalfmessages.txt",what=character(),quiet=TRUE))
+
+  #get average sample size (for significance testing)
+  avg_n<-mean(sapply(results,function(x){ sum(!is.na(x$abds$abhalf0) & !is.na(x$abds$abhalf1)) }))
+
+  #assemble output
   output<-list(uncorrected=list(r=mean(cors),
-                                lowerci=cors[round(iters*0.025)],
-                                upperci=cors[round(iters*0.975)],
+                                lowerci=quantile(cors,probs=.025),
+                                upperci=quantile(cors,probs=.975),
                                 pval=r2p(mean(cors),avg_n),
                                 itercors=cors),
-               spearmanbrown=list(r=SpearmanBrown(mean(cors),fix.negative="bilateral"),
-                                  lowerci=SpearmanBrown(cors[round(iters*0.025)],fix.negative="bilateral"),
-                                  upperci=SpearmanBrown(cors[round(iters*0.975)],fix.negative="bilateral"),
-                                  pval=r2p(SpearmanBrown(mean(cors),fix.negative="bilateral"),avg_n),
-                                  itercors=SpearmanBrown(cors,fix.negative="bilateral")),
+               spearmanbrown=list(r=mean(sbcors),
+                                  lowerci=quantile(sbcors,probs=.025),
+                                  upperci=quantile(sbcors,probs=.975),
+                                  pval=r2p(mean(sbcors),avg_n),
+                                  itercors=sbcors),
                flanaganrulon=list(r=mean(frcorrs),
                                   lowerci=quantile(x=frcorrs,probs=.025),
                                   upperci=quantile(x=frcorrs,probs=.975),
                                   pval=r2p(mean(frcorrs),avg_n),
                                   itercors=frcorrs),
+               raju=list(r=mean(rjcors),
+                         lowerci=quantile(x=rjcors,probs=.025),
+                         upperci=quantile(x=rjcors,probs=.975),
+                         pval=r2p(mean(rjcors),avg_n),
+                         itercors=rjcors),
                avg_n=avg_n,
                ordering=ordering,
                parameters=c(list(ds=ds,
@@ -234,23 +255,51 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,
                             args),
                iterdata=lapply(results,function(x){ x$abds })[ordering]) %>%
     structure(class = "aat_splithalf")
+
+  #include raw data if asked to (disabled by default, takes a lot of space)
   if(include.raw){
     output$rawiterdata<-lapply(results,function(x){ x$rawdata })[ordering]
   }
 
+  #plot if asked to (default)
   if(plot){ plot(output) }
+
+  #return output
   return(output)
 }
 
+#' @param coef Optional character argument,
+#' indicating which reliability coefficient should be printed.
+#' Defaults to Raju's beta.
+#' @details The calculated split-half coefficients are described in Warrens (2016).
+#' @references Warrens, M. J. (2016). A comparison of reliability coefficients for
+#' psychometric tests that consist of two parts.
+#' Advances in Data Analysis and Classification, 10(1), 71-84.
 #' @export
 #' @rdname aat_splithalf
-print.aat_splithalf<-function(x,...){
-  cat("\nUncorrected r (",format(x$avg_n),") = ",mf(x$uncorrected$r),
+print.aat_splithalf<-function(x,coef=c("Raju","FlanaganRulon","SpearmanBrown"),...){
+  coef<-match.arg(coef)
+  if(coef=="Raju"){
+    coefstr<-paste0("\nFull-length reliability (Raju's beta):\n",
+                    "beta (",format(x$avg_n),") = ",mf(x$raju$r),
+                    ", 95%CI [", mf(x$raju$lowerci), ", ", mf(x$raju$upperci),"]",
+                    ", p = ",mf(x$raju$pval,digits=3),"\n")
+  }else if(coef=="FlanaganRulon"){
+    coefstr<-paste0("\nFull-length reliability (Flanagan-Rulon coefficient):\n",
+                    "FR (",format(x$avg_n),") = ",mf(x$flanaganrulon$r),
+                    ", 95%CI [", mf(x$flanaganrulon$lowerci), ", ", mf(x$flanaganrulon$upperci),"]",
+                    ", p = ",mf(x$flanaganrulon$pval,digits=3),"\n")
+  }else if(coef=="SpearmanBrown"){
+    coefstr<-paste0("\nFull-length reliability (Spearman-Brown coefficient):\n",
+                    "SB (",format(x$avg_n),") = ",mf(x$spearmanbrown$r),
+                    ", 95%CI [", mf(x$spearmanbrown$lowerci), ", ", mf(x$spearmanbrown$upperci),"]",
+                    ", p = ",mf(x$spearmanbrown$pval,digits=3),"\n")
+  }
+  cat(coefstr,
+      "\nUncorrected, average split-half correlation:\n",
+      "r (",format(x$avg_n),") = ",mf(x$uncorrected$r),
       ", 95%CI [", mf(x$uncorrected$lowerci), ", ", mf(x$uncorrected$upperci),"]",
-      "p = ",mf(x$uncorrected$pval,digits=3),
-      "\nSpearman-Brown-corrected r (",format(x$avg_n),") = ",mf(x$spearmanbrown$r),
-      ", 95%CI [", mf(x$spearmanbrown$lowerci), ", ", mf(x$spearmanbrown$upperci),"]",
-      ", p = ",mf(x$spearmanbrown$pval,digits=3),"\n",
+      ", p = ",mf(x$uncorrected$pval,digits=3),"\n",
       sep="")
 }
 

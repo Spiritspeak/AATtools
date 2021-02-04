@@ -6,6 +6,14 @@ FlanaganRulonBilateral<-function(x1,x2){
   return(fr/max(1, 1-fr))
 }
 
+RajuBilateral<-function(x1,x2,prop){
+  covar<-cov(x1,x2)
+  sumvar<-var(x1)+var(x2)+2*abs(covar)
+  raju<-covar / (prop * (1-prop) * sumvar)
+  return(raju)
+}
+
+
 r2p<-function(corr,n){
   t<- (corr*sqrt(n-2))/(1-corr^2)
   2*pt(abs(t),n-2,lower.tail=FALSE)

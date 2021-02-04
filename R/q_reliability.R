@@ -51,8 +51,7 @@ q_reliability<-function(ds,subjvar,formula,aatterm=NA){
 
   bv<-var(coefs$ab,na.rm=TRUE)
   wv<-mean(coefs$var,na.rm=TRUE)
-  q<-(bv-wv)/(bv+wv)
-  # alternative: (2*wv)/(bv*wv) -1
+  q<-(bv-wv)/(bv)
 
   return(structure(list(q=q,coefs=coefs),class="qreliability"))
 }
@@ -94,7 +93,7 @@ q_reliability2<-function(ds,subjvar,splitvars,rtvar,na.rm=F){
   #rel
   bv<-var(sc)
   wv<-mean(variances)
-  rel<-(bv-wv)/(bv+wv)
+  rel<-(bv-wv)/(bv)
 
   #output
   return(structure(list(q=rel,coefs=data.frame(pp=names(sc),

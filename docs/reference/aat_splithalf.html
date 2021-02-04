@@ -148,7 +148,7 @@
 )
 
 <span class='co'># S3 method for aat_splithalf</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>x</span>, coef = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Raju"</span>, <span class='st'>"FlanaganRulon"</span>, <span class='st'>"SpearmanBrown"</span>), <span class='kw'>...</span>)
 
 <span class='co'># S3 method for aat_splithalf</span>
 <span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='kw'>x</span>, type = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"median"</span>, <span class='st'>"minimum"</span>, <span class='st'>"maximum"</span>, <span class='st'>"random"</span>), <span class='kw'>...</span>)</pre>
@@ -260,6 +260,12 @@ this function will register a cluster and stop it after finishing, which takes s
       <td><p>an <code>aat_splithalf</code> object</p></td>
     </tr>
     <tr>
+      <th>coef</th>
+      <td><p>Optional character argument,
+indicating which reliability coefficient should be printed.
+Defaults to Raju's beta.</p></td>
+    </tr>
+    <tr>
       <th>type</th>
       <td><p>Character argument indicating which iteration should be chosen. Must be an abbreviation of
 <code>"median"</code> (default), <code>"minimum"</code>, <code>"maximum"</code>, or <code>"random"</code>.</p></td>
@@ -270,6 +276,14 @@ this function will register a cluster and stop it after finishing, which takes s
 
     <p>A list, containing the mean bootstrapped split-half reliability, bootstrapped 95<!-- % confidence intervals, -->
 a list of data.frames used over each iteration, and a vector containing the split-half reliability of each iteration.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The calculated split-half coefficients are described in Warrens (2016).</p>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Warrens, M. J. (2016). A comparison of reliability coefficients for
+psychometric tests that consist of two parts.
+Advances in Data Analysis and Classification, 10(1), 71-84.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><a href='q_reliability.html'>q_reliability</a></p></div>
@@ -286,8 +300,11 @@ a list of data.frames used over each iteration, and a vector containing the spli
 
 <span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>split</span>)
 </div><div class='output co'>#&gt; 
-#&gt; Uncorrected r (58) = .48, 95%CI [, .59]p = 0
-#&gt; Spearman-Brown-corrected r (58) = .65, 95%CI [, .74], p = 0</div><div class='input'><span class='co'>#Mean reliability: 0.521959</span>
+#&gt; Full-length reliability (Raju's beta):
+#&gt; beta (58) = .66, 95%CI [.57, .72], p = 0
+#&gt; 
+#&gt; Uncorrected, average split-half correlation:
+#&gt; r (58) = .5, 95%CI [.4, .57], p = 0</div><div class='input'><span class='co'>#Mean reliability: 0.521959</span>
 <span class='co'>#Spearman-Brown-corrected r: 0.6859041</span>
 <span class='co'>#95%CI: [0.4167018, 0.6172474]</span>
 
@@ -302,8 +319,11 @@ a list of data.frames used over each iteration, and a vector containing the spli
               formula = <span class='kw'>RT</span> <span class='op'>~</span> <span class='kw'>is_pull</span> <span class='op'>*</span> <span class='kw'>is_target</span>, aatterm = <span class='st'>"is_pull:is_target"</span>,
               plot=<span class='fl'>FALSE</span>, parallel=<span class='fl'>FALSE</span>)
 </div><div class='output co'>#&gt; 
-#&gt; Uncorrected r (56.9) = .43, 95%CI [, .53]p = 0
-#&gt; Spearman-Brown-corrected r (56.9) = .6, 95%CI [, .7], p = 0</div><div class='input'><span class='co'>#Mean reliability: 0.5313939</span>
+#&gt; Full-length reliability (Raju's beta):
+#&gt; beta (56.7) = .59, 95%CI [.5, .68], p = 0
+#&gt; 
+#&gt; Uncorrected, average split-half correlation:
+#&gt; r (56.7) = .43, 95%CI [.35, .52], p = 0</div><div class='input'><span class='co'>#Mean reliability: 0.5313939</span>
 <span class='co'>#Spearman-Brown-corrected r: 0.6940003</span>
 <span class='co'>#95%CI: [0.2687186, 0.6749176]</span>
 <span class='co'># }</span>

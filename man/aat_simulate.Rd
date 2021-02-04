@@ -2,8 +2,8 @@
 % Please edit documentation in R/aat_simulate.R
 \name{aat_simulate}
 \alias{aat_simulate}
-\title{Simulate AAT datasets and predict parameters
-\code{aat_simulate()} generates approach-avoidance task datasets.}
+\alias{aat_simulate2}
+\title{Simulate AAT datasets and predict parameters}
 \usage{
 aat_simulate(
   npps = 40,
@@ -19,6 +19,15 @@ aat_simulate(
   stimfx_jitter = 35,
   biasfx = 35,
   biasfx_jitter = 75
+)
+
+aat_simulate2(
+  ...,
+  defaults = c("none", "Lender2018_raw", "Lender2018_clean", "Kahveci2021_raw",
+    "Kahveci2021_clean"),
+  slowols = 0,
+  fastols = 0,
+  olsd = 3
 )
 }
 \arguments{
@@ -52,6 +61,17 @@ are larger or smaller than the samplewide SD.}
 \item{biasfx}{Size of the approach bias effect, in milliseconds}
 
 \item{biasfx_jitter}{Individual variation in the approach bias effect}
+
+\item{...}{Any parameters of \code{aat_simulate} provided here will override the defaults
+from the defaults parameter.}
+
+\item{defaults}{Which set of default values should be used?}
+
+\item{slowols}{Number of slow outliers to insert per participant}
+
+\item{fastols}{Number of fats outliers to insert per participant}
+
+\item{olsd}{Number of standard deviations by which (slow) outliers deviate}
 }
 \value{
 \code{aat_simulate()} returns a \code{data.frame} with the following columns:
@@ -66,12 +86,23 @@ Additionally, the data.frame has the attribute \code{population_reliability} whi
 the expected reliability of the data given the provided parameters.
 }
 \description{
-Simulate AAT datasets and predict parameters
 \code{aat_simulate()} generates approach-avoidance task datasets.
 }
 \details{
 Defaults of \code{aat_simulate()} are based on
 Kahveci, Van Alebeek, Berking, & Blechert (2021).
+
+"Lender2018" parameters are taken from the relevant-feature AAT of
+Lender, Meule, Rinck, Brockmeyer, & Blechert (2018). "Kahveci2021" parameters
+are taken from Kahveci, Van Alebeek, Berking, & Blechert (in review).
+
+Lender, A., Meule, A., Rinck, M., Brockmeyer, T., & Blechert, J. (2018).
+Measurement of food-related approach–avoidance biases:
+Larger biases when food stimuli are task relevant. Appetite, 125, 42-47.
+
+Kahveci, S., Van Alebeek, H., Berking, M., & Blechert, J. (in review).
+Touchscreen based assessment of food approach biases: investigation of
+reliability and stimulus-specific effects.
 }
 \examples{
 ts<- aat_simulate(pullfx = 50, stimfx = 10, biasfx = 100)
@@ -91,4 +122,5 @@ ranef(mod)$subjectid \%>\% apply(2,sd) #from here, all the fx jitters are derive
 dsa \%>\% group_by(subjectid) \%>\% summarise(sd=sd(resid)) \%>\%
 summarise(m=mean(sd),s=sd(sd)) # from here, sdrt_jitter is derived
 }
+hist(aat_simulate2(defaults="Lender2018_raw",slowols=10,fastols=10)$rt)
 }

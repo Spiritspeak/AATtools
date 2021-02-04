@@ -1,10 +1,10 @@
 
 # utils ####
-#' @name reliability-corrections
+#' @name reliability-coefficients
 #' @title Correct a correlation coefficient for being based on only a subset of the data
 NULL
 
-#' @describeIn reliability-corrections Perform a Spearman-Brown correction on the provided correlation score.
+#' @describeIn reliability-coefficients Perform a Spearman-Brown correction on the provided correlation score.
 #'
 #' @param corr To-be-corrected correlation coefficient
 #' @param ntests An integer indicating how many times larger the full test is, for which the corrected correlation coefficient is being computed.
@@ -36,7 +36,7 @@ SpearmanBrown<-function(corr,ntests=2,fix.negative=c("nullify","bilateral","none
   }
 }
 
-#' @describeIn reliability-corrections Compute the true reliability using the Flanagan-Rulon formula,
+#' @describeIn reliability-coefficients Compute the true reliability using the Flanagan-Rulon formula,
 #' which takes into account inequal variances between split halves
 #' @param x1 scores from half 1
 #' @param x2 scores from half 2
@@ -66,4 +66,28 @@ FlanaganRulon<-function(x1,x2,x=NULL,fix.negative=c("nullify","bilateral","none"
     fr<-1-d/k
     return(ifelse(fr>0,fr,0))
   }
+}
+
+#' @describeIn reliability-coefficients Compute split-half reliability using the Raju formula,
+#' which takes into account unequal split-halves and variances.
+#'
+#' @param prop Proportion of the first half to the complete sample
+#'
+#' @export
+#'
+#' @examples
+#' a<-rnorm(50)
+#' b<-rnorm(50)+a*.5
+#' RajuCoefficient(a,b,prop=.4,fix.negative="bilateral")
+RajuCoefficient<-function(x1,x2,prop,fix.negative=c("nullify","bilateral","none")){
+  fix.negative<-match.arg(fix.negative)
+  covar<-cov(x1,x2)
+  if(fix.negative=="bilateral"){
+    sumvar<-var(x1)+var(x2)+2*abs(covar)
+  }else{
+    sumvar<-var(x1)+var(x2)+2*covar
+  }
+
+  raju<-covar / (prop * (1-prop) * sumvar)
+  return(ifelse(fix.negative=="nullify" & raju<0,0,raju))
 }

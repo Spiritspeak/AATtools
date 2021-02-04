@@ -6,8 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Simulate AAT datasets and predict parameters
-aat_simulate() generates approach-avoidance task datasets. — aat_simulate • AATtools</title>
+<title>Simulate AAT datasets and predict parameters — aat_simulate • AATtools</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -47,10 +46,8 @@ aat_simulate() generates approach-avoidance task datasets. — aat_simulate • 
 
 
 
-<meta property="og:title" content="Simulate AAT datasets and predict parameters
-aat_simulate() generates approach-avoidance task datasets. — aat_simulate" />
-<meta property="og:description" content="Simulate AAT datasets and predict parameters
-aat_simulate() generates approach-avoidance task datasets." />
+<meta property="og:title" content="Simulate AAT datasets and predict parameters — aat_simulate" />
+<meta property="og:description" content="aat_simulate() generates approach-avoidance task datasets." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -119,15 +116,13 @@ aat_simulate() generates approach-avoidance task datasets." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Simulate AAT datasets and predict parameters
-<code>aat_simulate()</code> generates approach-avoidance task datasets.</h1>
+    <h1>Simulate AAT datasets and predict parameters</h1>
     <small class="dont-index">Source: <a href='https://github.com/Spiritspeak/AATtools/blob/master/R/aat_simulate.R'><code>R/aat_simulate.R</code></a></small>
     <div class="hidden name"><code>aat_simulate.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Simulate AAT datasets and predict parameters
-<code>aat_simulate()</code> generates approach-avoidance task datasets.</p>
+    <p><code>aat_simulate()</code> generates approach-avoidance task datasets.</p>
     </div>
 
     <pre class="usage"><span class='fu'>aat_simulate</span>(
@@ -144,6 +139,15 @@ aat_simulate() generates approach-avoidance task datasets." />
   stimfx_jitter = <span class='fl'>35</span>,
   biasfx = <span class='fl'>35</span>,
   biasfx_jitter = <span class='fl'>75</span>
+)
+
+<span class='fu'>aat_simulate2</span>(
+  <span class='kw'>...</span>,
+  defaults = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"none"</span>, <span class='st'>"Lender2018_raw"</span>, <span class='st'>"Lender2018_clean"</span>, <span class='st'>"Kahveci2021_raw"</span>,
+    <span class='st'>"Kahveci2021_clean"</span>),
+  slowols = <span class='fl'>0</span>,
+  fastols = <span class='fl'>0</span>,
+  olsd = <span class='fl'>3</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -206,6 +210,27 @@ are larger or smaller than the samplewide SD.</p></td>
       <th>biasfx_jitter</th>
       <td><p>Individual variation in the approach bias effect</p></td>
     </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Any parameters of <code>aat_simulate</code> provided here will override the defaults
+from the defaults parameter.</p></td>
+    </tr>
+    <tr>
+      <th>defaults</th>
+      <td><p>Which set of default values should be used?</p></td>
+    </tr>
+    <tr>
+      <th>slowols</th>
+      <td><p>Number of slow outliers to insert per participant</p></td>
+    </tr>
+    <tr>
+      <th>fastols</th>
+      <td><p>Number of fats outliers to insert per participant</p></td>
+    </tr>
+    <tr>
+      <th>olsd</th>
+      <td><p>Number of standard deviations by which (slow) outliers deviate</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -224,15 +249,24 @@ the expected reliability of the data given the provided parameters.</p>
 
     <p>Defaults of <code>aat_simulate()</code> are based on
 Kahveci, Van Alebeek, Berking, &amp; Blechert (2021).</p>
+<p>"Lender2018" parameters are taken from the relevant-feature AAT of
+Lender, Meule, Rinck, Brockmeyer, &amp; Blechert (2018). "Kahveci2021" parameters
+are taken from Kahveci, Van Alebeek, Berking, &amp; Blechert (in review).</p>
+<p>Lender, A., Meule, A., Rinck, M., Brockmeyer, T., &amp; Blechert, J. (2018).
+Measurement of food-related approach–avoidance biases:
+Larger biases when food stimuli are task relevant. Appetite, 125, 42-47.</p>
+<p>Kahveci, S., Van Alebeek, H., Berking, M., &amp; Blechert, J. (in review).
+Touchscreen based assessment of food approach biases: investigation of
+reliability and stimulus-specific effects.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>ts</span><span class='op'>&lt;-</span> <span class='fu'>aat_simulate</span>(pullfx = <span class='fl'>50</span>, stimfx = <span class='fl'>10</span>, biasfx = <span class='fl'>100</span>)
 <span class='kw'>mod</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='kw'>rt</span><span class='op'>~</span><span class='kw'>is_pull</span><span class='op'>*</span><span class='kw'>is_target</span>,data=<span class='kw'>ts</span>)
 <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='kw'>mod</span>) <span class='co'>#these should be somewhat close to the provided coefficients</span>
 </div><div class='output co'>#&gt;       (Intercept)           is_pull         is_target is_pull:is_target 
-#&gt;        693.909920         54.232076          8.621564         80.587690 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='kw'>ts</span>,<span class='st'>"population_reliabilty"</span>))
+#&gt;        693.866321         55.445962          4.019462         90.160960 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='kw'>ts</span>,<span class='st'>"population_reliabilty"</span>))
 </div><div class='output co'>#&gt; NULL</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='fu'><a href='q_reliability.html'>q_reliability</a></span>(<span class='kw'>ts</span>,<span class='st'>"subj"</span>,<span class='kw'>rt</span><span class='op'>~</span><span class='kw'>is_pull</span><span class='op'>*</span><span class='kw'>is_target</span>,<span class='st'>"is_pull:is_target"</span>))
-</div><div class='output co'>#&gt; q = 0.6739759</div><div class='input'><span class='co'>#these two should be not too far apart,</span>
+</div><div class='output co'>#&gt; q = 0.7389898</div><div class='input'><span class='co'>#these two should be not too far apart,</span>
 <span class='co'># and should converge when the process is repeated a bunch</span>
 
 
@@ -244,7 +278,8 @@ Kahveci, Van Alebeek, Berking, &amp; Blechert (2021).</p>
 <span class='kw'>dsa</span> <span class='op'>%&gt;%</span> <span class='fu'>group_by</span>(<span class='kw'>subjectid</span>) <span class='op'>%&gt;%</span> <span class='fu'>summarise</span>(sd=<span class='fu'><a href='https://rdrr.io/r/stats/sd.html'>sd</a></span>(<span class='kw'>resid</span>)) <span class='op'>%&gt;%</span>
 <span class='fu'>summarise</span>(m=<span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='kw'>sd</span>),s=<span class='fu'><a href='https://rdrr.io/r/stats/sd.html'>sd</a></span>(<span class='kw'>sd</span>)) <span class='co'># from here, sdrt_jitter is derived</span>
 }
-</div></pre>
+<span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span>(<span class='fu'>aat_simulate2</span>(defaults=<span class='st'>"Lender2018_raw"</span>,slowols=<span class='fl'>10</span>,fastols=<span class='fl'>10</span>)<span class='op'>$</span><span class='kw'>rt</span>)
+</div><div class='img'><img src='aat_simulate-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

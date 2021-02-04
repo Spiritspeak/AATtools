@@ -202,15 +202,15 @@ independently calculated bias scores, for example using <code><a href='aat_compu
     <pre class="examples"><div class='input'><span class='co'># Double-difference score reliability</span>
 <span class='fu'>q_reliability</span>(ds=<span class='kw'>erotica</span>,subjvar=<span class='st'>"subject"</span>,
               formula= <span class='kw'>RT</span> <span class='op'>~</span> <span class='kw'>is_pull</span> <span class='op'>*</span> <span class='kw'>is_target</span>, aatterm = <span class='st'>"is_pull:is_target"</span>)
-</div><div class='output co'>#&gt; q = 0.2313192</div><div class='input'>
+</div><div class='output co'>#&gt; q = 0.3757258</div><div class='input'>
 <span class='co'># Single-difference reliability for target stimuli</span>
 <span class='fu'>q_reliability</span>(ds=<span class='kw'>erotica</span>[<span class='kw'>erotica</span><span class='op'>$</span><span class='kw'>is_target</span> <span class='op'>==</span><span class='fl'>1</span>,],subjvar=<span class='st'>"subject"</span>,
               formula= <span class='kw'>RT</span> <span class='op'>~</span> <span class='kw'>is_pull</span>, aatterm = <span class='st'>"is_pull"</span>)
-</div><div class='output co'>#&gt; q = 0.2311904</div><div class='input'>
+</div><div class='output co'>#&gt; q = 0.3755559</div><div class='input'>
 <span class='co'># Reliability of the mean reaction time of approaching target stimuli (no difference score)</span>
 <span class='fu'>q_reliability</span>(ds=<span class='kw'>erotica</span>[<span class='kw'>erotica</span><span class='op'>$</span><span class='kw'>is_target</span> <span class='op'>==</span><span class='fl'>1</span> <span class='op'>&amp;</span> <span class='kw'>erotica</span><span class='op'>$</span><span class='kw'>is_pull</span> <span class='op'>==</span><span class='fl'>1</span>,],subjvar=<span class='st'>"subject"</span>,
               formula= <span class='kw'>RT</span> <span class='op'>~</span> <span class='fl'>1</span>, aatterm = <span class='st'>"1"</span>)
-</div><div class='output co'>#&gt; q = 0.8649177</div><div class='input'>
+</div><div class='output co'>#&gt; q = 0.9275666</div><div class='input'>
 <span class='fu'>q_reliability2</span>(ds=<span class='kw'>erotica</span>,subjvar=<span class='st'>"subject"</span>,
               splitvars=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"is_pull"</span>, <span class='st'>"is_target"</span>),rtvar=<span class='st'>"RT"</span>)
 </div><div class='output co'>#&gt; q = NA</div></pre>

@@ -28,7 +28,7 @@ aat_splithalf(
   ...
 )
 
-\method{print}{aat_splithalf}(x, ...)
+\method{print}{aat_splithalf}(x, coef = c("Raju", "FlanaganRulon", "SpearmanBrown"), ...)
 
 \method{plot}{aat_splithalf}(x, type = c("median", "minimum", "maximum", "random"), ...)
 }
@@ -114,6 +114,10 @@ this function will register a cluster and stop it after finishing, which takes s
 
 \item{x}{an \code{aat_splithalf} object}
 
+\item{coef}{Optional character argument,
+indicating which reliability coefficient should be printed.
+Defaults to Raju's beta.}
+
 \item{type}{Character argument indicating which iteration should be chosen. Must be an abbreviation of
 \code{"median"} (default), \code{"minimum"}, \code{"maximum"}, or \code{"random"}.}
 }
@@ -123,6 +127,9 @@ a list of data.frames used over each iteration, and a vector containing the spli
 }
 \description{
 Compute bootstrapped split-half reliability for approach-avoidance task data.
+}
+\details{
+The calculated split-half coefficients are described in Warrens (2016).
 }
 \examples{
 split <- aat_splithalf(ds=erotica[erotica$is_irrelevant==0,],
@@ -150,6 +157,11 @@ aat_splithalf(ds=erotica[erotica$is_irrelevant==0,],
 #Spearman-Brown-corrected r: 0.6940003
 #95\%CI: [0.2687186, 0.6749176]
 }
+}
+\references{
+Warrens, M. J. (2016). A comparison of reliability coefficients for
+psychometric tests that consist of two parts.
+Advances in Data Analysis and Classification, 10(1), 71-84.
 }
 \seealso{
 \link{q_reliability}
