@@ -13,12 +13,6 @@ RajuBilateral<-function(x1,x2,prop){
   return(raju)
 }
 
-
-r2p<-function(corr,n){
-  t<- (corr*sqrt(n-2))/(1-corr^2)
-  2*pt(abs(t),n-2,lower.tail=FALSE)
-}
-
 val_between<-function(x,lb,ub){x>lb & x<ub}
 
 drop_empty_cases<-function(iterds,subjvar){

@@ -6,7 +6,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Correct a correlation coefficient for being based on only a subset of the data — reliability-coefficients • AATtools</title>
+<title>Covariance Matrix Tools
+These functions allow for the computation of covariance matrices with missing data
+and for the computation of Cronbach's alpha from them. — covmat-tools • AATtools</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +48,12 @@
 
 
 
-<meta property="og:title" content="Correct a correlation coefficient for being based on only a subset of the data — reliability-coefficients" />
-<meta property="og:description" content="Correct a correlation coefficient for being based on only a subset of the data" />
+<meta property="og:title" content="Covariance Matrix Tools
+These functions allow for the computation of covariance matrices with missing data
+and for the computation of Cronbach's alpha from them. — covmat-tools" />
+<meta property="og:description" content="Covariance Matrix Tools
+These functions allow for the computation of covariance matrices with missing data
+and for the computation of Cronbach's alpha from them." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -116,89 +122,61 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Correct a correlation coefficient for being based on only a subset of the data</h1>
-    <small class="dont-index">Source: <a href='https://github.com/Spiritspeak/AATtools/blob/master/R/relcorrections.R'><code>R/relcorrections.R</code></a></small>
-    <div class="hidden name"><code>reliability-coefficients.Rd</code></div>
+    <h1>Covariance Matrix Tools
+These functions allow for the computation of covariance matrices with missing data
+and for the computation of Cronbach's alpha from them.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/Spiritspeak/AATtools/blob/master/R/aat_alpha.R'><code>R/aat_alpha.R</code></a></small>
+    <div class="hidden name"><code>covmat-tools.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Correct a correlation coefficient for being based on only a subset of the data</p>
+    <p>Covariance Matrix Tools
+These functions allow for the computation of covariance matrices with missing data
+and for the computation of Cronbach's alpha from them.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>SpearmanBrown</span>(
-  <span class='kw'>corr</span>,
-  ntests = <span class='fl'>2</span>,
-  fix.negative = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"nullify"</span>, <span class='st'>"bilateral"</span>, <span class='st'>"none"</span>)
-)
+    <pre class="usage"><span class='fu'>calpha</span>(<span class='kw'>covmat</span>)
 
-<span class='fu'>FlanaganRulon</span>(
-  <span class='kw'>x1</span>,
-  <span class='kw'>x2</span>,
-  x = <span class='kw'>NULL</span>,
-  fix.negative = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"nullify"</span>, <span class='st'>"bilateral"</span>, <span class='st'>"none"</span>)
-)
-
-<span class='fu'>RajuCoefficient</span>(<span class='kw'>x1</span>, <span class='kw'>x2</span>, <span class='kw'>prop</span>, fix.negative = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"nullify"</span>, <span class='st'>"bilateral"</span>, <span class='st'>"none"</span>))</pre>
+<span class='fu'>covEM</span>(<span class='kw'>dat_missing</span>, iters = <span class='fl'>1000</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>corr</th>
-      <td><p>To-be-corrected correlation coefficient</p></td>
+      <th>covmat</th>
+      <td><p>a covariance matrix</p></td>
     </tr>
     <tr>
-      <th>ntests</th>
-      <td><p>An integer indicating how many times larger the full test is, for which the corrected correlation coefficient is being computed.
-When <code>ntests=2</code>, the formula will compute what the correlation coefficient would be if the test were twice as long.</p></td>
+      <th>dat_missing</th>
+      <td><p>a matrix with missing values</p></td>
     </tr>
     <tr>
-      <th>fix.negative</th>
-      <td><p>Determines how to deal with a negative value. "nullify" sets it to zero,
-"bilateral" applies the correction as if it were a positive number, and then sets it to negative.
-"none" gives the raw value. It should be noted that negative values are not supposed to occur,
-and there is no commonly accepted way to deal with them when they do occur.</p></td>
-    </tr>
-    <tr>
-      <th>x1</th>
-      <td><p>scores from half 1</p></td>
-    </tr>
-    <tr>
-      <th>x2</th>
-      <td><p>scores from half 2</p></td>
-    </tr>
-    <tr>
-      <th>x</th>
-      <td><p>scores from the full sample (more accurate if provided)</p></td>
-    </tr>
-    <tr>
-      <th>prop</th>
-      <td><p>Proportion of the first half to the complete sample</p></td>
+      <th>iters</th>
+      <td><p>the number of iterations to perform to estimate missing values</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>Spearman-Brown-corrected correlation coefficient.</p>
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
     
 <ul>
-<li><p><code>SpearmanBrown</code>: Perform a Spearman-Brown correction on the provided correlation score.</p></li>
-<li><p><code>FlanaganRulon</code>: Compute the true reliability using the Flanagan-Rulon formula,
-which takes into account inequal variances between split halves</p></li>
-<li><p><code>RajuCoefficient</code>: Compute split-half reliability using the Raju formula,
-which takes into account unequal split-halves and variances.</p></li>
+<li><p><code>calpha</code>: Compute Cronbach's alpha from a covariance matrix</p></li>
+<li><p><code>covEM</code>: This function computes a covariance matrix from data with some values missing at random.
+The code was written by Eric from StackExchange. https://stats.stackexchange.com/questions/182718/ml-covariance-estimation-from-expectation-maximization-with-missing-data</p></li>
 </ul>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Beale, E. M. L., &amp; Little, R. J. A.. (1975). Missing Values in Multivariate Analysis. Journal of the Royal Statistical Society. Series B (methodological), 37(1), 129–145.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='fu'>SpearmanBrown</span>(<span class='fl'>.5</span>)
-</div><div class='output co'>#&gt; [1] 0.6666667</div><div class='input'><span class='fu'>FlanaganRulon</span>(<span class='kw'>a</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>50</span>),<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>50</span>)<span class='op'>+</span><span class='kw'>a</span><span class='op'>*</span><span class='fl'>.5</span>,fix.negative=<span class='st'>"bilateral"</span>)
-</div><div class='output co'>#&gt; [1] 0.6184404</div><div class='input'><span class='kw'>a</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>50</span>)
-<span class='kw'>b</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>50</span>)<span class='op'>+</span><span class='kw'>a</span><span class='op'>*</span><span class='fl'>.5</span>
-<span class='fu'>RajuCoefficient</span>(<span class='kw'>a</span>,<span class='kw'>b</span>,prop=<span class='fl'>.4</span>,fix.negative=<span class='st'>"bilateral"</span>)
-</div><div class='output co'>#&gt; [1] 0.4124526</div></pre>
+    <pre class="examples"><div class='input'><span class='co'># make data with missing values</span>
+<span class='kw'>missing_mtcars</span> <span class='op'>&lt;-</span> <span class='kw'>mtcars</span>
+<span class='co'>for</span>(<span class='kw'>i</span> <span class='co'>in</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>20</span>){
+  <span class='kw'>missing_mtcars</span>[<span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>mtcars</span>),<span class='fl'>1</span>),<span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span>(<span class='kw'>mtcars</span>),<span class='fl'>1</span>)]<span class='op'>&lt;-</span><span class='fl'>NA</span>
+}
+<span class='kw'>covmat</span><span class='op'>&lt;-</span><span class='fu'>covEM</span>(<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix</a></span>(<span class='kw'>missing_mtcars</span>))
+<span class='fu'>calpha</span>(<span class='kw'>covmat</span>)
+</div><div class='output co'>#&gt; [1] 0.411484</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

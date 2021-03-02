@@ -54,12 +54,7 @@ each participant.
 aat_alpha_jackknife additionally leaves out one stimulus or participant
 at a time and computes Cronbach's alpha for each such exclusion. This gives a
 glimpse of which stimuli may have especially confused participants or otherwise
-induced responses that are unlike those to other stimuli.
-Please note that this method does not tolerate missing values - for every
-movement direction, within every stimulus, within every participant, there must be
-at least one trial - otherwise either the entire stimulus or participant must be
-excluded. q_reliability or aat_splithalf
-are recommended instead." />
+induced responses that are unlike those to other stimuli." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -142,11 +137,6 @@ each participant.</p>
 at a time and computes Cronbach's alpha for each such exclusion. This gives a
 glimpse of which stimuli may have especially confused participants or otherwise
 induced responses that are unlike those to other stimuli.</p>
-<p>Please note that this method does not tolerate missing values - for every
-movement direction, within every stimulus, within every participant, there must be
-at least one trial - otherwise either the entire stimulus or participant must be
-excluded. <code><a href='q_reliability.html'>q_reliability</a></code> or <code><a href='aat_splithalf.html'>aat_splithalf</a></code>
-are recommended instead.</p>
     </div>
 
     <pre class="usage"><span class='fu'>aat_alpha</span>(
@@ -156,7 +146,8 @@ are recommended instead.</p>
   <span class='kw'>pullvar</span>,
   <span class='kw'>rtvar</span>,
   algorithm = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"aat_singlemeandiff"</span>, <span class='st'>"aat_singlemediandiff"</span>),
-  delete.missing = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"subjects"</span>, <span class='st'>"stimuli"</span>, <span class='st'>"both"</span>, <span class='st'>"none"</span>)
+  delete.missing = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"estimate"</span>, <span class='st'>"subjects"</span>, <span class='st'>"stimuli"</span>, <span class='st'>"both"</span>, <span class='st'>"none"</span>),
+  iters = <span class='fl'>100</span>
 )
 
 <span class='fu'>aat_alpha_jackknife</span>(
@@ -166,7 +157,7 @@ are recommended instead.</p>
   <span class='kw'>pullvar</span>,
   <span class='kw'>rtvar</span>,
   algorithm = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"aat_singlemeandiff"</span>, <span class='st'>"aat_singlemediandiff"</span>),
-  delete.missing = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"subjects"</span>, <span class='st'>"stimuli"</span>, <span class='st'>"both"</span>, <span class='st'>"none"</span>)
+  delete.missing = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"estimate"</span>, <span class='st'>"subjects"</span>, <span class='st'>"stimuli"</span>, <span class='st'>"both"</span>, <span class='st'>"none"</span>)
 )
 
 <span class='co'># S3 method for aat_alpha</span>
@@ -211,10 +202,15 @@ per-stimulus approach bias scores</p></td>
     </tr>
     <tr>
       <th>delete.missing</th>
-      <td><p>character denoting the deletion strategy when missing
+      <td><p>character denoting the strategy to be taken when missing
 values are encountered, which may occur when one participant saw a stimulus which
 another participant did not see, or when all approach trials for a certain stimulus
-were excluded for one participant. Defaults to excluding the entire participant's dataset.</p></td>
+were excluded for one participant. Defaults to estimating the covariance matrix.</p></td>
+    </tr>
+    <tr>
+      <th>iters</th>
+      <td><p>Numeric. When there are missing values, the covariance matrix is estimated
+instead of computed; how many iterations should be used?</p></td>
     </tr>
     <tr>
       <th>x</th>
@@ -236,11 +232,19 @@ individually excluded participants, stimuli, or both?</p></td>
     <p><code>aat_alpha</code> returns an <code>aat_alpha</code> S3 object,
 <code>aat_alpha_jackknife</code> returns an <code>aat_alpha_jackknife</code> S3 object,
 both with print and plot methods.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>When there are missing values, the covariance matrix is estimated using
+100 iterations of an expectation-maximization algorithm developed by Beale and Little (1975)
+and implemented in R by StackExchange user Eric at URL
+https://stats.stackexchange.com/questions/182718/ml-covariance-estimation-from-expectation-maximization-with-missing-data</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Cousijn, J., Goudriaan, A. E., &amp; Wiers, R. W. (2011).
 Reaching out towards cannabis: Approach‐bias in heavy cannabis users predicts
 changes in cannabis use. Addiction, 106(9), 1667-1674.</p>
+<p>Beale, E. M. L., &amp; Little, R. J. A.. (1975). Missing Values in Multivariate Analysis.
+Journal of the Royal Statistical Society. Series B (methodological), 37(1), 129–145.</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Sercan Kahveci</p>

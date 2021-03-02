@@ -199,8 +199,9 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,
       rjcorr<-RajuBilateral(abds$abhalf0,abds$abhalf1,mean(iterds$key))
 
       #produce output
-      c(list(corr=currcorr,frcorr=frcorr,rjcorr=rjcorr,abds=abds),
-        ifelse(include.raw,list(rawdata=iterds),list()))
+      out<-list(corr=currcorr,frcorr=frcorr,rjcorr=rjcorr,abds=abds)
+      if(include.raw){out$rawdata<-iterds}
+      out
     }
 
   #extract coefs from output

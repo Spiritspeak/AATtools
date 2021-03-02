@@ -7,7 +7,7 @@
 #' @importFrom parallel detectCores makeCluster stopCluster
 #' @importFrom foreach getDoParRegistered registerDoSEQ
 #' @importFrom stats var median sd lm vcov terms as.formula coef cor cov setNames quantile pt
-#' rnorm rgamma
+#' rnorm rgamma pnorm qnorm
 #' @importFrom graphics abline points segments text plot par
 .onLoad<-function(libname, pkgname){
   #avoid CRAN errors

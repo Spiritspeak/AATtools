@@ -16,7 +16,8 @@ aat_alpha(
   pullvar,
   rtvar,
   algorithm = c("aat_singlemeandiff", "aat_singlemediandiff"),
-  delete.missing = c("subjects", "stimuli", "both", "none")
+  delete.missing = c("estimate", "subjects", "stimuli", "both", "none"),
+  iters = 100
 )
 
 aat_alpha_jackknife(
@@ -26,7 +27,7 @@ aat_alpha_jackknife(
   pullvar,
   rtvar,
   algorithm = c("aat_singlemeandiff", "aat_singlemediandiff"),
-  delete.missing = c("subjects", "stimuli", "both", "none")
+  delete.missing = c("estimate", "subjects", "stimuli", "both", "none")
 )
 
 \method{print}{aat_alpha}(x, ...)
@@ -51,10 +52,13 @@ aat_alpha_jackknife(
 \item{algorithm}{character name of the algorithm used to compute
 per-stimulus approach bias scores}
 
-\item{delete.missing}{character denoting the deletion strategy when missing
+\item{delete.missing}{character denoting the strategy to be taken when missing
 values are encountered, which may occur when one participant saw a stimulus which
 another participant did not see, or when all approach trials for a certain stimulus
-were excluded for one participant. Defaults to excluding the entire participant's dataset.}
+were excluded for one participant. Defaults to estimating the covariance matrix.}
+
+\item{iters}{Numeric. When there are missing values, the covariance matrix is estimated
+instead of computed; how many iterations should be used?}
 
 \item{x}{an \code{aat_alpha} or \code{aat_alpha_jackknife} object}
 
@@ -78,12 +82,12 @@ each participant.
 at a time and computes Cronbach's alpha for each such exclusion. This gives a
 glimpse of which stimuli may have especially confused participants or otherwise
 induced responses that are unlike those to other stimuli.
-
-Please note that this method does not tolerate missing values - for every
-movement direction, within every stimulus, within every participant, there must be
-at least one trial - otherwise either the entire stimulus or participant must be
-excluded. \code{\link{q_reliability}} or \code{\link{aat_splithalf}}
-are recommended instead.
+}
+\details{
+When there are missing values, the covariance matrix is estimated using
+100 iterations of an expectation-maximization algorithm developed by Beale and Little (1975)
+and implemented in R by StackExchange user Eric at URL
+https://stats.stackexchange.com/questions/182718/ml-covariance-estimation-from-expectation-maximization-with-missing-data
 }
 \examples{
 data(erotica)
@@ -103,6 +107,9 @@ plot(myalpha2)
 Cousijn, J., Goudriaan, A. E., & Wiers, R. W. (2011).
 Reaching out towards cannabis: Approach‐bias in heavy cannabis users predicts
 changes in cannabis use. Addiction, 106(9), 1667-1674.
+
+Beale, E. M. L., & Little, R. J. A.. (1975). Missing Values in Multivariate Analysis.
+Journal of the Royal Statistical Society. Series B (methodological), 37(1), 129–145.
 }
 \author{
 Sercan Kahveci
