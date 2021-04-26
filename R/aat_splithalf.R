@@ -210,36 +210,38 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,
   sbcors<-SpearmanBrown(cors,fix.negative="bilateral")
   frcorrs<-sapply(results,FUN=function(x){x$frcorr})
 
+  #get  sample sizes (for averaging and significance testing)
+  counts<-sapply(results,function(x){ sum(!is.na(x$abds$abhalf0) & !is.na(x$abds$abhalf1)) })
+  avg_n<-mean(counts)
+
   #sort the cors
   ordering<-order(rjcors)
   rjcors<-rjcors[ordering]
   cors<-cors[ordering]
   sbcors<-sbcors[ordering]
   frcorrs<-frcorrs[ordering]
-
-  #get average sample size (for significance testing)
-  avg_n<-mean(sapply(results,function(x){ sum(!is.na(x$abds$abhalf0) & !is.na(x$abds$abhalf1)) }))
+  counts<-counts[ordering]
 
   #assemble output
-  output<-list(uncorrected=list(r=mean(cors),
+  output<-list(uncorrected=list(r=cormean(cors,counts),
                                 lowerci=quantile(cors,probs=.025),
                                 upperci=quantile(cors,probs=.975),
-                                pval=r2p(mean(cors),avg_n),
+                                pval=r2p(cormean(cors,counts),avg_n),
                                 itercors=cors),
-               spearmanbrown=list(r=mean(sbcors),
+               spearmanbrown=list(r=cormean(sbcors,counts),
                                   lowerci=quantile(sbcors,probs=.025),
                                   upperci=quantile(sbcors,probs=.975),
-                                  pval=r2p(mean(sbcors),avg_n),
+                                  pval=r2p(cormean(sbcors,counts),avg_n),
                                   itercors=sbcors),
-               flanaganrulon=list(r=mean(frcorrs),
+               flanaganrulon=list(r=cormean(frcorrs,counts),
                                   lowerci=quantile(x=frcorrs,probs=.025),
                                   upperci=quantile(x=frcorrs,probs=.975),
-                                  pval=r2p(mean(frcorrs),avg_n),
+                                  pval=r2p(cormean(frcorrs,counts),avg_n),
                                   itercors=frcorrs),
-               raju=list(r=mean(rjcors),
+               raju=list(r=cormean(rjcors,counts),
                          lowerci=quantile(x=rjcors,probs=.025),
                          upperci=quantile(x=rjcors,probs=.975),
-                         pval=r2p(mean(rjcors),avg_n),
+                         pval=r2p(cormean(rjcors,counts),avg_n),
                          itercors=rjcors),
                avg_n=avg_n,
                ordering=ordering,
@@ -304,7 +306,6 @@ print.aat_splithalf<-function(x,coef=c("Raju","FlanaganRulon","SpearmanBrown"),.
       sep="")
 }
 
-
 #' @title Plot split-half scatterplots
 #'
 #' @param x an \code{aat_splithalf} object
@@ -330,8 +331,7 @@ plot.aat_splithalf<-function(x,type=c("median","minimum","maximum","random"),...
   }
   abds<-x$iterdata[[idx]]
   plot(abds$abhalf0,abds$abhalf1,pch=20,main=
-         paste0(title,
-                "\n(Uncorrected r = ", round(x$uncorrected$itercors[idx],digits=2),")"),
+         paste0(title,"\n(Uncorrected r = ", round(x$uncorrected$itercors[idx],digits=2),")"),
        xlab="Half 1 computed bias",ylab="Half 2 computed bias")
   text(abds$abhalf0,abds$abhalf1,abds[,1],cex= 0.7, pos=3, offset=0.3)
 }

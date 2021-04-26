@@ -78,7 +78,7 @@ aat_alpha<-function(ds,subjvar,stimvar,pullvar,rtvar,
 
   deletions<-list(subjects=numeric(0),stimuli=numeric(0))
   if(delete.missing=="estimate"){
-    covmat<-covEM(biasmat,iters)
+    covmat<-covEM(biasmat,iters)$sigma
   }else{
     if(delete.missing %in% c("subjects","both")){
       deletions$subjects<-biasmat %>% apply(1,function(x){any(is.na(x))}) %>% which()
@@ -252,11 +252,12 @@ calpha<-function(covmat){
 #' for(i in 1:20){
 #'   missing_mtcars[sample(1:nrow(mtcars),1),sample(1:ncol(mtcars),1)]<-NA
 #' }
-#' covmat<-covEM(as.matrix(missing_mtcars))
+#' covmat<-covEM(as.matrix(missing_mtcars))$sigma
 #' calpha(covmat)
+
 covEM<-function(dat_missing,iters=1000){
   if(!anyNA(dat_missing)){
-    return(cov(dat_missing))
+    return(list(sigma=cov(dat_missing),data=dat_missing))
   }
 
   n <- nrow(dat_missing)
@@ -294,5 +295,6 @@ covEM<-function(dat_missing,iters=1000){
     # correct for bias in covariance matrix
     sigma <- biased_sigma + bias/n
   }
-  return(sigma)
+  return(list(sigma=sigma,data=dat_impute))
 }
+

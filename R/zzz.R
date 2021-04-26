@@ -8,7 +8,7 @@
 #' @importFrom foreach getDoParRegistered registerDoSEQ
 #' @importFrom stats var median sd lm vcov terms as.formula coef cor cov setNames quantile pt
 #' rnorm rgamma pnorm qnorm
-#' @importFrom graphics abline points segments text plot par
+#' @importFrom graphics abline points segments text plot par axis
 .onLoad<-function(libname, pkgname){
   #avoid CRAN errors
   utils::globalVariables(c("abhalf0","abhalf1","ab","key","."),"AATtools")

@@ -264,9 +264,9 @@ reliability and stimulus-specific effects.</p>
 <span class='kw'>mod</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='kw'>rt</span><span class='op'>~</span><span class='kw'>is_pull</span><span class='op'>*</span><span class='kw'>is_target</span>,data=<span class='kw'>ts</span>)
 <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='kw'>mod</span>) <span class='co'>#these should be somewhat close to the provided coefficients</span>
 </div><div class='output co'>#&gt;       (Intercept)           is_pull         is_target is_pull:is_target 
-#&gt;        693.866321         55.445962          4.019462         90.160960 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='kw'>ts</span>,<span class='st'>"population_reliabilty"</span>))
+#&gt;         684.44214          55.86831          13.49281          85.05667 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='kw'>ts</span>,<span class='st'>"population_reliabilty"</span>))
 </div><div class='output co'>#&gt; NULL</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='fu'><a href='q_reliability.html'>q_reliability</a></span>(<span class='kw'>ts</span>,<span class='st'>"subj"</span>,<span class='kw'>rt</span><span class='op'>~</span><span class='kw'>is_pull</span><span class='op'>*</span><span class='kw'>is_target</span>,<span class='st'>"is_pull:is_target"</span>))
-</div><div class='output co'>#&gt; q = 0.7389898</div><div class='input'><span class='co'>#these two should be not too far apart,</span>
+</div><div class='output co'>#&gt; q = 0.807647</div><div class='input'><span class='co'>#these two should be not too far apart,</span>
 <span class='co'># and should converge when the process is repeated a bunch</span>
 
 
