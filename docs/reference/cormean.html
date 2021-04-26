@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Correlation tools — correlation-tools • AATtools</title>
+<title>Compute a minimally average correlation — cormean • AATtools</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,11 @@
 
 
 
-<meta property="og:title" content="Correlation tools — correlation-tools" />
-<meta property="og:description" content="Helper functions to compute important statistics from correlation coefficients." />
+<meta property="og:title" content="Compute a minimally average correlation — cormean" />
+<meta property="og:description" content="This function computes a minimally biased average of correlation values.
+This is needed because simple averaging of correlations is negatively biased,
+and the often used z-transformation method of averaging correlations is positively biased.
+The algorithm was developed by Olkin &amp;amp; Pratt (1958) and implemented by Jan Seifert." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -116,75 +119,50 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Correlation tools</h1>
+    <h1>Compute a minimally average correlation</h1>
     <small class="dont-index">Source: <a href='https://github.com/Spiritspeak/AATtools/blob/master/R/cortools.R'><code>R/cortools.R</code></a></small>
-    <div class="hidden name"><code>correlation-tools.Rd</code></div>
+    <div class="hidden name"><code>cormean.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Helper functions to compute important statistics from correlation coefficients.</p>
+    <p>This function computes a minimally biased average of correlation values.
+This is needed because simple averaging of correlations is negatively biased,
+and the often used z-transformation method of averaging correlations is positively biased.
+The algorithm was developed by Olkin &amp; Pratt (1958) and implemented by Jan Seifert.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>r2z</span>(<span class='kw'>r</span>)
-
-<span class='fu'>z2r</span>(<span class='kw'>z</span>)
-
-<span class='fu'>r2t</span>(<span class='kw'>r</span>, <span class='kw'>n</span>)
-
-<span class='fu'>r2p</span>(<span class='kw'>r</span>, <span class='kw'>n</span>)
-
-<span class='fu'>rconfint</span>(<span class='kw'>r</span>, <span class='kw'>n</span>, alpha = <span class='fl'>0.05</span>)
-
-<span class='fu'>compcorr</span>(<span class='kw'>r1</span>, <span class='kw'>r2</span>, <span class='kw'>n1</span>, <span class='kw'>n2</span>)</pre>
+    <pre class="usage"><span class='fu'>cormean</span>(<span class='kw'>r</span>, <span class='kw'>n</span>, na.rm = <span class='kw'>F</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>r, r1, r2</th>
-      <td><p>a correlation value</p></td>
+      <th>r</th>
+      <td><p>a vector containing correlation values</p></td>
     </tr>
     <tr>
-      <th>z</th>
-      <td><p>a Z-score</p></td>
+      <th>n</th>
+      <td><p>a single value or vector containing sample sizes</p></td>
     </tr>
     <tr>
-      <th>n, n1, n2</th>
-      <td><p>sample sizes</p></td>
-    </tr>
-    <tr>
-      <th>alpha</th>
-      <td><p>the significance level to use</p></td>
+      <th>na.rm</th>
+      <td><p>Logical. Should missing values be removed?</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    
-<ul>
-<li><p><code>r2z</code>: converts correlation coefficients to z-scores</p></li>
-<li><p><code>z2r</code>: converts z-scores to correlation coefficients</p></li>
-<li><p><code>r2t</code>: Converts correlation coefficients to t-scores</p></li>
-<li><p><code>r2p</code>: Computes the p-value for a given correlation</p></li>
-<li><p><code>rconfint</code>: Computes confidence intervals for a given correlation coefficient</p></li>
-<li><p><code>compcorr</code>: computes the significance of the difference between two correlation coefficients</p></li>
-</ul>
+    <p>An average correlation.</p>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Olkin, I., &amp; Pratt, J. (1958). Unbiased estimation of certain correlation coefficients.
+The Annals of Mathematical Statistics, 29. https://doi.org/10.1214/aoms/1177706717</p>
+<p>https://github.com/SigurdJanson/AveragingCorrelations/blob/master/CorrAggBias.R</p>
+<p>https://medium.com/@jan.seifert/averaging-correlations-part-ii-9143b546860b</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>z</span> <span class='op'>&lt;-</span> <span class='fu'>r2z</span>(<span class='fl'>.5</span>)
-<span class='kw'>r</span> <span class='op'>&lt;-</span> <span class='fu'>z2r</span>(<span class='kw'>z</span>)
-<span class='kw'>t</span><span class='op'>&lt;-</span><span class='fu'>r2t</span>(<span class='kw'>r</span>,<span class='fl'>30</span>)
-<span class='fu'>r2p</span>(<span class='kw'>r</span>,<span class='fl'>30</span>)
-</div><div class='output co'>#&gt; [1] 0.001466911</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='fu'>rconfint</span>(<span class='kw'>r</span>,<span class='fl'>30</span>))
-</div><div class='output co'>#&gt; [1] 0.1704314 0.7289586</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='fu'>compcorr</span>(<span class='fl'>.5</span>,<span class='fl'>.7</span>,<span class='fl'>20</span>,<span class='fl'>20</span>))
-</div><div class='output co'>#&gt; $zscore
-#&gt; [1] 0.927105
-#&gt; 
-#&gt; $pvalue
-#&gt; [1] 0.353872
-#&gt; 
-#&gt; attr(,"class")
-#&gt; [1] "compcorr"</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'>cormean</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>.3</span>,<span class='fl'>.5</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>30</span>,<span class='fl'>30</span>,<span class='fl'>60</span>))
+</div><div class='output co'>#&gt; [1] 0.3294746</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

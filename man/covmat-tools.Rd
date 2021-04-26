@@ -38,7 +38,7 @@ missing_mtcars <- mtcars
 for(i in 1:20){
   missing_mtcars[sample(1:nrow(mtcars),1),sample(1:ncol(mtcars),1)]<-NA
 }
-covmat<-covEM(as.matrix(missing_mtcars))
+covmat<-covEM(as.matrix(missing_mtcars))$sigma
 calpha(covmat)
 }
 \references{

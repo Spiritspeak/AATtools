@@ -174,9 +174,9 @@ The code was written by Eric from StackExchange. https://stats.stackexchange.com
 <span class='co'>for</span>(<span class='kw'>i</span> <span class='co'>in</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>20</span>){
   <span class='kw'>missing_mtcars</span>[<span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>mtcars</span>),<span class='fl'>1</span>),<span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span>(<span class='kw'>mtcars</span>),<span class='fl'>1</span>)]<span class='op'>&lt;-</span><span class='fl'>NA</span>
 }
-<span class='kw'>covmat</span><span class='op'>&lt;-</span><span class='fu'>covEM</span>(<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix</a></span>(<span class='kw'>missing_mtcars</span>))
+<span class='kw'>covmat</span><span class='op'>&lt;-</span><span class='fu'>covEM</span>(<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix</a></span>(<span class='kw'>missing_mtcars</span>))<span class='op'>$</span><span class='kw'>sigma</span>
 <span class='fu'>calpha</span>(<span class='kw'>covmat</span>)
-</div><div class='output co'>#&gt; [1] 0.411484</div></pre>
+</div><div class='output co'>#&gt; [1] 0.4086579</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
