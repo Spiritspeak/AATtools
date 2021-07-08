@@ -112,15 +112,15 @@ aat_compute<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,
   ds<-do.call(aat_preparedata,c(list(ds=ds,subjvar=subjvar,pullvar=pullvar,targetvar=targetvar,rtvar=rtvar),args)) %>% mutate(key=1)
 
   #Handle outlying trials
-  iterds<-do.call(trialdropfunc,list(ds=ds,subjvar=subjvar,rtvar=rtvar))
+  ds<-do.call(trialdropfunc,list(ds=ds,subjvar=subjvar,rtvar=rtvar))
   #Handle error trials
-  iterds<-do.call(errortrialfunc,list(ds=ds,subjvar=subjvar,rtvar=rtvar,
-                                      blockvar=args$blockvar,errorvar=args$errorvar,
-                                      errorbonus=args$errorbonus))
+  ds<-do.call(errortrialfunc,list(ds=ds,subjvar=subjvar,rtvar=rtvar,
+                                  blockvar=args$blockvar,errorvar=args$errorvar,
+                                  errorbonus=args$errorbonus))
 
   abds<-do.call(algorithm,c(list(ds=ds,subjvar=subjvar,pullvar=pullvar,
                                  targetvar=targetvar,rtvar=rtvar),args))
 
-  abds <- merge(x=abds,by=subjvar,all=TRUE,y=iterds %>% group_by(!!sym(subjvar)) %>% summarise(trials=n()))
+  abds <- merge(x=abds,by=subjvar,all=TRUE,y=ds %>% group_by(!!sym(subjvar)) %>% summarise(trials=n()))
   return(abds)
 }
