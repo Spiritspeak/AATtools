@@ -42,7 +42,7 @@ Helper functions to compute important statistics from correlation coefficients.
 
 \item \code{r2t}: Converts correlation coefficients to t-scores
 
-\item \code{r2p}: Computes the p-value for a given correlation
+\item \code{r2p}: Computes the two-sided p-value for a given correlation
 
 \item \code{rconfint}: Computes confidence intervals for a given correlation coefficient
 
@@ -56,4 +56,7 @@ t<-r2t(r,30)
 r2p(r,30)
 print(rconfint(r,30))
 print(compcorr(.5,.7,20,20))
+}
+\seealso{
+\link{cormean}, \link{multiple.cor}, \link{partial.cor}
 }

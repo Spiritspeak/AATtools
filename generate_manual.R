@@ -11,3 +11,5 @@ devtools::check(args="--as-cran")
 #devtools::check_win_devel()
 #build package
 devtools::build()
+
+

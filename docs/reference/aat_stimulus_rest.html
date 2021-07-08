@@ -228,72 +228,72 @@ as well as z-scores (zpercentile) and p-values for this percentile (pval).</p>
 <span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='kw'>stimrest</span>)
 </div><div class='img'><img src='aat_stimulus_rest-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>stimrest</span>)
 </div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 64 x 5</span><span>
-#&gt;      img  mcor restpercentile zpercentile  pval
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span>    15 0.575          0.109    -</span><span style='color: #BB0000;'>1.23</span><span>    0.218
-#&gt; </span><span style='color: #555555;'> 2</span><span>    18 0.574          0.109    -</span><span style='color: #BB0000;'>1.23</span><span>    0.218
-#&gt; </span><span style='color: #555555;'> 3</span><span>    12 0.556          0.151    -</span><span style='color: #BB0000;'>1.03</span><span>    0.301
-#&gt; </span><span style='color: #555555;'> 4</span><span>     9 0.555          0.154    -</span><span style='color: #BB0000;'>1.02</span><span>    0.308
-#&gt; </span><span style='color: #555555;'> 5</span><span>    13 0.508          0.234    -</span><span style='color: #BB0000;'>0.725</span><span>   0.468
-#&gt; </span><span style='color: #555555;'> 6</span><span>    18 0.505          0.247    -</span><span style='color: #BB0000;'>0.685</span><span>   0.493
-#&gt; </span><span style='color: #555555;'> 7</span><span>    12 0.481          0.297    -</span><span style='color: #BB0000;'>0.534</span><span>   0.593
-#&gt; </span><span style='color: #555555;'> 8</span><span>     8 0.486          0.299    -</span><span style='color: #BB0000;'>0.529</span><span>   0.597
-#&gt; </span><span style='color: #555555;'> 9</span><span>    16 0.473          0.315    -</span><span style='color: #BB0000;'>0.481</span><span>   0.630
-#&gt; </span><span style='color: #555555;'>10</span><span>    30 0.472          0.317    -</span><span style='color: #BB0000;'>0.477</span><span>   0.634
-#&gt; </span><span style='color: #555555;'>11</span><span>    21 0.472          0.317    -</span><span style='color: #BB0000;'>0.475</span><span>   0.634
-#&gt; </span><span style='color: #555555;'>12</span><span>    24 0.471          0.328    -</span><span style='color: #BB0000;'>0.444</span><span>   0.657
-#&gt; </span><span style='color: #555555;'>13</span><span>    27 0.467          0.330    -</span><span style='color: #BB0000;'>0.439</span><span>   0.661
-#&gt; </span><span style='color: #555555;'>14</span><span>    23 0.465          0.337    -</span><span style='color: #BB0000;'>0.420</span><span>   0.675
-#&gt; </span><span style='color: #555555;'>15</span><span>     8 0.464          0.338    -</span><span style='color: #BB0000;'>0.417</span><span>   0.677
-#&gt; </span><span style='color: #555555;'>16</span><span>    10 0.460          0.343    -</span><span style='color: #BB0000;'>0.404</span><span>   0.686
-#&gt; </span><span style='color: #555555;'>17</span><span>     3 0.456          0.352    -</span><span style='color: #BB0000;'>0.380</span><span>   0.704
-#&gt; </span><span style='color: #555555;'>18</span><span>    26 0.455          0.359    -</span><span style='color: #BB0000;'>0.361</span><span>   0.718
-#&gt; </span><span style='color: #555555;'>19</span><span>    20 0.448          0.372    -</span><span style='color: #BB0000;'>0.326</span><span>   0.744
-#&gt; </span><span style='color: #555555;'>20</span><span>     5 0.448          0.378    -</span><span style='color: #BB0000;'>0.310</span><span>   0.756
-#&gt; </span><span style='color: #555555;'>21</span><span>     3 0.445          0.386    -</span><span style='color: #BB0000;'>0.290</span><span>   0.772
-#&gt; </span><span style='color: #555555;'>22</span><span>    19 0.443          0.389    -</span><span style='color: #BB0000;'>0.282</span><span>   0.778
-#&gt; </span><span style='color: #555555;'>23</span><span>    31 0.445          0.397    -</span><span style='color: #BB0000;'>0.261</span><span>   0.794
-#&gt; </span><span style='color: #555555;'>24</span><span>    17 0.438          0.402    -</span><span style='color: #BB0000;'>0.249</span><span>   0.803
-#&gt; </span><span style='color: #555555;'>25</span><span>    14 0.437          0.407    -</span><span style='color: #BB0000;'>0.234</span><span>   0.815
-#&gt; </span><span style='color: #555555;'>26</span><span>    26 0.436          0.409    -</span><span style='color: #BB0000;'>0.230</span><span>   0.818
-#&gt; </span><span style='color: #555555;'>27</span><span>    10 0.434          0.414    -</span><span style='color: #BB0000;'>0.217</span><span>   0.828
-#&gt; </span><span style='color: #555555;'>28</span><span>    24 0.427          0.423    -</span><span style='color: #BB0000;'>0.193</span><span>   0.847
-#&gt; </span><span style='color: #555555;'>29</span><span>    29 0.428          0.424    -</span><span style='color: #BB0000;'>0.191</span><span>   0.849
-#&gt; </span><span style='color: #555555;'>30</span><span>    11 0.426          0.429    -</span><span style='color: #BB0000;'>0.178</span><span>   0.859
-#&gt; </span><span style='color: #555555;'>31</span><span>    22 0.418          0.449    -</span><span style='color: #BB0000;'>0.128</span><span>   0.898
-#&gt; </span><span style='color: #555555;'>32</span><span>    25 0.419          0.451    -</span><span style='color: #BB0000;'>0.124</span><span>   0.901
-#&gt; </span><span style='color: #555555;'>33</span><span>     6 0.399          0.497    -</span><span style='color: #BB0000;'>0.008</span><span style='color: #BB0000;text-decoration: underline;'>21</span><span> 0.993
-#&gt; </span><span style='color: #555555;'>34</span><span>    28 0.393          0.506     0.015</span><span style='text-decoration: underline;'>1</span><span>  0.988
-#&gt; </span><span style='color: #555555;'>35</span><span>    19 0.394          0.509     0.022</span><span style='text-decoration: underline;'>9</span><span>  0.982
-#&gt; </span><span style='color: #555555;'>36</span><span>     4 0.385          0.522     0.056</span><span style='text-decoration: underline;'>1</span><span>  0.955
-#&gt; </span><span style='color: #555555;'>37</span><span>    20 0.382          0.524     0.061</span><span style='text-decoration: underline;'>3</span><span>  0.951
-#&gt; </span><span style='color: #555555;'>38</span><span>     2 0.379          0.536     0.090</span><span style='text-decoration: underline;'>2</span><span>  0.928
-#&gt; </span><span style='color: #555555;'>39</span><span>    16 0.372          0.557     0.143   0.886
-#&gt; </span><span style='color: #555555;'>40</span><span>    25 0.369          0.563     0.159   0.874
-#&gt; </span><span style='color: #555555;'>41</span><span>    22 0.362          0.580     0.203   0.839
-#&gt; </span><span style='color: #555555;'>42</span><span>    30 0.354          0.609     0.277   0.782
-#&gt; </span><span style='color: #555555;'>43</span><span>     1 0.341          0.625     0.318   0.750
-#&gt; </span><span style='color: #555555;'>44</span><span>     5 0.334          0.627     0.324   0.746
-#&gt; </span><span style='color: #555555;'>45</span><span>    11 0.339          0.629     0.329   0.742
-#&gt; </span><span style='color: #555555;'>46</span><span>     1 0.336          0.634     0.341   0.733
-#&gt; </span><span style='color: #555555;'>47</span><span>     6 0.336          0.638     0.352   0.725
-#&gt; </span><span style='color: #555555;'>48</span><span>    23 0.333          0.645     0.372   0.710
-#&gt; </span><span style='color: #555555;'>49</span><span>    31 0.319          0.662     0.419   0.676
-#&gt; </span><span style='color: #555555;'>50</span><span>     7 0.323          0.665     0.425   0.671
-#&gt; </span><span style='color: #555555;'>51</span><span>    13 0.316          0.670     0.440   0.660
-#&gt; </span><span style='color: #555555;'>52</span><span>     2 0.308          0.682     0.472   0.637
-#&gt; </span><span style='color: #555555;'>53</span><span>     9 0.297          0.711     0.557   0.577
-#&gt; </span><span style='color: #555555;'>54</span><span>     4 0.299          0.722     0.588   0.557
-#&gt; </span><span style='color: #555555;'>55</span><span>     7 0.283          0.732     0.619   0.536
-#&gt; </span><span style='color: #555555;'>56</span><span>    15 0.285          0.735     0.629   0.529
-#&gt; </span><span style='color: #555555;'>57</span><span>    32 0.290          0.736     0.631   0.528
-#&gt; </span><span style='color: #555555;'>58</span><span>    14 0.266          0.762     0.712   0.477
-#&gt; </span><span style='color: #555555;'>59</span><span>    17 0.253          0.778     0.765   0.444
-#&gt; </span><span style='color: #555555;'>60</span><span>    21 0.233          0.792     0.815   0.415
-#&gt; </span><span style='color: #555555;'>61</span><span>    29 0.231          0.830     0.953   0.340
-#&gt; </span><span style='color: #555555;'>62</span><span>    32 0.189          0.844     1.01    0.313
-#&gt; </span><span style='color: #555555;'>63</span><span>    28 0.186          0.875     1.15    0.250
-#&gt; </span><span style='color: #555555;'>64</span><span>    27 0.124          0.936     1.52    0.128</div></span></pre>
+#&gt;      img   mcor restpercentile zpercentile   pval
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span>     4 0.522           0.173     -</span><span style='color: #BB0000;'>0.942</span><span>  0.346 
+#&gt; </span><span style='color: #555555;'> 2</span><span>     6 0.513           0.185     -</span><span style='color: #BB0000;'>0.897</span><span>  0.370 
+#&gt; </span><span style='color: #555555;'> 3</span><span>     4 0.500           0.211     -</span><span style='color: #BB0000;'>0.804</span><span>  0.421 
+#&gt; </span><span style='color: #555555;'> 4</span><span>    27 0.490           0.212     -</span><span style='color: #BB0000;'>0.800</span><span>  0.423 
+#&gt; </span><span style='color: #555555;'> 5</span><span>    30 0.489           0.221     -</span><span style='color: #BB0000;'>0.770</span><span>  0.442 
+#&gt; </span><span style='color: #555555;'> 6</span><span>    13 0.493           0.221     -</span><span style='color: #BB0000;'>0.770</span><span>  0.442 
+#&gt; </span><span style='color: #555555;'> 7</span><span>    18 0.491           0.224     -</span><span style='color: #BB0000;'>0.757</span><span>  0.449 
+#&gt; </span><span style='color: #555555;'> 8</span><span>    29 0.472           0.259     -</span><span style='color: #BB0000;'>0.646</span><span>  0.518 
+#&gt; </span><span style='color: #555555;'> 9</span><span>    20 0.472           0.265     -</span><span style='color: #BB0000;'>0.629</span><span>  0.529 
+#&gt; </span><span style='color: #555555;'>10</span><span>     7 0.457           0.293     -</span><span style='color: #BB0000;'>0.546</span><span>  0.585 
+#&gt; </span><span style='color: #555555;'>11</span><span>    30 0.454           0.297     -</span><span style='color: #BB0000;'>0.532</span><span>  0.595 
+#&gt; </span><span style='color: #555555;'>12</span><span>    18 0.448           0.309     -</span><span style='color: #BB0000;'>0.498</span><span>  0.618 
+#&gt; </span><span style='color: #555555;'>13</span><span>    12 0.445           0.316     -</span><span style='color: #BB0000;'>0.478</span><span>  0.633 
+#&gt; </span><span style='color: #555555;'>14</span><span>    26 0.452           0.318     -</span><span style='color: #BB0000;'>0.475</span><span>  0.635 
+#&gt; </span><span style='color: #555555;'>15</span><span>     8 0.442           0.322     -</span><span style='color: #BB0000;'>0.462</span><span>  0.644 
+#&gt; </span><span style='color: #555555;'>16</span><span>     5 0.437           0.330     -</span><span style='color: #BB0000;'>0.439</span><span>  0.661 
+#&gt; </span><span style='color: #555555;'>17</span><span>    10 0.429           0.338     -</span><span style='color: #BB0000;'>0.418</span><span>  0.676 
+#&gt; </span><span style='color: #555555;'>18</span><span>    17 0.432           0.342     -</span><span style='color: #BB0000;'>0.407</span><span>  0.684 
+#&gt; </span><span style='color: #555555;'>19</span><span>    16 0.428           0.352     -</span><span style='color: #BB0000;'>0.379</span><span>  0.705 
+#&gt; </span><span style='color: #555555;'>20</span><span>    21 0.420           0.369     -</span><span style='color: #BB0000;'>0.334</span><span>  0.739 
+#&gt; </span><span style='color: #555555;'>21</span><span>    24 0.418           0.377     -</span><span style='color: #BB0000;'>0.314</span><span>  0.753 
+#&gt; </span><span style='color: #555555;'>22</span><span>     2 0.418           0.378     -</span><span style='color: #BB0000;'>0.310</span><span>  0.756 
+#&gt; </span><span style='color: #555555;'>23</span><span>    24 0.409           0.386     -</span><span style='color: #BB0000;'>0.291</span><span>  0.771 
+#&gt; </span><span style='color: #555555;'>24</span><span>    21 0.408           0.390     -</span><span style='color: #BB0000;'>0.279</span><span>  0.780 
+#&gt; </span><span style='color: #555555;'>25</span><span>     3 0.401           0.411     -</span><span style='color: #BB0000;'>0.226</span><span>  0.821 
+#&gt; </span><span style='color: #555555;'>26</span><span>     6 0.396           0.420     -</span><span style='color: #BB0000;'>0.201</span><span>  0.841 
+#&gt; </span><span style='color: #555555;'>27</span><span>    15 0.389           0.424     -</span><span style='color: #BB0000;'>0.192</span><span>  0.848 
+#&gt; </span><span style='color: #555555;'>28</span><span>    32 0.387           0.426     -</span><span style='color: #BB0000;'>0.186</span><span>  0.853 
+#&gt; </span><span style='color: #555555;'>29</span><span>    25 0.394           0.429     -</span><span style='color: #BB0000;'>0.178</span><span>  0.858 
+#&gt; </span><span style='color: #555555;'>30</span><span>     9 0.385           0.440     -</span><span style='color: #BB0000;'>0.151</span><span>  0.880 
+#&gt; </span><span style='color: #555555;'>31</span><span>    26 0.372           0.462     -</span><span style='color: #BB0000;'>0.095</span><span style='color: #BB0000;text-decoration: underline;'>8</span><span> 0.924 
+#&gt; </span><span style='color: #555555;'>32</span><span>     5 0.371           0.462     -</span><span style='color: #BB0000;'>0.094</span><span style='color: #BB0000;text-decoration: underline;'>7</span><span> 0.925 
+#&gt; </span><span style='color: #555555;'>33</span><span>     9 0.373           0.468     -</span><span style='color: #BB0000;'>0.080</span><span style='color: #BB0000;text-decoration: underline;'>2</span><span> 0.936 
+#&gt; </span><span style='color: #555555;'>34</span><span>    22 0.366           0.478     -</span><span style='color: #BB0000;'>0.055</span><span style='color: #BB0000;text-decoration: underline;'>8</span><span> 0.956 
+#&gt; </span><span style='color: #555555;'>35</span><span>    20 0.355           0.506      0.014</span><span style='text-decoration: underline;'>1</span><span> 0.989 
+#&gt; </span><span style='color: #555555;'>36</span><span>    31 0.352           0.514      0.036</span><span style='text-decoration: underline;'>2</span><span> 0.971 
+#&gt; </span><span style='color: #555555;'>37</span><span>     3 0.339           0.535      0.086</span><span style='text-decoration: underline;'>8</span><span> 0.931 
+#&gt; </span><span style='color: #555555;'>38</span><span>     8 0.333           0.549      0.122  0.903 
+#&gt; </span><span style='color: #555555;'>39</span><span>    14 0.328           0.550      0.125  0.900 
+#&gt; </span><span style='color: #555555;'>40</span><span>    13 0.323           0.572      0.181  0.856 
+#&gt; </span><span style='color: #555555;'>41</span><span>    15 0.316           0.577      0.193  0.847 
+#&gt; </span><span style='color: #555555;'>42</span><span>    23 0.316           0.578      0.197  0.844 
+#&gt; </span><span style='color: #555555;'>43</span><span>    19 0.320           0.582      0.208  0.835 
+#&gt; </span><span style='color: #555555;'>44</span><span>    28 0.310           0.593      0.235  0.814 
+#&gt; </span><span style='color: #555555;'>45</span><span>    28 0.295           0.617      0.296  0.767 
+#&gt; </span><span style='color: #555555;'>46</span><span>    27 0.295           0.622      0.311  0.756 
+#&gt; </span><span style='color: #555555;'>47</span><span>    11 0.280           0.631      0.334  0.738 
+#&gt; </span><span style='color: #555555;'>48</span><span>    11 0.278           0.647      0.377  0.706 
+#&gt; </span><span style='color: #555555;'>49</span><span>    22 0.270           0.671      0.442  0.659 
+#&gt; </span><span style='color: #555555;'>50</span><span>     2 0.251           0.688      0.491  0.623 
+#&gt; </span><span style='color: #555555;'>51</span><span>    19 0.244           0.707      0.545  0.586 
+#&gt; </span><span style='color: #555555;'>52</span><span>     7 0.238           0.720      0.583  0.560 
+#&gt; </span><span style='color: #555555;'>53</span><span>    25 0.233           0.725      0.597  0.551 
+#&gt; </span><span style='color: #555555;'>54</span><span>    14 0.241           0.725      0.598  0.550 
+#&gt; </span><span style='color: #555555;'>55</span><span>    12 0.229           0.727      0.605  0.545 
+#&gt; </span><span style='color: #555555;'>56</span><span>     1 0.229           0.738      0.637  0.524 
+#&gt; </span><span style='color: #555555;'>57</span><span>    10 0.188           0.796      0.827  0.408 
+#&gt; </span><span style='color: #555555;'>58</span><span>     1 0.181           0.802      0.847  0.397 
+#&gt; </span><span style='color: #555555;'>59</span><span>    17 0.184           0.802      0.850  0.395 
+#&gt; </span><span style='color: #555555;'>60</span><span>    32 0.163           0.819      0.910  0.363 
+#&gt; </span><span style='color: #555555;'>61</span><span>    31 0.165           0.827      0.944  0.345 
+#&gt; </span><span style='color: #555555;'>62</span><span>    23 0.138           0.841      0.999  0.318 
+#&gt; </span><span style='color: #555555;'>63</span><span>    16 0.112           0.879      1.17   0.243 
+#&gt; </span><span style='color: #555555;'>64</span><span>    29 0.024</span><span style='text-decoration: underline;'>0</span><span>          0.954      1.69   0.091</span><span style='text-decoration: underline;'>4</span><span></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

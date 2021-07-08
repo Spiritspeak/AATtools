@@ -54,93 +54,40 @@ aat_stimulus_rest<-function(ds,subjvar,stimvar,pullvar,targetvar,rtvar){
   #compute single-difference scores
   biasset<-ds%>%group_by(!!sym(subjvar),!!sym(stimvar),!!sym(targetvar))%>%
     summarise(bias=mean(subset(!!sym(rtvar),!!sym(pullvar)==0),na.rm=T)-
-                   mean(subset(!!sym(rtvar),!!sym(pullvar)==1),na.rm=T))
+                mean(subset(!!sym(rtvar),!!sym(pullvar)==1),na.rm=T),.groups="drop")
+  stimset<-biasset%>%select(!!sym(stimvar),!!sym(targetvar))%>%distinct()
+  stimset$mcor<-NA
 
-  #compute dataset with all subtractions
-  pp<-unique(biasset[[subjvar]])
-  dl<-as.list(numeric(length(pp)))
-  for(i in seq_along(pp)){
-    mm<-subtraction.matrix(biasset[biasset[[subjvar]]==pp[i] & biasset[[targetvar]]==0,][["bias"]],
-                           biasset[biasset[[subjvar]]==pp[i] & biasset[[targetvar]]==1,][["bias"]])
-    cols<-unique(biasset[biasset[[subjvar]]==pp[i] & biasset[[targetvar]]==0,][[stimvar]])
-    rows<-unique(biasset[biasset[[subjvar]]==pp[i] & biasset[[targetvar]]==1,][[stimvar]])
-
-    dl[[i]]<-do.call(data.frame,
-                list(as.vector(mm),rep(cols,each=nrow(mm)),rep(rows,n=ncol(mm)),F) %>%
-                setNames(c(paste0("subject_",pp[i]),"first","second","stringsAsFactors")))
+  for(i in seq_len(nrow(stimset))){
+    iterset<-biasset%>%group_by(!!sym(subjvar))%>%
+      summarise(stimbias=.data$bias[which(!!sym(stimvar)==stimset[[stimvar]][i])],
+                restbias=mean(.data$bias[!!sym(stimvar) != stimset[[stimvar]][i] &
+                                           !!sym(targetvar) == stimset[[targetvar]][i] ]),
+                counterbias=mean(.data$bias[!!sym(targetvar) != stimset[[targetvar]][i] ]),
+                .groups="drop")
+    stimset$mcor[i]<-cor(iterset$stimbias-iterset$counterbias,iterset$restbias-iterset$counterbias)
   }
-  diffset<-Reduce(function(x,y){merge(x,y,by=c("first","second"),all=T,sort=F,
-                                      no.dups=F)},x=dl[-1],init=dl[1])
-
-  #compute correlations between specific subtraction and mean of all subtractions
-  # not involving the stimuli involved in this particular subtraction
-  diffmat<-as.matrix(diffset[,-1:-2])
-  corvec<-numeric(nrow(diffset))
-  counts<-numeric(nrow(diffset))
-  for(i in seq_along(corvec)){
-    relrows<-which(diffset$first[i] != diffset$first & diffset$second[i] != diffset$second)
-    corvec[i]<-cor(diffmat[i,],cs<-colSums(diffmat[relrows,],na.rm=T),use="complete.obs")
-    counts[i]<-sum(!is.na(diffmat[i,]) & !is.na(cs))
-  }
-
-  #compute stats based on correlations
-  difflist<-data.frame(cor=corvec,
-                       count=counts,
-                       firstimg=diffset$first,
-                       secondimg=diffset$second,
-                       rownum=seq_along(corvec))
-  stimstats<-rbind(difflist%>%rename(img=.data$firstimg)%>%group_by(.data$img)%>%
-                   summarise(mcor=cormean(.data$cor,.data$count,na.rm=T),
-                             sdcor=sd(.data$cor,na.rm=T),
-                             n=sum(!is.na(cor)),
-                             restpercentile=meanpercentile(.data$cor,corvec[-.data$rownum]),
-                             lowerci=quantile(.data$cor,.025,na.rm=T),
-                             upperci=quantile(.data$cor,.975,na.rm=T)),
-                 difflist%>%rename(img=.data$secondimg)%>%group_by(.data$img)%>%
-                   summarise(mcor=cormean(.data$cor,.data$count,na.rm=T),
-                             sdcor=sd(.data$cor,na.rm=T),
-                             n=sum(!is.na(.data$cor)),
-                             restpercentile=meanpercentile(.data$cor,corvec[-.data$rownum]),
-                             lowerci=quantile(.data$cor,.025,na.rm=T),
-                             upperci=quantile(.data$cor,.975,na.rm=T)))
-  stimstats$zpercentile<-qnorm(stimstats$restpercentile)
-  stimstats$pval<-1-abs(.5-stimstats$restpercentile)*2
-  # selfpercentile=mean(cor>mean(corvec))
-  # stimstats$percentile<-stimstats$mcor %>% sapply(function(x) mean(x < corvec))
-  # stimstats$compcorrz<-(r2z(stimstats$mcor)-r2z(mean(corvec))) / sqrt((1/(stimstats$n-3)) + (1/(length(corvec)-3)))
-  # stimstats$compcorrp<-pnorm(abs(stimstats$compcorrz)/2,lower.tail=F)
-  # stimstats$zcor<-(stimstats$mcor-mean(corvec))/sd(corvec) #full sample-perspective P-value
-  # stimstats$zcor2<-(stimstats$mcor-mean(corvec))/stimstats$sdcor #stimulus-perspective P-value
-
-  return(structure(list(stimstats=stimstats,difflist=difflist),class="aat_stimulus_rest"))
+  return(structure(stimset,class=c("aat_stimulus_rest","data.frame")))
 }
+
 
 #' @rdname aat_stimulus_rest
 #' @param x an \code{aat_stimulus_rest} object
 #' @param ... Ignored.
 #' @export
 plot.aat_stimulus_rest<-function(x,...){
-  statset<-x$stimstats
-  statset<-statset[!is.na(statset$mcor) & !is.na(statset$upperci) & !is.na(statset$lowerci),]
-  ranks<-rank(statset$mcor)
-  wideness<-max(statset$upperci) - min(statset$lowerci)
-
-  plot(x=statset$mcor,y=ranks,
-       xlim=c(min(statset$lowerci)-0.01*wideness,max(statset$upperci)+0.01*wideness),
-       xlab="Stimulus-rest correlation",main=paste0("Stimulus-rest correlations with 95%CI"),
+  x<-x[!is.na(x$mcor),]
+  ranks<-rank(x$mcor)
+  wideness<-max(x$mcor)-min(x$mcor)
+  plot(x=x$mcor,y=ranks,
+       xlim=c(min(x$mcor)-.5*wideness*strwidth(s=x$mcor[min(ranks)],cex=.5,font=2,units="figure"),
+              max(x$mcor)+.5*wideness*strwidth(s=x$mcor[max(ranks)],cex=.5,font=2,units="figure")),
+       xlab="Stimulus-rest correlation",main=paste0("Stimulus-rest correlations"),
        yaxt="n")
-  segments(x0=statset$lowerci,x1=statset$mcor-0.005*wideness,y0=ranks,y1=ranks)
-  segments(x0=statset$mcor+0.005*wideness,x1=statset$upperci,y0=ranks,y1=ranks)
-  abline(v=mean(statset$mcor))
-
-  axis(2, labels=statset$img,at=ranks,las=1,cex.axis=.5)
+  segments(x0=mean(x$mcor),x1=x$mcor,y0=ranks,y1=ranks)
+  text(x=x$mcor,y=ranks,labels=x$stim,
+       pos=3+sign(x$mcor-mean(x$mcor)),offset=0.5,cex=.5,font=2)
+  abline(v=mean(x$mcor))
+  axis(2, labels=x$img,at=ranks,las=1,cex.axis=.5)
 }
 
-#' @rdname aat_stimulus_rest
-#' @param x an \code{aat_stimulus_rest} object
-#' @param ... Ignored.
-#' @export
-print.aat_stimulus_rest<-function(x,...){
-  print(x$stimstats[order(x$stimstats$restpercentile),
-                    c("img","mcor","restpercentile","zpercentile","pval")],n=nrow(x$stimstats))
-}

@@ -80,9 +80,9 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,
                         algorithm=c("aat_doublemeandiff","aat_doublemediandiff",
                                     "aat_dscore","aat_dscore_multiblock",
                                     "aat_regression","aat_standardregression",
-                                    "aat_doublemeanquotient","aat_doublemedianquotient",
                                     "aat_singlemeandiff","aat_singlemediandiff"),
-                        trialdropfunc=c("prune_nothing","trial_prune_3SD","trial_prune_SD_dropcases","trial_recode_SD",
+                        trialdropfunc=c("prune_nothing","trial_prune_3SD","trial_prune_3MAD",
+                                        "trial_prune_SD_dropcases","trial_recode_SD",
                                         "trial_prune_percent_subject","trial_prune_percent_sample"),
                         errortrialfunc=c("prune_nothing","error_replace_blockmeanplus","error_prune_dropcases"),
                         plot=TRUE,include.raw=FALSE,parallel=TRUE,...){
@@ -135,8 +135,10 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,
   results<-
     foreach(iter = seq_len(iters), .packages=packs, .combine=cbind) %dofunc% {
       #Split data
-      iterds<-ds %>% group_by(!!sym(subjvar), !!sym(pullvar), !!sym(targetvar)) %>%
-        sample_n(size=n(),replace=TRUE) %>% ungroup()
+      # iterds<-ds %>% group_by(!!sym(subjvar), !!sym(pullvar), !!sym(targetvar)) %>%
+      #   sample_n(size=n(),replace=TRUE) %>% ungroup()
+      iterds<-ds[unlist(sapply(split(x=seq_len(nrow(ds)),f=ds[c(subjvar,pullvar,targetvar)]),
+                        FUN=function(x){ x[sample.int(length(x),replace=T)] })),]
 
       #Handle outlying trials
       iterds<-do.call(trialdropfunc,list(ds=iterds,subjvar=subjvar,rtvar=rtvar))
@@ -166,7 +168,7 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,
   #q-reliability
   bv<-var(statset$bias,na.rm=TRUE)
   wv<-mean(statset$var,na.rm=TRUE)
-  q<-(bv-wv)/(bv+wv)
+  q<-1-wv/bv
 
   output<-list(bias=statset,
                reliability=q,
@@ -194,7 +196,7 @@ print.aat_bootstrap<-function(x,...){
   cat("Bootstrapped bias scores and confidence intervals",
       "\nMean bias score: ", mean(x$bias$bias,na.rm=TRUE),
       "\nMean confidence interval: ",mean(x$bias$ci,na.rm=TRUE),
-      "\nreliability: q = ",mean(x$bias$bias,na.rm=TRUE),
+      "\nreliability: q = ",x$reliability,
       "\nNumber of iterations: ",x$parameters$iters,sep="")
 }
 

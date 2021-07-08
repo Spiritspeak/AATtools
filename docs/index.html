@@ -172,7 +172,7 @@
 <span class="kw">dataset</span><span class="op">$</span><span class="kw">stimulus</span><span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/substr.html">substr</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(<span class="kw">dataset</span><span class="op">$</span><span class="kw">stimulus</span>),<span class="fl">5</span>,<span class="fl">5</span>)
 
 <span class="co">#We use the special jackknife function, which allows us to diagnose flaws in the experiment by computing Cronbach's alpha while single stimuli or participants are excluded.</span>
-<span class="kw">alpha</span><span class="op">&lt;-</span><span class="fu"><a href="reference/aat_alpha.html">aat_alpha_jackknife</a></span>(ds=<span class="kw">dataset</span>, <span class="co">#The dataset</span>
+<span class="kw">alpha</span><span class="op">&lt;-</span><span class="fu">aat_alpha_jackknife</span>(ds=<span class="kw">dataset</span>, <span class="co">#The dataset</span>
                            subjvar=<span class="st">"subject"</span>, <span class="co">#Name of the column with participant IDs</span>
                            stimvar=<span class="st">"stimulus"</span>,<span class="co">#Name of the column with stimulus IDs</span>
                            pullvar=<span class="st">"is_pull"</span>, <span class="co">#Name of the column indicating approach or avoid trial</span>
