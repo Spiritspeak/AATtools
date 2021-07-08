@@ -14,8 +14,9 @@ aat_compute(
     "aat_dscore_multiblock", "aat_regression", "aat_standardregression",
     "aat_doublemeanquotient", "aat_doublemedianquotient", "aat_singlemeandiff",
     "aat_singlemediandiff"),
-  trialdropfunc = c("prune_nothing", "trial_prune_3SD", "trial_prune_SD_dropcases",
-    "trial_recode_SD", "trial_prune_percent_subject", "trial_prune_percent_sample"),
+  trialdropfunc = c("prune_nothing", "trial_prune_3SD", "trial_prune_3MAD",
+    "trial_prune_SD_dropcases", "trial_recode_SD", "trial_prune_percent_subject",
+    "trial_prune_percent_sample"),
   errortrialfunc = c("prune_nothing", "error_replace_blockmeanplus",
     "error_prune_dropcases"),
   ...

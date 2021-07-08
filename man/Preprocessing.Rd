@@ -6,6 +6,7 @@
 \alias{trial_prune_percent_subject}
 \alias{trial_prune_percent_sample}
 \alias{trial_prune_3SD}
+\alias{trial_prune_3MAD}
 \alias{trial_prune_SD_dropcases}
 \alias{trial_recode_SD}
 \alias{case_prune_3SD}
@@ -33,6 +34,8 @@ trial_prune_percent_sample(
 )
 
 trial_prune_3SD(ds, subjvar, rtvar, ...)
+
+trial_prune_3MAD(ds, subjvar, rtvar, ...)
 
 trial_prune_SD_dropcases(
   ds,
@@ -96,6 +99,7 @@ but not when using d-scores or median double-difference scores.
 \itemize{
 \item \code{prune_nothing} excludes no trials (default)
 \item \code{trial_prune_3SD} excludes trials deviating more than 3SD from the mean per participant.
+\item \code{trial_prune_3MAD} excludes trials deviating more than 3 median absolute deviations from the median per participant.
 \item \code{trial_prune_SD_dropcases} removes trials deviating more than a specific number of standard deviations from the participant's mean,
 and removes participants with an excessive percentage of outliers.
 Required arguments:
