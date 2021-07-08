@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Correlation tools — correlation-tools • AATtools</title>
+<title>Split Half-Based Reliability Coefficients — splitrel • AATtools</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="Correlation tools — correlation-tools" />
-<meta property="og:description" content="Helper functions to compute important statistics from correlation coefficients." />
+<meta property="og:title" content="Split Half-Based Reliability Coefficients — splitrel" />
+<meta property="og:description" content="Split Half-Based Reliability Coefficients" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -116,86 +116,83 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Correlation tools</h1>
-    <small class="dont-index">Source: <a href='https://github.com/Spiritspeak/AATtools/blob/master/R/cortools.R'><code>R/cortools.R</code></a></small>
-    <div class="hidden name"><code>correlation-tools.Rd</code></div>
+    <h1>Split Half-Based Reliability Coefficients</h1>
+    <small class="dont-index">Source: <a href='https://github.com/Spiritspeak/AATtools/blob/master/R/relcorrections.R'><code>R/relcorrections.R</code></a></small>
+    <div class="hidden name"><code>splitrel.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Helper functions to compute important statistics from correlation coefficients.</p>
+    <p>Split Half-Based Reliability Coefficients</p>
     </div>
 
-    <pre class="usage"><span class='fu'>r2z</span>(<span class='kw'>r</span>)
+    <pre class="usage"><span class='fu'>SpearmanBrown</span>(
+  <span class='kw'>corr</span>,
+  ntests = <span class='fl'>2</span>,
+  fix.negative = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"nullify"</span>, <span class='st'>"bilateral"</span>, <span class='st'>"none"</span>)
+)
 
-<span class='fu'>z2r</span>(<span class='kw'>z</span>)
+<span class='fu'>FlanaganRulon</span>(<span class='kw'>x1</span>, <span class='kw'>x2</span>, fix.negative = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"nullify"</span>, <span class='st'>"bilateral"</span>, <span class='st'>"none"</span>))
 
-<span class='fu'>r2t</span>(<span class='kw'>r</span>, <span class='kw'>n</span>)
-
-<span class='fu'>r2p</span>(<span class='kw'>r</span>, <span class='kw'>n</span>)
-
-<span class='fu'>rconfint</span>(<span class='kw'>r</span>, <span class='kw'>n</span>, alpha = <span class='fl'>0.05</span>)
-
-<span class='fu'>compcorr</span>(<span class='kw'>r1</span>, <span class='kw'>r2</span>, <span class='kw'>n1</span>, <span class='kw'>n2</span>)</pre>
+<span class='fu'>RajuCoefficient</span>(<span class='kw'>x1</span>, <span class='kw'>x2</span>, <span class='kw'>prop</span>, fix.negative = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"nullify"</span>, <span class='st'>"bilateral"</span>, <span class='st'>"none"</span>))</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>r, r1, r2</th>
-      <td><p>a correlation value</p></td>
+      <th>corr</th>
+      <td><p>To-be-corrected correlation coefficient</p></td>
     </tr>
     <tr>
-      <th>z</th>
-      <td><p>a Z-score</p></td>
+      <th>ntests</th>
+      <td><p>An integer indicating how many times larger the full test is, for which the corrected correlation coefficient is being computed.
+When <code>ntests=2</code>, the formula will compute what the correlation coefficient would be if the test were twice as long.</p></td>
     </tr>
     <tr>
-      <th>n, n1, n2</th>
-      <td><p>sample sizes</p></td>
+      <th>fix.negative</th>
+      <td><p>Determines how to deal with a negative value. "nullify" sets it to zero,
+"bilateral" applies the correction as if it were a positive number, and then sets it to negative.
+"none" gives the raw value. It should be noted that negative values are not supposed to occur,
+and there is no commonly accepted way to deal with them when they do occur.</p></td>
     </tr>
     <tr>
-      <th>alpha</th>
-      <td><p>the significance level to use</p></td>
+      <th>x1</th>
+      <td><p>scores from half 1</p></td>
+    </tr>
+    <tr>
+      <th>x2</th>
+      <td><p>scores from half 2</p></td>
+    </tr>
+    <tr>
+      <th>prop</th>
+      <td><p>Proportion of the first half to the complete sample</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>Spearman-Brown-corrected correlation coefficient.</p>
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
     
 <ul>
-<li><p><code>r2z</code>: converts correlation coefficients to z-scores</p></li>
-<li><p><code>z2r</code>: converts z-scores to correlation coefficients</p></li>
-<li><p><code>r2t</code>: Converts correlation coefficients to t-scores</p></li>
-<li><p><code>r2p</code>: Computes the two-sided p-value for a given correlation</p></li>
-<li><p><code>rconfint</code>: Computes confidence intervals for a given correlation coefficient</p></li>
-<li><p><code>compcorr</code>: computes the significance of the difference between two correlation coefficients</p></li>
+<li><p><code>SpearmanBrown</code>: Perform a Spearman-Brown correction on the provided correlation score.</p></li>
+<li><p><code>FlanaganRulon</code>: Compute the true reliability using the Flanagan-Rulon formula,
+which takes into account inequal variances between split halves.</p></li>
+<li><p><code>RajuCoefficient</code>: Compute split-half reliability using the Raju formula,
+which takes into account unequal split-halves and variances.</p></li>
 </ul>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><a href='cormean.html'>cormean</a>, <a href='multiple.cor.html'>multiple.cor</a>, <a href='partial.cor.html'>partial.cor</a></p></div>
+    <div class='dont-index'><p><a href='covrel.html'>covrel</a></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>z</span> <span class='op'>&lt;-</span> <span class='fu'>r2z</span>(<span class='fl'>.5</span>)
-<span class='kw'>r</span> <span class='op'>&lt;-</span> <span class='fu'>z2r</span>(<span class='kw'>z</span>)
-<span class='kw'>t</span><span class='op'>&lt;-</span><span class='fu'>r2t</span>(<span class='kw'>r</span>,<span class='fl'>30</span>)
-<span class='fu'>r2p</span>(<span class='kw'>r</span>,<span class='fl'>30</span>)
-</div><div class='output co'>#&gt; [1] 0.001466911</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='fu'>rconfint</span>(<span class='kw'>r</span>,<span class='fl'>30</span>))
-</div><div class='output co'>#&gt; function (r, n, alpha = 0.05) 
-#&gt; {
-#&gt;     z &lt;- r2z(r)
-#&gt;     zint &lt;- qnorm(1 - alpha/2) * sqrt(1/(n - 3))
-#&gt;     confints &lt;- c(z2r(z - zint), z2r(z + zint))
-#&gt;     return(rconfint)
-#&gt; }
-#&gt; &lt;bytecode: 0x00000000289965d0&gt;
-#&gt; &lt;environment: namespace:AATtools&gt;</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='fu'>compcorr</span>(<span class='fl'>.5</span>,<span class='fl'>.7</span>,<span class='fl'>20</span>,<span class='fl'>20</span>))
-</div><div class='output co'>#&gt; $zscore
-#&gt; [1] 0.927105
-#&gt; 
-#&gt; $pvalue
-#&gt; [1] 0.353872
-#&gt; 
-#&gt; attr(,"class")
-#&gt; [1] "compcorr"</div></pre>
+    <pre class="examples"><div class='input'>
+<span class='fu'>SpearmanBrown</span>(<span class='fl'>.5</span>)
+</div><div class='output co'>#&gt; [1] 0.6666667</div><div class='input'><span class='fu'>FlanaganRulon</span>(<span class='kw'>a</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>50</span>),<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>50</span>)<span class='op'>+</span><span class='kw'>a</span><span class='op'>*</span><span class='fl'>.5</span>,fix.negative=<span class='st'>"bilateral"</span>)
+</div><div class='output co'>#&gt; [1] 0.6361502</div><div class='input'><span class='kw'>a</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>50</span>)
+<span class='kw'>b</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>50</span>)<span class='op'>+</span><span class='kw'>a</span><span class='op'>*</span><span class='fl'>.5</span>
+<span class='fu'>RajuCoefficient</span>(<span class='kw'>a</span>,<span class='kw'>b</span>,prop=<span class='fl'>.4</span>,fix.negative=<span class='st'>"bilateral"</span>)
+</div><div class='output co'>#&gt; [1] 0.7795584</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

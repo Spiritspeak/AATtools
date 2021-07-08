@@ -47,31 +47,7 @@
 
 
 <meta property="og:title" content="AAT score computation algorithms — Algorithms" />
-<meta property="og:description" content="
-
-aat_doublemeandiff computes a mean-based double-difference score:
-(mean(push_target) - mean(pull_target)) - (mean(push_control) - mean(pull_control))
-aat_doublemediandiff computes a median-based double-difference score:
-(median(push_target) - median(pull_target)) - (median(push_control) - median(pull_control))
-aat_dscore computes D-scores for a 2-block design (see Greenwald, Nosek, and Banaji, 2003):
-((mean(push_target) - mean(pull_target)) - (mean(push_control) - mean(pull_control))) / sd(participant_reaction_times)
-aat_dscore_multiblock computes D-scores for pairs of sequential blocks
-and averages the resulting score (see Greenwald, Nosek, and Banaji, 2003).
-Requires extra blockvar argument, indicating the name of the block variable.
-aat_regression and aat_standardregression fit regression models to participants' reaction times and extract a term that serves as AAT score.
-aat_regression extracts the raw coefficient, equivalent to a mean difference score.
-aat_standardregression extracts the t-score of the coefficient, standardized on the basis of the variability of the participant's reaction times.
-These algorithms can be used to regress nuisance variables out of the data before computing AAT scores.
-When using these functions, additional arguments must be provided:
-formula - a formula to fit to the data
-aatterm - the term within the formula that indicates the approach bias; this is usually the interaction of the pull and target terms.
-
-aat_doublemeanquotient and aat_doublemedianquotient compute a log-transformed ratio of approach to avoidance for both stimulus categories and subtract these ratios:
-log(mean(pull_target) / mean(push_target)) - log(mean(pull_control) / mean(push_control))
-aat_singlemeandiff and aat_singlemediandiff subtract the mean or median approach reaction time from the mean or median avoidance reaction time.
-These algorithms are only sensible if the supplied data contain a single stimulus category.
-
-" />
+<meta property="og:description" content="AAT score computation algorithms" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -146,31 +122,7 @@ These algorithms are only sensible if the supplied data contain a single stimulu
     </div>
 
     <div class="ref-description">
-    
-<ul>
-<li><p><code>aat_doublemeandiff</code> computes a mean-based double-difference score:</p>
-<p><code>(mean(push_target) - mean(pull_target)) - (mean(push_control) - mean(pull_control))</code></p></li>
-<li><p><code>aat_doublemediandiff</code> computes a median-based double-difference score:</p>
-<p><code>(median(push_target) - median(pull_target)) - (median(push_control) - median(pull_control))</code></p></li>
-<li><p><code>aat_dscore</code> computes D-scores for a 2-block design (see Greenwald, Nosek, and Banaji, 2003):</p>
-<p><code>((mean(push_target) - mean(pull_target)) - (mean(push_control) - mean(pull_control))) / sd(participant_reaction_times)</code></p></li>
-<li><p><code>aat_dscore_multiblock</code> computes D-scores for pairs of sequential blocks
-and averages the resulting score (see Greenwald, Nosek, and Banaji, 2003).
-Requires extra <code>blockvar</code> argument, indicating the name of the block variable.</p></li>
-<li><p><code>aat_regression</code> and <code>aat_standardregression</code> fit regression models to participants' reaction times and extract a term that serves as AAT score.
-<code>aat_regression</code> extracts the raw coefficient, equivalent to a mean difference score.
-<code>aat_standardregression</code> extracts the t-score of the coefficient, standardized on the basis of the variability of the participant's reaction times.
-These algorithms can be used to regress nuisance variables out of the data before computing AAT scores.
-When using these functions, additional arguments must be provided:</p><ul>
-<li><p><code>formula</code> - a formula to fit to the data</p></li>
-<li><p><code>aatterm</code> - the term within the formula that indicates the approach bias; this is usually the interaction of the pull and target terms.</p></li>
-</ul></li>
-<li><p><code>aat_doublemeanquotient</code> and <code>aat_doublemedianquotient</code> compute a log-transformed ratio of approach to avoidance for both stimulus categories and subtract these ratios:</p>
-<p><code>log(mean(pull_target) / mean(push_target)) - log(mean(pull_control) / mean(push_control))</code></p></li>
-<li><p><code>aat_singlemeandiff</code> and <code>aat_singlemediandiff</code> subtract the mean or median approach reaction time from the mean or median avoidance reaction time.
-These algorithms are only sensible if the supplied data contain a single stimulus category.</p></li>
-</ul>
-
+    <p>AAT score computation algorithms</p>
     </div>
 
     <pre class="usage"><span class='fu'>aat_doublemeandiff</span>(<span class='kw'>ds</span>, <span class='kw'>subjvar</span>, <span class='kw'>pullvar</span>, <span class='kw'>targetvar</span>, <span class='kw'>rtvar</span>, <span class='kw'>...</span>)
@@ -179,15 +131,13 @@ These algorithms are only sensible if the supplied data contain a single stimulu
 
 <span class='fu'>aat_dscore</span>(<span class='kw'>ds</span>, <span class='kw'>subjvar</span>, <span class='kw'>pullvar</span>, <span class='kw'>targetvar</span>, <span class='kw'>rtvar</span>, <span class='kw'>...</span>)
 
+<span class='fu'>aat_mediandscore</span>(<span class='kw'>ds</span>, <span class='kw'>subjvar</span>, <span class='kw'>pullvar</span>, <span class='kw'>targetvar</span>, <span class='kw'>rtvar</span>, <span class='kw'>...</span>)
+
 <span class='fu'>aat_dscore_multiblock</span>(<span class='kw'>ds</span>, <span class='kw'>subjvar</span>, <span class='kw'>pullvar</span>, <span class='kw'>targetvar</span>, <span class='kw'>rtvar</span>, <span class='kw'>blockvar</span>, <span class='kw'>...</span>)
 
 <span class='fu'>aat_regression</span>(<span class='kw'>ds</span>, <span class='kw'>subjvar</span>, <span class='kw'>formula</span>, <span class='kw'>aatterm</span>, <span class='kw'>...</span>)
 
 <span class='fu'>aat_standardregression</span>(<span class='kw'>ds</span>, <span class='kw'>subjvar</span>, <span class='kw'>formula</span>, <span class='kw'>aatterm</span>, <span class='kw'>...</span>)
-
-<span class='fu'>aat_doublemedianquotient</span>(<span class='kw'>ds</span>, <span class='kw'>subjvar</span>, <span class='kw'>pullvar</span>, <span class='kw'>targetvar</span>, <span class='kw'>rtvar</span>, <span class='kw'>...</span>)
-
-<span class='fu'>aat_doublemeanquotient</span>(<span class='kw'>ds</span>, <span class='kw'>subjvar</span>, <span class='kw'>pullvar</span>, <span class='kw'>targetvar</span>, <span class='kw'>rtvar</span>, <span class='kw'>...</span>)
 
 <span class='fu'>aat_singlemeandiff</span>(<span class='kw'>ds</span>, <span class='kw'>subjvar</span>, <span class='kw'>pullvar</span>, <span class='kw'>rtvar</span>, <span class='kw'>...</span>)
 
@@ -238,6 +188,36 @@ Usually this is the interaction of the movement-direction and stimulus-category 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A data.frame containing participant number and computed AAT score.</p>
+    <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
+
+    
+<ul>
+<li><p><code>aat_doublemeandiff</code>: computes a mean-based double-difference score:
+<code>(mean(push_target) - mean(pull_target)) - (mean(push_control) - mean(pull_control))</code></p></li>
+<li><p><code>aat_doublemediandiff</code>: computes a median-based double-difference score:
+<code>(median(push_target) - median(pull_target)) - (median(push_control) - median(pull_control))</code></p></li>
+<li><p><code>aat_dscore</code>: computes D-scores for a 2-block design (see Greenwald, Nosek, and Banaji, 2003):
+<code>((mean(push_target) - mean(pull_target)) - (mean(push_control) - mean(pull_control))) / sd(participant_reaction_times)</code></p></li>
+<li><p><code>aat_mediandscore</code>: computes a double-difference score usign medians,
+and divides it by the median absolute deviation of the participant's overall reaction times:
+<code>((median(push_target) - median(pull_target)) - (median(push_control) - median(pull_control))) / mad(participant_reaction_times)</code></p></li>
+<li><p><code>aat_dscore_multiblock</code>: computes D-scores for pairs of sequential blocks
+and averages the resulting score (see Greenwald, Nosek, and Banaji, 2003).
+Requires extra <code>blockvar</code> argument, indicating the name of the block variable.</p></li>
+<li><p><code>aat_regression</code>: <code>aat_regression</code> and <code>aat_standardregression</code> fit regression models to participants' reaction times and extract a term that serves as AAT score.
+<code>aat_regression</code> extracts the raw coefficient, equivalent to a mean difference score.
+<code>aat_standardregression</code> extracts the t-score of the coefficient, standardized on the basis of the variability of the participant's reaction times.
+These algorithms can be used to regress nuisance variables out of the data before computing AAT scores.
+When using these functions, additional arguments must be provided:</p><ul>
+<li><p><code>formula</code> - a formula to fit to the data</p></li>
+<li><p><code>aatterm</code> - the term within the formula that indicates the approach bias; this is usually the interaction of the pull and target terms.</p></li>
+</ul></li>
+<li><p><code>aat_standardregression</code>: See above</p></li>
+<li><p><code>aat_singlemeandiff</code>: subtracts the mean approach reaction time from the mean avoidance reaction time.
+Using this algorithm is only sensible if the supplied data contain a single stimulus category.</p></li>
+<li><p><code>aat_singlemediandiff</code>: subtracts the median approach reaction time from the median avoidance reaction time.
+Using this algorithm is only sensible if the supplied data contain a single stimulus category.</p></li>
+</ul>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

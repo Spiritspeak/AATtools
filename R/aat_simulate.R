@@ -20,6 +20,7 @@
 #' @param stimfx_jitter Individual variation in the effect of stimulus category
 #' @param biasfx Size of the approach bias effect, in milliseconds
 #' @param biasfx_jitter Individual variation in the approach bias effect
+#' @param empirical If TRUE, then effect sizes and standard deviations will be exact
 #'
 #' @return \code{aat_simulate()} returns a \code{data.frame} with the following columns:
 #' subj (participant ID), stim (stimulus number), rep (stimulus repetition number),
@@ -39,7 +40,6 @@
 #' ts<- aat_simulate(pullfx = 50, stimfx = 10, biasfx = 100)
 #' mod<-lm(rt~is_pull*is_target,data=ts)
 #' coef(mod) #these should be somewhat close to the provided coefficients
-#' print(attr(ts,"population_reliabilty"))
 #' print(q_reliability(ts,"subj",rt~is_pull*is_target,"is_pull:is_target"))
 #' #these two should be not too far apart,
 #' # and should converge when the process is repeated a bunch
@@ -54,6 +54,54 @@
 #' summarise(m=mean(sd),s=sd(sd)) # from here, sdrt_jitter is derived
 #' }
 aat_simulate<-function(npps=40,nstims=32,stimreps=2,
+                       meanrt=743,meanrt_jitter=66,
+                       sdrt=133,sdrt_jitter=38,
+                       pullfx=25,pullfx_jitter=40,
+                       stimfx=10,stimfx_jitter=35,
+                       biasfx=35,biasfx_jitter=75,
+                       empirical=FALSE){
+
+  cond.scale<-function(x,emp){ if(emp){vec.scale(x)}else{x} }
+
+  #set properties
+  subjprops<-data.frame(subj=1:npps,
+                        meanrt=meanrt+meanrt_jitter*cond.scale(rnorm(npps),empirical),
+                        sdrt=sdrt+sdrt_jitter*cond.scale(rgamma2(n=npps,shape=3),empirical),
+                        pullfx=pullfx+pullfx_jitter*cond.scale(rnorm(npps),empirical),
+                        stimfx=stimfx+stimfx_jitter*cond.scale(rnorm(npps),empirical),
+                        biasfx=biasfx+biasfx_jitter*cond.scale(rnorm(npps),empirical))
+
+  #initialize dataset
+  ds<-expand.grid(subj=1:npps,stim=1:nstims,rep=1:stimreps,is_pull=0:1,is_target=0:1)
+  ds<-merge(ds,subjprops,by="subj",all.x=T)
+
+  #fix stimulus names
+  ds$stim<-paste0(ds$is_target,"-",ds$stim)
+
+  #Generate RTs
+  gshape<-3
+  gscale<-1
+  ds$rt<-rgamma2(n=nrow(ds),shape=gshape)
+  if(empirical){
+    ds$rt<-ave(ds$rt,ds[c("subj","is_pull","is_target")],FUN=vec.scale)
+  }
+  ds$rt<-ds$rt * ds$sdrt + ds$meanrt +
+    (ds$is_pull-.5)*ds$pullfx + (ds$is_target-.5) * ds$stimfx +
+    ((ds$is_pull==ds$is_target)-.5)*-.5 * ds$biasfx
+
+  #compute true "population" reliability (Kahveci's Q)
+  # alt_q <- (biasfx_jitter^2)/(biasfx_jitter^2 + sdrt^2 /(nstims*stimreps) *4)
+  # attr(ds,"population_reliability")<-alt_q
+
+  #output
+  return(ds)
+}
+
+rgamma2<-function(n,shape,m=0,s=1){
+  m + (rgamma(n=n,shape=shape,scale=1) - shape*1) *s/(sqrt(shape)*1)
+}
+
+aat_simulate_old<-function(npps=40,nstims=32,stimreps=2,
                   meanrt=743,meanrt_jitter=66,
                   sdrt=133,sdrt_jitter=38,
                   pullfx=25,pullfx_jitter=40,
@@ -86,10 +134,6 @@ aat_simulate<-function(npps=40,nstims=32,stimreps=2,
 
   #output
   return(ds)
-}
-
-rgamma2<-function(n,shape,m=0,s=1){
-  m + (rgamma(n=n,shape=shape,scale=1) - shape*1) *s/(sqrt(shape)*1)
 }
 
 

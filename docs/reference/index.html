@@ -141,12 +141,6 @@
       <tr>
         
         <td>
-          <p><code><a href="aat_alpha.html">aat_alpha()</a></code> <code><a href="aat_alpha.html">aat_alpha_jackknife()</a></code> <code><a href="aat_alpha.html">print(<i>&lt;aat_alpha&gt;</i>)</a></code> <code><a href="aat_alpha.html">plot(<i>&lt;aat_alpha&gt;</i>)</a></code> <code><a href="aat_alpha.html">print(<i>&lt;aat_alpha_jackknife&gt;</i>)</a></code> <code><a href="aat_alpha.html">plot(<i>&lt;aat_alpha_jackknife&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Compute reliability using Cronbach's Alpha</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="aat_bootstrap.html">aat_bootstrap()</a></code> <code><a href="aat_bootstrap.html">print(<i>&lt;aat_bootstrap&gt;</i>)</a></code> <code><a href="aat_bootstrap.html">plot(<i>&lt;aat_bootstrap&gt;</i>)</a></code> </p>
         </td>
         <td><p>Compute bootstrapped approach-bias scores</p></td>
@@ -159,9 +153,9 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="aat_intercategorical_alpha.html">aat_intercategorical_alpha()</a></code> </p>
+          <p><code><a href="aat_covreliability.html">aat_covreliability()</a></code> </p>
         </td>
-        <td><p>Compute the reliability of a double difference score</p></td>
+        <td><p>Compute a dataset's reliability from its covariance matrix</p></td>
       </tr><tr>
         
         <td>
@@ -174,6 +168,13 @@
           <p><code><a href="aat_splithalf.html">aat_splithalf()</a></code> <code><a href="aat_splithalf.html">print(<i>&lt;aat_splithalf&gt;</i>)</a></code> <code><a href="aat_splithalf.html">plot(<i>&lt;aat_splithalf&gt;</i>)</a></code> </p>
         </td>
         <td><p>Compute the bootstrapped split-half reliability for approach-avoidance task data</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="aat_stimulusscores.html">aat_stimulusscores()</a></code> </p>
+        </td>
+        <td><p>Compute stimulus-specific bias scores
+Computes mean single-difference scores (push - pull) for each stimulus.</p></td>
       </tr><tr>
         
         <td>
@@ -191,7 +192,7 @@ computed by averaging every such subtraction-rest correlation involving a specif
       </tr><tr>
         
         <td>
-          <p><code><a href="Algorithms.html">aat_doublemeandiff()</a></code> <code><a href="Algorithms.html">aat_doublemediandiff()</a></code> <code><a href="Algorithms.html">aat_dscore()</a></code> <code><a href="Algorithms.html">aat_dscore_multiblock()</a></code> <code><a href="Algorithms.html">aat_regression()</a></code> <code><a href="Algorithms.html">aat_standardregression()</a></code> <code><a href="Algorithms.html">aat_doublemedianquotient()</a></code> <code><a href="Algorithms.html">aat_doublemeanquotient()</a></code> <code><a href="Algorithms.html">aat_singlemeandiff()</a></code> <code><a href="Algorithms.html">aat_singlemediandiff()</a></code> </p>
+          <p><code><a href="Algorithms.html">aat_doublemeandiff()</a></code> <code><a href="Algorithms.html">aat_doublemediandiff()</a></code> <code><a href="Algorithms.html">aat_dscore()</a></code> <code><a href="Algorithms.html">aat_mediandscore()</a></code> <code><a href="Algorithms.html">aat_dscore_multiblock()</a></code> <code><a href="Algorithms.html">aat_regression()</a></code> <code><a href="Algorithms.html">aat_standardregression()</a></code> <code><a href="Algorithms.html">aat_singlemeandiff()</a></code> <code><a href="Algorithms.html">aat_singlemediandiff()</a></code> </p>
         </td>
         <td><p>AAT score computation algorithms</p></td>
       </tr><tr>
@@ -199,7 +200,7 @@ computed by averaging every such subtraction-rest correlation involving a specif
         <td>
           <p><code><a href="cormean.html">cormean()</a></code> </p>
         </td>
-        <td><p>Compute a minimally average correlation</p></td>
+        <td><p>Compute a minimally biased average of correlation values</p></td>
       </tr><tr>
         
         <td>
@@ -209,17 +210,36 @@ computed by averaging every such subtraction-rest correlation involving a specif
       </tr><tr>
         
         <td>
-          <p><code><a href="covmat-tools.html">calpha()</a></code> <code><a href="covmat-tools.html">covEM()</a></code> </p>
+          <p><code><a href="covEM.html">covEM()</a></code> </p>
         </td>
-        <td><p>Covariance Matrix Tools
-These functions allow for the computation of covariance matrices with missing data
-and for the computation of Cronbach's alpha from them.</p></td>
+        <td><p>Covariance matrix computation with multiple imputation</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="covrel.html">calpha()</a></code> <code><a href="covrel.html">lambda2()</a></code> <code><a href="covrel.html">lambda4()</a></code> </p>
+        </td>
+        <td><p>Covariance Matrix-Based Reliability Coefficients</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="erotica.html">erotica</a></code> </p>
         </td>
         <td><p>AAT examining approach bias for erotic stimuli</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="multiple.cor.html">multiple.cor()</a></code> </p>
+        </td>
+        <td><p>Multiple correlation
+Computes the <a href='https://en.wikipedia.org/wiki/Multiple_correlation'>multiple correlation coefficient</a>
+of variables in <code>ymat</code> with the variable <code>x</code></p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="partial.cor.html">partial.cor()</a></code> </p>
+        </td>
+        <td><p>Partial correlation
+Compute the correlation between x and y while controlling for z.</p></td>
       </tr><tr>
         
         <td>
@@ -235,9 +255,9 @@ and for the computation of Cronbach's alpha from them.</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="reliability-coefficients.html">SpearmanBrown()</a></code> <code><a href="reliability-coefficients.html">FlanaganRulon()</a></code> <code><a href="reliability-coefficients.html">RajuCoefficient()</a></code> </p>
+          <p><code><a href="splitrel.html">SpearmanBrown()</a></code> <code><a href="splitrel.html">FlanaganRulon()</a></code> <code><a href="splitrel.html">RajuCoefficient()</a></code> </p>
         </td>
-        <td><p>Correct a correlation coefficient for being based on only a subset of the data</p></td>
+        <td><p>Split Half-Based Reliability Coefficients</p></td>
       </tr>
     </tbody>
     </table>

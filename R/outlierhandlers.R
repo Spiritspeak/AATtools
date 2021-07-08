@@ -12,6 +12,7 @@
 #' \itemize{
 #' \item \code{prune_nothing} excludes no trials (default)
 #' \item \code{trial_prune_3SD} excludes trials deviating more than 3SD from the mean per participant.
+#' #' \item \code{trial_prune_3SD} excludes trials deviating more than 3 median absolute deviations from the median per participant.
 #' \item \code{trial_prune_SD_dropcases} removes trials deviating more than a specific number of standard deviations from the participant's mean,
 #' and removes participants with an excessive percentage of outliers.
 #' Required arguments:
@@ -80,67 +81,121 @@ prune_nothing<-function(ds,...){
 #' @export
 #' @rdname Preprocessing
 trial_prune_percent_subject<-function(ds,subjvar,rtvar,lowerpercent=.01,upperpercent=.99,...){
-  ds %>% group_by(!!sym(subjvar)) %>% mutate(percentile=rank(!!sym(rtvar))/n()) %>%
+  ds %>% group_by(!!sym(subjvar),key) %>%
+    mutate(percentile=(rank(!!sym(rtvar))-1)/(n()-1)) %>%
     filter(.data$percentile > lowerpercent & .data$percentile< upperpercent) %>% ungroup()
+}
+
+trial_prune_percent_subject_alt<-function(ds,subjvar,rtvar,lowerpercent=.01,upperpercent=.99,...){
+  ds$percentile <- ave(ds[[rtvar]],ds[[subjvar]],ds[["key"]],FUN=function(x){ (rank(x)-1)/(length(x)-1) })
+  ds[ds$percentile > lowerpercent & ds$percentile < upperpercent,]
 }
 
 #' @export
 #' @rdname Preprocessing
 trial_prune_percent_sample<-function(ds,rtvar,lowerpercent=.01,upperpercent=.99,...){
-  ds %>% mutate(percentile=rank(!!sym(rtvar))/n()) %>%
-    filter(.data$percentile > lowerpercent & .data$percentile< upperpercent)
+  ds %>% group_by(key) %>% mutate(percentile=(rank(!!sym(rtvar))-1)/(n()-1)) %>%
+    filter(.data$percentile > lowerpercent & .data$percentile< upperpercent) %>% ungroup()
+}
+
+trial_prune_percent_sample_alt<-function(ds,rtvar,lowerpercent=.01,upperpercent=.99,...){
+  ds$percentile <- ave(ds[[rtvar]],ds[["key"]],FUN=function(x){ (rank(x)-1)/(length(x)-1) })
+  ds[(ds$percentile > lowerpercent & ds$percentile < upperpercent),]
 }
 
 #' @export
 #' @rdname Preprocessing
 trial_prune_3SD<-function(ds,subjvar,rtvar,...){
-  ds %>% group_by(!!sym(subjvar)) %>% filter(abs(scale(!!sym(rtvar))) <3) %>% ungroup()
+  ds %>% group_by(!!sym(subjvar),key) %>% filter(abs(vec.scale(!!sym(rtvar))) <3) %>% ungroup()
 }
 
 #' @export
 #' @rdname Preprocessing
+trial_prune_3MAD<-function(ds,subjvar,rtvar,...){
+  ds %>% group_by(!!sym(subjvar),key) %>% filter(abs(vec.madscale(!!sym(rtvar))) <3) %>% ungroup()
+}
+
+trial_prune_3SD_alt<-function(ds,subjvar,rtvar,...){
+  h<-ave(ds[[rtvar]],ds[[subjvar]],ds[["key"]],FUN=vec.scale)
+  ds[which(abs(h)<3),]
+}
+
+
+#' @export
+#' @rdname Preprocessing
 trial_prune_SD_dropcases<-function(ds,subjvar,rtvar,trialsd=3,maxoutliers=.15,...){
-  ds %>% group_by(!!sym(subjvar)) %>% mutate(is.ol=as.numeric(abs(scale(!!sym(rtvar))) >=3),avg.ol=mean(.data$is.ol)) %>%
-    ungroup %>% filter(.data$is.ol==0 & .data$avg.ol<maxoutliers)
+  ds %>% group_by(!!sym(subjvar),key) %>%
+    mutate(is.ol=as.numeric(abs(vec.scale(!!sym(rtvar))) >=3),
+           avg.ol=mean.default(.data$is.ol)) %>%
+    ungroup() %>% filter(.data$is.ol==0 & .data$avg.ol<maxoutliers)
 }
 
 #' @export
 #' @rdname Preprocessing
 trial_recode_SD<-function(ds,subjvar,rtvar,trialsd=3,...){
-  dsa<- ds %>% group_by(!!sym(subjvar)) %>% mutate(ol.z.score=scale(!!sym(rtvar)),
-                                                   ol.type=(.data$ol.z.score >= trialsd) - (.data$ol.z.score <= -trialsd),
-                                                   is.ol=abs(.data$ol.type),
-                                                   ol.max.rt=mean(!!sym(rtvar))+sd(!!sym(rtvar))*trialsd,
-                                                   ol.min.rt=mean(!!sym(rtvar))-sd(!!sym(rtvar))*trialsd)
+  dsa<- ds %>% group_by(!!sym(subjvar),key) %>%
+    mutate(ol.z.score=vec.scale(!!sym(rtvar)),
+           ol.type=(.data$ol.z.score >= trialsd) - (.data$ol.z.score <= -trialsd),
+           is.ol=abs(.data$ol.type),
+           ol.max.rt=mean.default(!!sym(rtvar))+vec.sd(!!sym(rtvar))*trialsd,
+           ol.min.rt=mean.default(!!sym(rtvar))-vec.sd(!!sym(rtvar))*trialsd)
   dsa[which(dsa$is.ol!=0),rtvar]<-ifelse(dsa[which(dsa$is.ol!=0),]$ol.type==1,
                                          dsa[which(dsa$is.ol!=0),]$ol.max.rt,
                                          dsa[which(dsa$is.ol!=0),]$ol.min.rt)
-  dsa %>% dplyr::select(-.data$ol.type,-.data$ol.max.rt,-.data$ol.min.rt,-.data$ol.z.score)
+  #dsa %>% dplyr::select(-.data$ol.type,-.data$ol.max.rt,-.data$ol.min.rt,-.data$ol.z.score)
+  dsa$ol.type<-dsa$ol.max.rt<-dsa$ol.min.rt<-dsa$ol.z.score<-NULL
+  return(dsa)
+}
+
+trial_recode_SD_alt<-function(ds,subjvar,rtvar,trialsd=3,...){
+  ds$ol.grmean<-ave(ds[[rtvar]],ds[[subjvar]],ds$key,FUN=mean.default)
+  ds$ol.grsd<-ave(ds[[rtvar]],ds[[subjvar]],ds$key,FUN=vec.sd)
+  ds$ol.z.score<-(ds[[rtvar]]-ds$ol.grmean)/ds$ol.grsd
+  ds$is.ol<-abs(ds$ol.z.score)>=trialsd
+  ds[[rtvar]]<-(!ds$is.ol)*ds[[rtvar]] + ds$is.ol*(ds$ol.grmean+sign(ds$ol.z.score)*ds$ol.grsd*trialsd)
+  ds$ol.grmean<-ds$ol.grsd<-ds$ol.z.score<-ds$ol.type<-NULL
+  ds
 }
 
 #' @export
 #' @rdname Preprocessing
 case_prune_3SD<-function(ds,...){
-  dplyr::filter(ds,(abhalf0 < mean(abhalf0,na.rm=TRUE)+3*sd(abhalf0,na.rm=TRUE) &
-                      abhalf0 > mean(abhalf0,na.rm=TRUE)-3*sd(abhalf0,na.rm=TRUE)) &
-                  (abhalf1 < mean(abhalf1,na.rm=TRUE)+3*sd(abhalf1,na.rm=TRUE) &
-                     abhalf1 > mean(abhalf1,na.rm=TRUE)-3*sd(abhalf1,na.rm=TRUE)))
+  ds[which(abs(vec.scale(ds$abhalf0))<3 & abs(vec.scale(ds$abhalf1))<3),]
 }
 
 #Replace error trial latencies with correct block mean RT + 600
 #' @export
 #' @rdname Preprocessing
 error_replace_blockmeanplus<-function(ds,subjvar,rtvar,blockvar,errorvar,errorbonus, ...){
-  if(!("is.ol" %in% colnames(ds))){ ds$is.ol<-0; }
+  if(!("is.ol" %in% colnames(ds))){ ds$is.ol<-0 }
   ds%<>%group_by(!!sym(subjvar),!!sym(blockvar), key)%>%
-    mutate(newrt=mean((!!sym(rtvar))[!(!!sym(errorvar)) & .data$is.ol==0])+errorbonus)%>%ungroup()
-  ds[ds[,errorvar]==1,rtvar]<-ds[ds[,errorvar]==1,]$newrt
-  dplyr::select(ds,-.data$newrt)
+    mutate(newrt=mean.default((!!sym(rtvar))[!(!!sym(errorvar)) & .data$is.ol==0])+errorbonus)%>%ungroup()
+  errids<-which(ds[[errorvar]]==1)
+  ds[[rtvar]][errids]<-ds$newrt[errids]
+  ds$newrt<-NULL
+  ds
+}
+
+error_replace_blockmeanplus_alt<-function(ds,subjvar,rtvar,blockvar,errorvar,errorbonus, ...){
+  if(!("is.ol" %in% colnames(ds))){ ds$is.ol<-0 }
+  ds$.corrmean<-ave(ds$rt+ifelse(!ds[[errorvar]] & !ds$is.ol,0,NA),
+                    ds[[rtvar]],ds[[blockvar]],ds[["key"]],
+                   FUN=function(x){mean.default(x[!is.na(x)])})
+  ds[[rtvar]][ds[[errorvar]]==TRUE]<-ds$.corrmean[ds[[errorvar]]==TRUE]+errorbonus
+  ds$.corrmean<-NULL
+  ds
 }
 
 #' @export
 #' @rdname Preprocessing
 error_prune_dropcases<-function(ds,subjvar, errorvar, maxerrors = .15, ...){
   ds%>%group_by(!!sym(subjvar), key)%>%
-    filter(mean(!!sym(errorvar))<maxerrors & !!sym(errorvar) == FALSE)
+    filter(mean.default(!!sym(errorvar))<maxerrors & !!sym(errorvar) == FALSE)
 }
+
+error_prune_dropcases_alt<-function(ds,subjvar, errorvar, maxerrors = .15, ...){
+  ds$merr<-ave(ds[[errorvar]],ds[[subjvar]],ds$key,FUN=mean.default)
+  ds[which(ds$merr<maxerrors & !ds[[errorvar]]),]
+}
+
+

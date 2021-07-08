@@ -2,7 +2,7 @@
 % Please edit documentation in R/cortools.R
 \name{cormean}
 \alias{cormean}
-\title{Compute a minimally average correlation}
+\title{Compute a minimally biased average of correlation values}
 \usage{
 cormean(r, n, na.rm = F)
 }

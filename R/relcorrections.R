@@ -1,10 +1,11 @@
 
 # utils ####
-#' @name reliability-coefficients
-#' @title Correct a correlation coefficient for being based on only a subset of the data
+#' @name splitrel
+#' @title Split Half-Based Reliability Coefficients
+#' @seealso \link{covrel}
 NULL
 
-#' @describeIn reliability-coefficients Perform a Spearman-Brown correction on the provided correlation score.
+#' @describeIn splitrel Perform a Spearman-Brown correction on the provided correlation score.
 #'
 #' @param corr To-be-corrected correlation coefficient
 #' @param ntests An integer indicating how many times larger the full test is, for which the corrected correlation coefficient is being computed.
@@ -36,24 +37,18 @@ SpearmanBrown<-function(corr,ntests=2,fix.negative=c("nullify","bilateral","none
   }
 }
 
-#' @describeIn reliability-coefficients Compute the true reliability using the Flanagan-Rulon formula,
-#' which takes into account inequal variances between split halves
+#' @describeIn splitrel Compute the true reliability using the Flanagan-Rulon formula,
+#' which takes into account inequal variances between split halves.
 #' @param x1 scores from half 1
 #' @param x2 scores from half 2
-#' @param x scores from the full sample (more accurate if provided)
 #' @export
 #'
 #' @examples
 #' FlanaganRulon(a<-rnorm(50),rnorm(50)+a*.5,fix.negative="bilateral")
-FlanaganRulon<-function(x1,x2,x=NULL,fix.negative=c("nullify","bilateral","none")){
+FlanaganRulon<-function(x1,x2,fix.negative=c("nullify","bilateral","none")){
   fix.negative<-match.arg(fix.negative)
   d<-var(x1-x2)
-
-  if(missing(x)){
-    k<-var(x1+x2)
-  }else{
-    k<-var(x)
-  }
+  k<-var(x1+x2)
 
   if(fix.negative=="none"){
     return(1-d/k)
@@ -68,7 +63,7 @@ FlanaganRulon<-function(x1,x2,x=NULL,fix.negative=c("nullify","bilateral","none"
   }
 }
 
-#' @describeIn reliability-coefficients Compute split-half reliability using the Raju formula,
+#' @describeIn splitrel Compute split-half reliability using the Raju formula,
 #' which takes into account unequal split-halves and variances.
 #'
 #' @param prop Proportion of the first half to the complete sample
@@ -90,4 +85,64 @@ RajuCoefficient<-function(x1,x2,prop,fix.negative=c("nullify","bilateral","none"
 
   raju<-covar / (prop * (1-prop) * sumvar)
   return(ifelse(fix.negative=="nullify" & raju<0,0,raju))
+}
+
+
+#' @name covrel
+#' @title Covariance Matrix-Based Reliability Coefficients
+#' @description These functions allow for the computation of the reliability of a dataset
+#' from the covariance matrix of its variables.
+#' @seealso \link{splitrel}
+#' @examples
+#' # compute reliability from covariance
+#' h<-cov(iris[,1:4])
+#' calpha(h)
+#' lambda2(h)
+#' lambda4(h)
+#' # Lambda-2 and Lambda-4 are significantly larger because
+#' # some of the variables in the iris dataset are negatively correlated.
+NULL
+
+
+
+#' @describeIn covrel Cronbach's alpha
+#' @param covmat a covariance matrix
+#' @export
+calpha<-function(covmat){
+  (nrow(covmat)/(nrow(covmat)-1))*(1 - sum(diag(covmat))/sum(covmat))
+}
+
+#' @describeIn covrel Guttman's Lambda-2
+#' @export
+lambda2<-function(covmat){
+  offs<-covmat[upper.tri(covmat)]
+  covs<-2*sum(offs)
+  sqcov<-2*sum(offs^2)
+  sums<-sum(covmat)
+  n<-dim(covmat)[1]
+  covs/sums + sqrt(n/(n-1)*sqcov)/sums
+}
+
+#' @describeIn covrel Guttman's Lambda-4. This algorithm tries to get the highest attainable reliability by
+#' @export
+lambda4<-function(covmat){
+  flip<-rep(1,ncol(covmat))
+  itermaxid<- -1
+  itermax<- -1
+  while(itermaxid != 0){
+    itermaxid<-0
+    for(i in seq_along(flip)){
+      key<-rep(1,ncol(covmat))
+      key[i]<- -1
+      itera<-calpha(t(t(covmat*flip*key)*flip*key))
+      if(itera>itermax){
+        itermax<-itera
+        itermaxid<-i
+      }
+    }
+    if(itermaxid>0){
+      flip[itermaxid]<- -flip[itermaxid]
+    }
+  }
+  calpha(t(t(covmat*flip)*flip))
 }

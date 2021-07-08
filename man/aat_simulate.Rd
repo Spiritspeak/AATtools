@@ -18,7 +18,8 @@ aat_simulate(
   stimfx = 10,
   stimfx_jitter = 35,
   biasfx = 35,
-  biasfx_jitter = 75
+  biasfx_jitter = 75,
+  empirical = FALSE
 )
 
 aat_simulate2(
@@ -61,6 +62,8 @@ are larger or smaller than the samplewide SD.}
 \item{biasfx}{Size of the approach bias effect, in milliseconds}
 
 \item{biasfx_jitter}{Individual variation in the approach bias effect}
+
+\item{empirical}{If TRUE, then effect sizes and standard deviations will be exact}
 
 \item{...}{Any parameters of \code{aat_simulate} provided here will override the defaults
 from the defaults parameter.}
@@ -108,7 +111,6 @@ reliability and stimulus-specific effects.
 ts<- aat_simulate(pullfx = 50, stimfx = 10, biasfx = 100)
 mod<-lm(rt~is_pull*is_target,data=ts)
 coef(mod) #these should be somewhat close to the provided coefficients
-print(attr(ts,"population_reliabilty"))
 print(q_reliability(ts,"subj",rt~is_pull*is_target,"is_pull:is_target"))
 #these two should be not too far apart,
 # and should converge when the process is repeated a bunch

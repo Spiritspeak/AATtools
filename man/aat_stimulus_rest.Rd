@@ -3,7 +3,6 @@
 \name{aat_stimulus_rest}
 \alias{aat_stimulus_rest}
 \alias{plot.aat_stimulus_rest}
-\alias{print.aat_stimulus_rest}
 \title{Compute stimulus-rest correlations of double-difference scores
 This function provides a statistic that can give an indication of how deviant
 the responses to specific stimuli are, in comparison to the rest of the stimulus set.
@@ -17,8 +16,6 @@ computed by averaging every such subtraction-rest correlation involving a specif
 aat_stimulus_rest(ds, subjvar, stimvar, pullvar, targetvar, rtvar)
 
 \method{plot}{aat_stimulus_rest}(x, ...)
-
-\method{print}{aat_stimulus_rest}(x, ...)
 }
 \arguments{
 \item{ds}{a \code{data.frame}}

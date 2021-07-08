@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Correlation tools — correlation-tools • AATtools</title>
+<title>Partial correlation
+Compute the correlation between x and y while controlling for z. — partial.cor • AATtools</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +47,10 @@
 
 
 
-<meta property="og:title" content="Correlation tools — correlation-tools" />
-<meta property="og:description" content="Helper functions to compute important statistics from correlation coefficients." />
+<meta property="og:title" content="Partial correlation
+Compute the correlation between x and y while controlling for z. — partial.cor" />
+<meta property="og:description" content="Partial correlation
+Compute the correlation between x and y while controlling for z." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -116,86 +119,36 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Correlation tools</h1>
+    <h1>Partial correlation
+Compute the correlation between x and y while controlling for z.</h1>
     <small class="dont-index">Source: <a href='https://github.com/Spiritspeak/AATtools/blob/master/R/cortools.R'><code>R/cortools.R</code></a></small>
-    <div class="hidden name"><code>correlation-tools.Rd</code></div>
+    <div class="hidden name"><code>partial.cor.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Helper functions to compute important statistics from correlation coefficients.</p>
+    <p>Partial correlation
+Compute the correlation between x and y while controlling for z.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>r2z</span>(<span class='kw'>r</span>)
-
-<span class='fu'>z2r</span>(<span class='kw'>z</span>)
-
-<span class='fu'>r2t</span>(<span class='kw'>r</span>, <span class='kw'>n</span>)
-
-<span class='fu'>r2p</span>(<span class='kw'>r</span>, <span class='kw'>n</span>)
-
-<span class='fu'>rconfint</span>(<span class='kw'>r</span>, <span class='kw'>n</span>, alpha = <span class='fl'>0.05</span>)
-
-<span class='fu'>compcorr</span>(<span class='kw'>r1</span>, <span class='kw'>r2</span>, <span class='kw'>n1</span>, <span class='kw'>n2</span>)</pre>
+    <pre class="usage"><span class='fu'>partial.cor</span>(<span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>z</span>, use = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"complete.obs"</span>, <span class='st'>"everything"</span>))</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>r, r1, r2</th>
-      <td><p>a correlation value</p></td>
+      <th>x, y, z</th>
+      <td><p>x and y will be correlated while controlling for z</p></td>
     </tr>
     <tr>
-      <th>z</th>
-      <td><p>a Z-score</p></td>
-    </tr>
-    <tr>
-      <th>n, n1, n2</th>
-      <td><p>sample sizes</p></td>
-    </tr>
-    <tr>
-      <th>alpha</th>
-      <td><p>the significance level to use</p></td>
+      <th>use</th>
+      <td><p>optional character indicating how to handle missing values (see <a href='https://rdrr.io/r/stats/cor.html'>cor</a>)</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
-
-    
-<ul>
-<li><p><code>r2z</code>: converts correlation coefficients to z-scores</p></li>
-<li><p><code>z2r</code>: converts z-scores to correlation coefficients</p></li>
-<li><p><code>r2t</code>: Converts correlation coefficients to t-scores</p></li>
-<li><p><code>r2p</code>: Computes the two-sided p-value for a given correlation</p></li>
-<li><p><code>rconfint</code>: Computes confidence intervals for a given correlation coefficient</p></li>
-<li><p><code>compcorr</code>: computes the significance of the difference between two correlation coefficients</p></li>
-</ul>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p><a href='cormean.html'>cormean</a>, <a href='multiple.cor.html'>multiple.cor</a>, <a href='partial.cor.html'>partial.cor</a></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>z</span> <span class='op'>&lt;-</span> <span class='fu'>r2z</span>(<span class='fl'>.5</span>)
-<span class='kw'>r</span> <span class='op'>&lt;-</span> <span class='fu'>z2r</span>(<span class='kw'>z</span>)
-<span class='kw'>t</span><span class='op'>&lt;-</span><span class='fu'>r2t</span>(<span class='kw'>r</span>,<span class='fl'>30</span>)
-<span class='fu'>r2p</span>(<span class='kw'>r</span>,<span class='fl'>30</span>)
-</div><div class='output co'>#&gt; [1] 0.001466911</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='fu'>rconfint</span>(<span class='kw'>r</span>,<span class='fl'>30</span>))
-</div><div class='output co'>#&gt; function (r, n, alpha = 0.05) 
-#&gt; {
-#&gt;     z &lt;- r2z(r)
-#&gt;     zint &lt;- qnorm(1 - alpha/2) * sqrt(1/(n - 3))
-#&gt;     confints &lt;- c(z2r(z - zint), z2r(z + zint))
-#&gt;     return(rconfint)
-#&gt; }
-#&gt; &lt;bytecode: 0x00000000289965d0&gt;
-#&gt; &lt;environment: namespace:AATtools&gt;</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='fu'>compcorr</span>(<span class='fl'>.5</span>,<span class='fl'>.7</span>,<span class='fl'>20</span>,<span class='fl'>20</span>))
-</div><div class='output co'>#&gt; $zscore
-#&gt; [1] 0.927105
-#&gt; 
-#&gt; $pvalue
-#&gt; [1] 0.353872
-#&gt; 
-#&gt; attr(,"class")
-#&gt; [1] "compcorr"</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'>partial.cor</span>(<span class='kw'>mtcars</span><span class='op'>$</span><span class='kw'>mpg</span>,<span class='kw'>mtcars</span><span class='op'>$</span><span class='kw'>cyl</span>,<span class='kw'>mtcars</span><span class='op'>$</span><span class='kw'>disp</span>)
+</div><div class='output co'>#&gt; [1] -0.3825664</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

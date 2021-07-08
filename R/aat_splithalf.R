@@ -105,9 +105,9 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,
                         algorithm=c("aat_doublemeandiff","aat_doublemediandiff",
                                     "aat_dscore","aat_dscore_multiblock",
                                     "aat_regression","aat_standardregression",
-                                    "aat_doublemedianquotient","aat_doublemeanquotient",
                                     "aat_singlemeandiff","aat_singlemediandiff"),
-                        trialdropfunc=c("prune_nothing","trial_prune_3SD","trial_prune_SD_dropcases",
+                        trialdropfunc=c("prune_nothing","trial_prune_3SD","trial_prune_3MAD",
+                                        "trial_prune_SD_dropcases",
                                         "trial_recode_SD","trial_prune_percent_subject",
                                         "trial_prune_percent_sample"),
                         errortrialfunc=c("prune_nothing","error_replace_blockmeanplus",
@@ -118,13 +118,13 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,
 
   #Handle arguments
   args<-list(...)
-  algorithm<-ifelse(is.function(algorithm),deparse(substitute(algorithm)),match.arg(algorithm))
+  algorithm<-match.arg(algorithm)
   if(!(algorithm %in% c("aat_singlemeandiff","aat_singlemediandiff","aat_regression","aat_standardregression")) & is.null(targetvar)){
     stop("Argument targetvar missing but required for algorithm!")
   }
-  trialdropfunc<-ifelse(is.function(trialdropfunc),deparse(substitute(trialdropfunc)),match.arg(trialdropfunc))
-  casedropfunc<-ifelse(is.function(casedropfunc),deparse(substitute(casedropfunc)),match.arg(casedropfunc))
-  errortrialfunc<-ifelse(is.function(errortrialfunc),deparse(substitute(errortrialfunc)),match.arg(errortrialfunc))
+  trialdropfunc<-match.arg(trialdropfunc)
+  casedropfunc<-match.arg(casedropfunc)
+  errortrialfunc<-match.arg(errortrialfunc)
   if(errortrialfunc=="error_replace_blockmeanplus"){
     stopifnot(!is.null(args$blockvar),!is.null(args$errorvar))
     if(is.null(args$errorbonus)){ args$errorbonus<- 0.6 }
@@ -167,8 +167,14 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,
         iterds<-ds%>%group_by(!! sym(subjvar), !! sym(pullvar))%>%
           mutate(key=sample(n())%%2)%>%ungroup()
       }else{
-        iterds<-ds%>%group_by(!! sym(subjvar), !! sym(pullvar), !! sym(targetvar))%>%
-          mutate(key=sample(n())%%2)%>%ungroup()
+        # iterds<-ds%>%group_by(!! sym(subjvar), !! sym(pullvar), !! sym(targetvar))%>%
+        #   mutate(key=sample(n())%%2)%>%ungroup()
+
+        h<-tapply(seq_len(nrow(ds)),ds[c(subjvar,pullvar,targetvar)],
+                  function(x){sample(x,size=round(length(x)/2))})%>%unlist()
+        iterds<-ds
+        iterds$key<-0
+        iterds$key[h]<-1
       }
       #Handle outlying trials
       iterds<-do.call(trialdropfunc,c(args,list(ds=iterds,subjvar=subjvar,rtvar=rtvar)))
@@ -181,8 +187,8 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,
       #                                targetvar=targetvar,rtvar=rtvar),args))
 
       #Compute AB
-      half0set<-iterds%>%filter(key==0)
-      half1set<-iterds%>%filter(key==1)
+      half0set<-iterds[which(iterds$key==0),]
+      half1set<-iterds[which(iterds$key==1),]
       abds<-merge(
         do.call(algorithm,c(list(ds=half0set,subjvar=subjvar,pullvar=pullvar,
                                  targetvar=targetvar,rtvar=rtvar),args)),

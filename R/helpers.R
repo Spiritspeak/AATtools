@@ -1,3 +1,5 @@
+serr<-function(x,na.rm=T){sqrt(var(x,na.rm=na.rm)/sum(!is.na(x)))}
+
 FlanaganRulonBilateral<-function(x1,x2){
   key<-!is.na(x1) & !is.na(x2)
   x1<-x1[key]
@@ -13,10 +15,31 @@ RajuBilateral<-function(x1,x2,prop){
   return(raju)
 }
 
+vec.sd<-function(x,na.rm=F){
+  if(na.rm){x<-na.omit(x)}
+  sqrt(sum((x-mean.default(x))^2) / (length(x)-1))
+}
+
+vec.scale<-function(x){
+  xt<-na.omit(x)
+  m<-mean.default(xt)
+  (x-m)/sqrt((sum((xt-m)^2)/(length(xt)-1)))
+}
+
+vec.madscale<-function(x){
+  (x-median.default(x,na.rm=T))/mad(x,na.rm=T)
+}
+
 val_between<-function(x,lb,ub){x>lb & x<ub}
 
+
 drop_empty_cases<-function(iterds,subjvar){
-  iterds%>%group_by(!!sym(subjvar))%>%filter(val_between(mean(key),0,1))
+  ids<-vapply(split(iterds$key,iterds[[subjvar]]),
+              FUN=function(x){any(x==1)&any(x==0)},
+              FUN.VALUE=FALSE)
+  outds<-iterds[which(iterds[[subjvar]] %in% names(ids)[ids]),]
+  outds[[subjvar]]<-droplevels(outds[[subjvar]])
+  outds
 }
 
 form2char<-function(x){
@@ -62,7 +85,11 @@ aat_preparedata<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,...){
     }
     cols <- c(cols,formterms)
   }
-  stopifnot(all(cols %in% colnames(ds)))
+
+  missingcols<-!(cols %in% colnames(ds))
+  if(any(missingcols)){
+    stop("Missing column(s) in dataset: ",paste0(cols[missingcols],collapse=" "))
+  }
   ds<-ds[,cols]
 
   ds[[subjvar]]%<>%as.factor()
