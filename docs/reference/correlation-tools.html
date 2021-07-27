@@ -178,7 +178,7 @@
 <span class='kw'>r</span> <span class='op'>&lt;-</span> <span class='fu'>z2r</span>(<span class='kw'>z</span>)
 <span class='kw'>t</span><span class='op'>&lt;-</span><span class='fu'>r2t</span>(<span class='kw'>r</span>,<span class='fl'>30</span>)
 <span class='fu'>r2p</span>(<span class='kw'>r</span>,<span class='fl'>30</span>)
-</div><div class='output co'>#&gt; [1] 0.001466911</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='fu'>rconfint</span>(<span class='kw'>r</span>,<span class='fl'>30</span>))
+</div><div class='output co'>#&gt; [1] 0.004899934</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='fu'>rconfint</span>(<span class='kw'>r</span>,<span class='fl'>30</span>))
 </div><div class='output co'>#&gt; function (r, n, alpha = 0.05) 
 #&gt; {
 #&gt;     z &lt;- r2z(r)
@@ -186,7 +186,7 @@
 #&gt;     confints &lt;- c(z2r(z - zint), z2r(z + zint))
 #&gt;     return(rconfint)
 #&gt; }
-#&gt; &lt;bytecode: 0x00000000289965d0&gt;
+#&gt; &lt;bytecode: 0x000000002a9fecc8&gt;
 #&gt; &lt;environment: namespace:AATtools&gt;</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='fu'>compcorr</span>(<span class='fl'>.5</span>,<span class='fl'>.7</span>,<span class='fl'>20</span>,<span class='fl'>20</span>))
 </div><div class='output co'>#&gt; $zscore
 #&gt; [1] 0.927105

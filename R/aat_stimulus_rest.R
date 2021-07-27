@@ -29,6 +29,7 @@ meanpercentile<-function(sample,population){
 #' @param pullvar the label of the movement direction identifier variable
 #' @param targetvar the label of the stimulus category identifier variable
 #' @param rtvar the label of the reaction time variable
+#' @param method Optional, the correlation method to be used (pearson, spearman, kendall)
 #'
 #' @return Returns a \code{aat_stimulus_rest} object containing statistics for each stimulus.
 #' Stats include the average stimulus-rest correlation (mcor); the standard deviation of
@@ -47,7 +48,8 @@ meanpercentile<-function(sample,population){
 #'                      targetvar="is_target",rtvar="rt")
 #' plot(stimrest)
 #' print(stimrest)
-aat_stimulus_rest<-function(ds,subjvar,stimvar,pullvar,targetvar,rtvar){
+aat_stimulus_rest<-function(ds,subjvar,stimvar,pullvar,targetvar,rtvar,method=c("pearson","spearman","kendall")){
+  method<-match.arg(method)
   # check data
   ds<-aat_preparedata(ds,subjvar,pullvar,targetvar,rtvar,stimvar=stimvar)
 
@@ -65,11 +67,11 @@ aat_stimulus_rest<-function(ds,subjvar,stimvar,pullvar,targetvar,rtvar){
                                            !!sym(targetvar) == stimset[[targetvar]][i] ]),
                 counterbias=mean(.data$bias[!!sym(targetvar) != stimset[[targetvar]][i] ]),
                 .groups="drop")
-    stimset$mcor[i]<-cor(iterset$stimbias-iterset$counterbias,iterset$restbias-iterset$counterbias)
+    stimset$mcor[i]<-cor(iterset$stimbias-iterset$counterbias,iterset$restbias-iterset$counterbias,
+                         use="complete.obs",method=method)
   }
   return(structure(stimset,class=c("aat_stimulus_rest","data.frame")))
 }
-
 
 #' @rdname aat_stimulus_rest
 #' @param x an \code{aat_stimulus_rest} object
