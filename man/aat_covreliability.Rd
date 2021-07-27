@@ -2,6 +2,10 @@
 % Please edit documentation in R/aat_covreliability.R
 \name{aat_covreliability}
 \alias{aat_covreliability}
+\alias{print.aat_covreliability}
+\alias{aat_covreliability_jackknife}
+\alias{print.aat_covreliability_jackknife}
+\alias{plot.aat_covreliability_jackknife}
 \title{Compute a dataset's reliability from its covariance matrix}
 \usage{
 aat_covreliability(
@@ -14,6 +18,24 @@ aat_covreliability(
   algorithm = c("calpha", "lambda2", "lambda4"),
   iters = 5
 )
+
+\method{print}{aat_covreliability}(x, ...)
+
+aat_covreliability_jackknife(
+  ds,
+  subjvar,
+  stimvar,
+  pullvar,
+  targetvar = NULL,
+  rtvar,
+  algorithm = c("calpha", "lambda2", "lambda4"),
+  iters = 5,
+  holdout = c("both", "participant", "stimulus", "cross")
+)
+
+\method{print}{aat_covreliability_jackknife}(x, ...)
+
+\method{plot}{aat_covreliability_jackknife}(x, ...)
 }
 \arguments{
 \item{ds}{the \code{data.frame} to use}
@@ -33,17 +55,34 @@ aat_covreliability(
 \item{iters}{If there are missing values (which is almost inevitable) then
 multiple imputation will be used to complete the covariance matrix - this option sets
 the number of multiple imputations to be used.}
+
+\item{x}{Object to be printed}
+
+\item{...}{Ignored}
+
+\item{holdout}{What should be removed from the data for computation of jackknife statistics?
+"both" computes reliability when stimuli and participants are separately removed,
+while "cross" computes the reliability when removing each stimulus within each participant}
 }
 \value{
 Returns an \code{aat_covreliability} object containing the reliability value
 as well as the dataset and covariance matrix with replaced missing values. When
 the argument \code{targetvar} is provided, the output also contains the reliability of the
 individual stimulus categories and their intercorrelation.
+
+\code{aat_covreliability_jackknife()} returns an \code{aat_covreliability_jackknife} object,
+containing jackknife reliability statistics. If argument \code{holdout} was set to "cross",
+then these statistics are provided in a matrix where rows represent participants and columns represent stimuli.
+Otherwise, they are provided in \code{data.frame}s where the stimulus or participant is represented in a column
+alongside the associated reliability value.
 }
 \description{
 This function computes mean single-difference scores (push minus pull) for individual stimuli,
 and computes the reliability from that information.
 Missing values are dealt with using multiple imputation.
+
+This function computes the reliability when stimuli and participants are removed,
+allowing for the diagnosis of potential sources of unreliability within the data.
 }
 \details{
 When only one stimulus category is indicated, one of the commonly known reliability algorithms
@@ -55,6 +94,15 @@ to estimate the reliability of indiviau lstimulus categories.
 When one wants to compute the reliability of a double median difference score or D-score,
 \code{aat_splithalf()} is recommended instead.
 }
+\section{Methods (by generic)}{
+\itemize{
+\item \code{print}: Print an \code{aat_covreliability} object
+
+\item \code{print}: Print an \code{aat_covreliability_jackknife} object
+
+\item \code{plot}: Plot an \code{aat_covreliability_jackknife} object
+}}
+
 \examples{
 #We generate a dataset with 16 stimuli in each category
 ds<-aat_simulate(biasfx_jitter=40,nstims=16)
@@ -71,6 +119,11 @@ aat_splithalf(ds=ds,subjvar="subj",pullvar="is_pull",targetvar="is_target",rtvar
 #Testing reliability for single-difference scores
 ds<-ds[ds$is_target==1,]
 aat_covreliability(ds=ds,subjvar="subj",stimvar="stim",pullvar="is_pull",rtvar="rt")
+hh<-aat_simulate()
+test<-aat_covreliability_jackknife(ds=hh,subjvar="subj",stimvar="stim",pullvar="is_pull",
+                                   targetvar="is_target",rtvar="rt",holdout="cross")
+print(test)
+plot(test)
 }
 \references{
 Lord, F.Y. (1963), "Elementary Models for Measuring Change",

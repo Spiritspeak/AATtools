@@ -49,7 +49,9 @@
 <meta property="og:title" content="Compute a dataset's reliability from its covariance matrix — aat_covreliability" />
 <meta property="og:description" content="This function computes mean single-difference scores (push minus pull) for individual stimuli,
 and computes the reliability from that information.
-Missing values are dealt with using multiple imputation." />
+Missing values are dealt with using multiple imputation.
+This function computes the reliability when stimuli and participants are removed,
+allowing for the diagnosis of potential sources of unreliability within the data." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -127,6 +129,8 @@ Missing values are dealt with using multiple imputation." />
     <p>This function computes mean single-difference scores (push minus pull) for individual stimuli,
 and computes the reliability from that information.
 Missing values are dealt with using multiple imputation.</p>
+<p>This function computes the reliability when stimuli and participants are removed,
+allowing for the diagnosis of potential sources of unreliability within the data.</p>
     </div>
 
     <pre class="usage"><span class='fu'>aat_covreliability</span>(
@@ -138,7 +142,25 @@ Missing values are dealt with using multiple imputation.</p>
   <span class='kw'>rtvar</span>,
   algorithm = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"calpha"</span>, <span class='st'>"lambda2"</span>, <span class='st'>"lambda4"</span>),
   iters = <span class='fl'>5</span>
-)</pre>
+)
+
+<span class='co'># S3 method for aat_covreliability</span>
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
+
+<span class='fu'>aat_covreliability_jackknife</span>(
+  <span class='kw'>ds</span>,
+  <span class='kw'>subjvar</span>,
+  <span class='kw'>stimvar</span>,
+  <span class='kw'>pullvar</span>,
+  targetvar = <span class='kw'>NULL</span>,
+  <span class='kw'>rtvar</span>,
+  algorithm = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"calpha"</span>, <span class='st'>"lambda2"</span>, <span class='st'>"lambda4"</span>),
+  iters = <span class='fl'>5</span>,
+  holdout = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"both"</span>, <span class='st'>"participant"</span>, <span class='st'>"stimulus"</span>, <span class='st'>"cross"</span>)
+)
+
+<span class='co'># S3 method for aat_covreliability_jackknife</span>
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>x</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -177,6 +199,12 @@ Missing values are dealt with using multiple imputation.</p>
 multiple imputation will be used to complete the covariance matrix - this option sets
 the number of multiple imputations to be used.</p></td>
     </tr>
+    <tr>
+      <th>holdout</th>
+      <td><p>What should be removed from the data for computation of jackknife statistics?
+"both" computes reliability when stimuli and participants are separately removed,
+while "cross" computes the reliability when removing each stimulus within each participant</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -185,6 +213,11 @@ the number of multiple imputations to be used.</p></td>
 as well as the dataset and covariance matrix with replaced missing values. When
 the argument <code>targetvar</code> is provided, the output also contains the reliability of the
 individual stimulus categories and their intercorrelation.</p>
+<p><code>aat_covreliability_jackknife()</code> returns an <code>aat_covreliability_jackknife</code> object,
+containing jackknife reliability statistics. If argument <code>holdout</code> was set to "cross",
+then these statistics are provided in a matrix where rows represent participants and columns represent stimuli.
+Otherwise, they are provided in <code>data.frame</code>s where the stimulus or participant is represented in a column
+alongside the associated reliability value.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>When only one stimulus category is indicated, one of the commonly known reliability algorithms
@@ -194,6 +227,13 @@ compute the reliability of a double mean difference score, using the algorithms 
 to estimate the reliability of indiviau lstimulus categories.</p>
 <p>When one wants to compute the reliability of a double median difference score or D-score,
 <code><a href='aat_splithalf.html'>aat_splithalf()</a></code> is recommended instead.</p>
+    <h2 class="hasAnchor" id="methods-by-generic-"><a class="anchor" href="#methods-by-generic-"></a>Methods (by generic)</h2>
+
+    
+<ul>
+<li><p><code>print</code>: Print an <code>aat_covreliability</code> object</p></li>
+<li><p><code>print</code>: Print an <code>aat_covreliability_jackknife</code> object</p></li>
+</ul>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Lord, F.Y. (1963), "Elementary Models for Measuring Change",
@@ -210,23 +250,26 @@ University of Wisconsin.</p>
 <span class='co'># then the outcomes should be close to each other.</span>
 <span class='fu'>aat_covreliability</span>(ds=<span class='kw'>ds</span>,subjvar=<span class='st'>"subj"</span>,stimvar=<span class='st'>"stim"</span>,pullvar=<span class='st'>"is_pull"</span>,
                            targetvar=<span class='st'>"is_target"</span>,rtvar=<span class='st'>"rt"</span>)
-</div><div class='output co'>#&gt; r = .21
+</div><div class='output co'>#&gt; r = .41
 #&gt; Based on 32 valid stimuli, 40 valid participants, and the calpha algorithm.
-#&gt; Reliability of stimulus category 1: r = .72, n = 16, sd = 61.02
-#&gt; Reliability of stimulus category 2: r = .78, n = 16, sd = 68.35
-#&gt; Category intercorrelation: r = .69</div><div class='input'><span class='fu'><a href='aat_splithalf.html'>aat_splithalf</a></span>(ds=<span class='kw'>ds</span>,subjvar=<span class='st'>"subj"</span>,pullvar=<span class='st'>"is_pull"</span>,targetvar=<span class='st'>"is_target"</span>,rtvar=<span class='st'>"rt"</span>,
+#&gt; Reliability of stimulus category 1: r = .64, n = 16, sd = 54.22
+#&gt; Reliability of stimulus category 2: r = .7, n = 16, sd = 64.35
+#&gt; Category intercorrelation: r = .46</div><div class='input'><span class='fu'><a href='aat_splithalf.html'>aat_splithalf</a></span>(ds=<span class='kw'>ds</span>,subjvar=<span class='st'>"subj"</span>,pullvar=<span class='st'>"is_pull"</span>,targetvar=<span class='st'>"is_target"</span>,rtvar=<span class='st'>"rt"</span>,
               algorithm=<span class='st'>"aat_doublemeandiff"</span>,iters=<span class='fl'>100</span>,plot=<span class='fl'>FALSE</span>)
 </div><div class='output co'>#&gt; 
 #&gt; Full-length reliability (Raju's beta):
-#&gt; beta (40) = .21, 95%CI [-0.14, .49], p = .181
+#&gt; beta (40) = .44, 95%CI [.11, .72], p = .004
 #&gt; 
 #&gt; Uncorrected, average split-half correlation:
-#&gt; r (40) = .13, 95%CI [-0.08, .34], p = .415</div><div class='input'>
+#&gt; r (40) = .3, 95%CI [.06, .56], p = .063</div><div class='input'>
 <span class='co'>#Testing reliability for single-difference scores</span>
 <span class='kw'>ds</span><span class='op'>&lt;-</span><span class='kw'>ds</span>[<span class='kw'>ds</span><span class='op'>$</span><span class='kw'>is_target</span><span class='op'>==</span><span class='fl'>1</span>,]
 <span class='fu'>aat_covreliability</span>(ds=<span class='kw'>ds</span>,subjvar=<span class='st'>"subj"</span>,stimvar=<span class='st'>"stim"</span>,pullvar=<span class='st'>"is_pull"</span>,rtvar=<span class='st'>"rt"</span>)
-</div><div class='output co'>#&gt; r = .78
-#&gt; Based on 16 valid stimuli, 40 valid participants, and the calpha algorithm.</div></pre>
+</div><div class='output co'>#&gt; r = .7
+#&gt; Based on 16 valid stimuli, 40 valid participants, and the calpha algorithm.</div><div class='input'><span class='kw'>hh</span><span class='op'>&lt;-</span><span class='fu'><a href='aat_simulate.html'>aat_simulate</a></span>()
+<span class='kw'>test</span><span class='op'>&lt;-</span><span class='fu'>aat_covreliability_jackknife</span>(ds=<span class='kw'>hh</span>,subjvar=<span class='st'>"subj"</span>,stimvar=<span class='st'>"stim"</span>,pullvar=<span class='st'>"is_pull"</span>,<span class='st'>"is_target"</span>,<span class='st'>"rt"</span>,holdout=<span class='st'>"cross"</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>test</span>)
+</div><div class='output co'>#&gt; Maximum achieveable reliability is with removal of stimulus 0-24 in the data of participant 34: r = .84</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -134,10 +134,10 @@
   <span class='kw'>iters</span>,
   algorithm = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"aat_doublemeandiff"</span>, <span class='st'>"aat_doublemediandiff"</span>, <span class='st'>"aat_dscore"</span>,
     <span class='st'>"aat_dscore_multiblock"</span>, <span class='st'>"aat_regression"</span>, <span class='st'>"aat_standardregression"</span>,
-    <span class='st'>"aat_doublemeanquotient"</span>, <span class='st'>"aat_doublemedianquotient"</span>, <span class='st'>"aat_singlemeandiff"</span>,
-    <span class='st'>"aat_singlemediandiff"</span>),
-  trialdropfunc = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"prune_nothing"</span>, <span class='st'>"trial_prune_3SD"</span>, <span class='st'>"trial_prune_SD_dropcases"</span>,
-    <span class='st'>"trial_recode_SD"</span>, <span class='st'>"trial_prune_percent_subject"</span>, <span class='st'>"trial_prune_percent_sample"</span>),
+    <span class='st'>"aat_singlemeandiff"</span>, <span class='st'>"aat_singlemediandiff"</span>),
+  trialdropfunc = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"prune_nothing"</span>, <span class='st'>"trial_prune_3SD"</span>, <span class='st'>"trial_prune_3MAD"</span>,
+    <span class='st'>"trial_prune_SD_dropcases"</span>, <span class='st'>"trial_recode_SD"</span>, <span class='st'>"trial_prune_percent_subject"</span>,
+    <span class='st'>"trial_prune_percent_sample"</span>),
   errortrialfunc = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"prune_nothing"</span>, <span class='st'>"error_replace_blockmeanplus"</span>,
     <span class='st'>"error_prune_dropcases"</span>),
   plot = <span class='fl'>TRUE</span>,
@@ -273,9 +273,9 @@ the number of iterations, and a matrix of bias scores for each iteration.</p>
 #&gt; <span class='message'>    intersect, setdiff, setequal, union</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='kw'>boot</span>)
 </div><div class='img'><img src='aat_bootstrap-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>boot</span>)
 </div><div class='output co'>#&gt; Bootstrapped bias scores and confidence intervals
-#&gt; Mean bias score: 14.6681
-#&gt; Mean confidence interval: 121.0772
-#&gt; reliability: q = 14.6681
+#&gt; Mean bias score: 13.76466
+#&gt; Mean confidence interval: 121.5328
+#&gt; reliability: q = 0.510573
 #&gt; Number of iterations: 10</div><div class='input'>
 </div></pre>
   </div>

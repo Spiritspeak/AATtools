@@ -8,7 +8,7 @@
 #' @importFrom foreach getDoParRegistered registerDoSEQ
 #' @importFrom stats var median mad sd lm vcov terms as.formula coef cor cov setNames quantile
 #' pt rnorm rgamma pnorm qnorm ave median.default na.omit
-#' @importFrom graphics abline points segments text plot par axis strwidth
+#' @importFrom graphics abline points segments text plot par axis strwidth image
 .onLoad<-function(libname, pkgname){
   #avoid CRAN errors
   utils::globalVariables(c("abhalf0","abhalf1","ab","key","."),"AATtools")
@@ -21,12 +21,14 @@
   registerS3method("print",class="qreliability",method=print.qreliability)
   registerS3method("plot",class="qreliability",method=plot.qreliability)
   registerS3method("print",class="aat_covreliability",method=print.aat_covreliability)
+  registerS3method("print",class="aat_covreliability_jackknife",method=print.aat_covreliability_jackknife)
+  registerS3method("plot",class="aat_covreliability_jackknife",method=plot.aat_covreliability_jackknife)
 
   #set max number of cores to use
   if (r_check_limit_cores()) {
     num_workers <- 2L
   } else {
-    num_workers <- max(parallel::detectCores()-1,1)
+    num_workers <- max(parallel::detectCores(),1L)
   }
   options(AATtools.workers=num_workers)
 

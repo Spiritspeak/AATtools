@@ -13,7 +13,15 @@ It then computes correlations between every such subtraction of stimuli on one h
 the mean double difference score of all other stimuli. Stimulus-rest correlations are then
 computed by averaging every such subtraction-rest correlation involving a specific stimulus.}
 \usage{
-aat_stimulus_rest(ds, subjvar, stimvar, pullvar, targetvar, rtvar)
+aat_stimulus_rest(
+  ds,
+  subjvar,
+  stimvar,
+  pullvar,
+  targetvar,
+  rtvar,
+  method = c("pearson", "spearman", "kendall")
+)
 
 \method{plot}{aat_stimulus_rest}(x, ...)
 }
@@ -29,6 +37,8 @@ aat_stimulus_rest(ds, subjvar, stimvar, pullvar, targetvar, rtvar)
 \item{targetvar}{the label of the stimulus category identifier variable}
 
 \item{rtvar}{the label of the reaction time variable}
+
+\item{method}{Optional, the correlation method to be used (pearson, spearman, kendall)}
 
 \item{x}{an \code{aat_stimulus_rest} object}
 

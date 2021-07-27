@@ -135,8 +135,9 @@
     <span class='st'>"aat_dscore_multiblock"</span>, <span class='st'>"aat_regression"</span>, <span class='st'>"aat_standardregression"</span>,
     <span class='st'>"aat_doublemeanquotient"</span>, <span class='st'>"aat_doublemedianquotient"</span>, <span class='st'>"aat_singlemeandiff"</span>,
     <span class='st'>"aat_singlemediandiff"</span>),
-  trialdropfunc = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"prune_nothing"</span>, <span class='st'>"trial_prune_3SD"</span>, <span class='st'>"trial_prune_SD_dropcases"</span>,
-    <span class='st'>"trial_recode_SD"</span>, <span class='st'>"trial_prune_percent_subject"</span>, <span class='st'>"trial_prune_percent_sample"</span>),
+  trialdropfunc = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"prune_nothing"</span>, <span class='st'>"trial_prune_3SD"</span>, <span class='st'>"trial_prune_3MAD"</span>,
+    <span class='st'>"trial_prune_SD_dropcases"</span>, <span class='st'>"trial_recode_SD"</span>, <span class='st'>"trial_prune_percent_subject"</span>,
+    <span class='st'>"trial_prune_percent_sample"</span>),
   errortrialfunc = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"prune_nothing"</span>, <span class='st'>"error_replace_blockmeanplus"</span>,
     <span class='st'>"error_prune_dropcases"</span>),
   <span class='kw'>...</span>
@@ -234,7 +235,7 @@ If used, the following additional arguments are required:</p><ul>
 
 <span class='kw'>comparison.df</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/merge.html'>merge</a></span>(<span class='kw'>relevant</span>, <span class='kw'>irrelevant</span>, by = <span class='st'>"subject"</span>)
 <span class='fu'><a href='https://rdrr.io/r/stats/cor.html'>cor</a></span>(<span class='kw'>comparison.df</span><span class='op'>$</span><span class='kw'>ab.x</span>, <span class='kw'>comparison.df</span><span class='op'>$</span><span class='kw'>ab.y</span>)
-</div><div class='output co'>#&gt; [1] 0.1082213</div><div class='input'><span class='co'># 0.1145726</span>
+</div><div class='output co'>#&gt; [1] NA</div><div class='input'><span class='co'># 0.1145726</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
