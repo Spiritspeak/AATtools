@@ -62,7 +62,7 @@ the number of multiple imputations to be used.}
 
 \item{holdout}{What should be removed from the data for computation of jackknife statistics?
 "both" computes reliability when stimuli and participants are separately removed,
-while "cross" computes the reliability when removing each stimulus within each participant}
+while "cross" computes  reliability when stimuli and participants are simultaneously removed.}
 }
 \value{
 Returns an \code{aat_covreliability} object containing the reliability value

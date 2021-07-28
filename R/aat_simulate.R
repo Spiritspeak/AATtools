@@ -21,6 +21,7 @@
 #' @param biasfx Size of the approach bias effect, in milliseconds
 #' @param biasfx_jitter Individual variation in the approach bias effect
 #' @param empirical If TRUE, then effect sizes and standard deviations will be exact
+#' @param ... Ignored.
 #'
 #' @return \code{aat_simulate()} returns a \code{data.frame} with the following columns:
 #' subj (participant ID), stim (stimulus number), rep (stimulus repetition number),
@@ -40,12 +41,8 @@
 #' ts<- aat_simulate(pullfx = 50, stimfx = 10, biasfx = 100)
 #' mod<-lm(rt~is_pull*is_target,data=ts)
 #' coef(mod) #these should be somewhat close to the provided coefficients
-#' print(q_reliability(ts,"subj",rt~is_pull*is_target,"is_pull:is_target"))
-#' #these two should be not too far apart,
-#' # and should converge when the process is repeated a bunch
 #'
-#'
-#' # Here's how to derive the parameters used in this function from a real dataset
+#' # Here's how one might derive the parameters used in this function from a real dataset
 #' \dontrun{
 #' mod<-lmer(decisiontime ~ is_pull * is_food + (is_pull * is_food | subjectid),data=dsa)
 #' fixef(mod) # from here, all the fx and mean RTs are derived
@@ -53,13 +50,13 @@
 #' dsa %>% group_by(subjectid) %>% summarise(sd=sd(resid)) %>%
 #' summarise(m=mean(sd),s=sd(sd)) # from here, sdrt_jitter is derived
 #' }
-aat_simulate<-function(npps=40,nstims=32,stimreps=2,
-                       meanrt=743,meanrt_jitter=66,
-                       sdrt=133,sdrt_jitter=38,
-                       pullfx=25,pullfx_jitter=40,
-                       stimfx=10,stimfx_jitter=35,
-                       biasfx=35,biasfx_jitter=75,
-                       empirical=FALSE){
+aat_simulate<-function(npps=36,nstims=16,stimreps=8,
+                       meanrt=632,meanrt_jitter=90.1,
+                       sdrt=158,sdrt_jitter=49.9,
+                       pullfx=-39.2,pullfx_jitter=40.5,
+                       stimfx=-30.9,stimfx_jitter=32.5,
+                       biasfx= 39.0,biasfx_jitter=60.1,
+                       empirical=FALSE, ...){
 
   cond.scale<-function(x,emp){ if(emp){vec.scale(x)}else{x} }
 
@@ -164,42 +161,15 @@ aat_simulate_old<-function(npps=40,nstims=32,stimreps=2,
 #' @examples
 #' hist(aat_simulate2(defaults="Lender2018_raw",slowols=10,fastols=10)$rt)
 #' @rdname aat_simulate
-aat_simulate2<-function(..., defaults=c("none","Lender2018_raw","Lender2018_clean",
-                                        "Kahveci2021_raw","Kahveci2021_clean"),
+aat_simulate2<-function(..., defaults="none",
                         slowols=0,fastols=0,olsd=3){
-  defaults<-match.arg(defaults)
   override.args<-list(...)
 
   if(defaults=="none"){
     args<-override.args
-  }else if(defaults=="Lender2018_raw"){
-    args<-list(npps=37,nstims=16,stimreps=4,
-               meanrt=627,meanrt_jitter=97,
-               sdrt=197,sdrt_jitter=78,
-               pullfx=9,pullfx_jitter=49,
-               stimfx=7,stimfx_jitter=68,
-               biasfx=-76,biasfx_jitter=119)
-  }else if(defaults=="Lender2018_clean"){
-    args<-list(npps=37,nstims=16,stimreps=4,
-               meanrt=621,meanrt_jitter=84,
-               sdrt=134,sdrt_jitter=47,
-               pullfx=2,pullfx_jitter=38,
-               stimfx=3,stimfx_jitter=53,
-               biasfx=-56,biasfx_jitter=96)
-  }else if(defaults=="Kahveci2021_raw"){
-    args<-list(npps=40,nstims=32,stimreps=2,
-               mean=757,mean_jitter=67,
-               sdrt=197,sdrt_jitter=93,
-               pullfx=30,pullfx_jitter=40,
-               stimfx=09,stimfx_jitter=41,
-               biasfx=39,biasfx_jitter=79)
-  }else if(defaults=="Kahveci2021_clean"){
-    args<-list(npps=40,nstims=32,stimreps=2,
-               mean=743,mean_jitter=66,
-               sdrt=133,sdrt_jitter=38,
-               pullfx=27,pullfx_jitter=38,
-               stimfx=08,stimfx_jitter=35,
-               biasfx=36,biasfx_jitter=73)
+  }else{
+    chosenset<-match.arg(defaults,choices=dataprops$setname)
+    args<-as.list(dataprops[chosenset==dataprops$setname,])
   }
   args[names(override.args)]<-override.args
 
@@ -221,3 +191,48 @@ aat_simulate2<-function(..., defaults=c("none","Lender2018_raw","Lender2018_clea
   return(ds)
 }
 
+#experimental. Can currently only be used in datasets with approximately equal trials in all cells
+aat_properties<-function(ds,subjvar,pullvar,targetvar,rtvar){
+  ds<-aat_preparedata(ds=ds,subjvar=subjvar,pullvar=pullvar,targetvar=targetvar,rtvar=rtvar)
+
+  ds%<>%group_by(!!sym(subjvar))%>%
+    mutate(pulldiff=mean(subset(!!sym(rtvar),!!sym(pullvar)==1)) - mean(subset(!!sym(rtvar),!!sym(pullvar)==0)),
+           targetdiff=mean(subset(!!sym(rtvar),!!sym(targetvar)==1)) - mean(subset(!!sym(rtvar),!!sym(targetvar)==0)),
+           doublediff=2*mean(subset(!!sym(rtvar),!!sym(pullvar)!=!!sym(targetvar))) -
+                      2*mean(subset(!!sym(rtvar),!!sym(pullvar)==!!sym(targetvar))))
+
+  ds%<>%group_by(!!sym(subjvar)) %>%
+    mutate(.residrt=!!sym(rtvar)+
+             -(!!sym(pullvar)-mean(!!sym(pullvar)))*pulldiff+
+             -(!!sym(targetvar)-mean(!!sym(targetvar)))*targetdiff+
+             +.5*((!!sym(pullvar)==!!sym(targetvar))-mean(!!sym(pullvar)==!!sym(targetvar)))*doublediff)
+
+  ppstats<-ds%>%group_by(!!sym(subjvar))%>%
+    summarise(.pullfx=first(pulldiff),
+              .targetfx=first(targetdiff),
+              .biasfx=first(doublediff),
+              .meanrt=mean(!!sym(rtvar)),
+              .sdrt.full=sd(!!sym(rtvar)),
+              .sdrt.resid=sd(.residrt),
+              ntrial=n(),
+              .groups="drop")
+
+  output<-ppstats %>% ungroup() %>%
+    summarise(pullfx=mean(.pullfx),pullfx_jitter=sd(.pullfx),
+              stimfx=mean(.targetfx),stimfx_jitter=sd(.targetfx),
+              biasfx=mean(.biasfx),biasfx_jitter=sd(.biasfx),
+              meanrt=mean(.meanrt),meanrt_jitter=sd(.meanrt),
+              sdrt.full=mean(.sdrt.full),sdrt.full_jitter=sd(.sdrt.full),
+              sdrt.resid=mean(.sdrt.resid),sdrt.resid_jitter=sd(.sdrt.resid),
+              ntrial=mean(ntrial),
+              .groups="drop")
+
+  return(list(dataprops=as.list(output),subjectprops=ppstats,ds=ds))
+}
+
+#' @rdname aat_simulate
+#' @description \code{aat_getstudydata()} retrieves the properties of datasets from a number of pre-existing studies
+#' @export
+aat_getstudydata<-function(){
+  dataprops
+}
