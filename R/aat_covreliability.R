@@ -145,8 +145,6 @@ aat_covreliability<-function(ds,subjvar,stimvar,pullvar,targetvar=NULL,rtvar,alg
 
 #' @export
 #' @describeIn aat_covreliability Print an \code{aat_covreliability} object
-#' @param x Object to be printed
-#' @param ... Ignored
 print.aat_covreliability<-function(x,...){
   cat(sep="","r = ",mf(x$rel),
       "\nBased on ",ncol(x$data)," valid stimuli, ",
@@ -164,7 +162,7 @@ print.aat_covreliability<-function(x,...){
 #' @rdname aat_covreliability
 #' @param holdout What should be removed from the data for computation of jackknife statistics?
 #' "both" computes reliability when stimuli and participants are separately removed,
-#' while "cross" computes the reliability when removing each stimulus within each participant
+#' while "cross" computes  reliability when stimuli and participants are simultaneously removed.
 #' @description This function computes the reliability when stimuli and participants are removed,
 #' allowing for the diagnosis of potential sources of unreliability within the data.
 #' @export
@@ -257,20 +255,24 @@ aat_covreliability_jackknife<-function(ds,subjvar,stimvar,pullvar,targetvar=NULL
 
 #' @export
 #' @describeIn aat_covreliability Print an \code{aat_covreliability_jackknife} object
+#' @param x Object to be printed
+#' @param ... Ignored
 print.aat_covreliability_jackknife<-function(x, ...){
   cat("Reliability: r = ",mf(x$rel),"\n",sep="")
   if(any("pps"==names(x))){
     cmax<-which.max(x$pps$rel)
-    cat("Maximum achieveable reliability is with removal of participant ",x$pps$pp[cmax],": r = ",mf(x$pps$rel[cmax]),"\n",sep="")
+    cat("Maximum achieveable reliability is with removal of participant ",as.character(x$pps$pp[cmax]),
+        ": r = ",mf(x$pps$rel[cmax]),"\n",sep="")
   }
   if(any("stims"==names(x))){
     cmax<-which.max(x$stims$rel)
-    cat("Maximum achieveable reliability is with removal of stimulus ",x$stims$stim[cmax],": r = ",mf(x$stims$rel[cmax]),"\n",sep="")
+    cat("Maximum achieveable reliability is with removal of stimulus ",as.character(x$stims$stim[cmax]),
+        ": r = ",mf(x$stims$rel[cmax]),"\n",sep="")
   }
   if(any("cross"==names(x))){
     cmax<-which(x$cross==max(x$cross),arr.ind=T)
     cat("Maximum achieveable reliability is with removal of stimulus ",colnames(x$cross)[cmax[2]],
-        " in the data of participant ",rownames(x$cross)[cmax[1]],
+        " and participant ",rownames(x$cross)[cmax[1]],
         ": r = ",mf(x$cross[cmax[1],cmax[2]]),"\n",sep="")
   }
 }
@@ -287,7 +289,7 @@ plot.aat_covreliability_jackknife<-function(x, ...){
     plot(range(x$pps$rel), range(ord), bty = 'n', type = 'n',main="Participants",
          xlab="Jackknife reliability",ylab="Rank")
     abline(v=x$rel,col="#00000055")
-    text(x=x$pps$rel[ord],y=seq_along(x$pps$rel),label=x$pps$pp[ord],cex=.7)
+    text(x=x$pps$rel[ord],y=seq_along(x$pps$rel),label=as.character(x$pps$pp[ord]),cex=.7)
 
   }
 
@@ -296,7 +298,7 @@ plot.aat_covreliability_jackknife<-function(x, ...){
     plot(range(x$stims$rel), range(ord), bty = 'n', type = 'n',main="Stimuli",
          xlab="Jackknife reliability",ylab="Rank")
     abline(v=x$rel,col="#00000055")
-    text(x=x$stims$rel[ord],y=seq_along(x$stims$rel),label=x$stims$stim[ord],cex=.7)
+    text(x=x$stims$rel[ord],y=seq_along(x$stims$rel),label=as.character(x$stims$stim[ord]),cex=.7)
   }
 
   if(any("cross"==names(x))){
@@ -306,6 +308,5 @@ plot.aat_covreliability_jackknife<-function(x, ...){
   }
   par(mfrow=prev.mfrow)
 }
-
 
 

@@ -3,6 +3,7 @@
 \name{aat_simulate}
 \alias{aat_simulate}
 \alias{aat_simulate2}
+\alias{aat_getstudydata}
 \title{Simulate AAT datasets and predict parameters}
 \usage{
 aat_simulate(
@@ -19,17 +20,13 @@ aat_simulate(
   stimfx_jitter = 35,
   biasfx = 35,
   biasfx_jitter = 75,
-  empirical = FALSE
+  empirical = FALSE,
+  ...
 )
 
-aat_simulate2(
-  ...,
-  defaults = c("none", "Lender2018_raw", "Lender2018_clean", "Kahveci2021_raw",
-    "Kahveci2021_clean"),
-  slowols = 0,
-  fastols = 0,
-  olsd = 3
-)
+aat_simulate2(..., defaults = "none", slowols = 0, fastols = 0, olsd = 3)
+
+aat_getstudydata()
 }
 \arguments{
 \item{npps}{Number of participants}
@@ -107,6 +104,11 @@ Kahveci, S., Van Alebeek, H., Berking, M., & Blechert, J. (in review).
 Touchscreen based assessment of food approach biases: investigation of
 reliability and stimulus-specific effects.
 }
+\section{Functions}{
+\itemize{
+\item \code{aat_getstudydata}: Get the properties of pre-existing studies
+}}
+
 \examples{
 ts<- aat_simulate(pullfx = 50, stimfx = 10, biasfx = 100)
 mod<-lm(rt~is_pull*is_target,data=ts)
