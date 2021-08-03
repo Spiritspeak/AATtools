@@ -50,7 +50,7 @@
 #' dsa %>% group_by(subjectid) %>% summarise(sd=sd(resid)) %>%
 #' summarise(m=mean(sd),s=sd(sd)) # from here, sdrt_jitter is derived
 #' }
-aat_simulate<-function(npps=36,nstims=16,stimreps=8,
+aat_simulate<-function(npps=36,nstims=16,stimreps=4,
                        meanrt=632,meanrt_jitter=90.1,
                        sdrt=158,sdrt_jitter=49.9,
                        pullfx=-39.2,pullfx_jitter=40.5,
