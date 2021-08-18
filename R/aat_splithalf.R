@@ -201,8 +201,8 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,
 
       #Compute reliability
       currcorr<-cor(abds$abhalf0,abds$abhalf1,use="complete.obs")
-      frcorr<-FlanaganRulonBilateral(abds$abhalf0,abds$abhalf1)
-      rjcorr<-RajuBilateral(abds$abhalf0,abds$abhalf1,mean(iterds$key))
+      frcorr<-FlanaganRulonStandard(abds$abhalf0,abds$abhalf1)
+      rjcorr<-RajuStandard(abds$abhalf0,abds$abhalf1,mean(iterds$key))
 
       #produce output
       out<-list(corr=currcorr,frcorr=frcorr,rjcorr=rjcorr,abds=abds)
@@ -213,7 +213,7 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,
   #extract coefs from output
   rjcors<-sapply(results,FUN=function(x){x$rjcorr})
   cors<-sapply(results,FUN=function(x){x$corr})
-  sbcors<-SpearmanBrown(cors,fix.negative="bilateral")
+  sbcors<-SpearmanBrown(cors,fix.negative="none")
   frcorrs<-sapply(results,FUN=function(x){x$frcorr})
 
   #get  sample sizes (for averaging and significance testing)
@@ -229,25 +229,25 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,
   counts<-counts[ordering]
 
   #assemble output
-  output<-list(uncorrected=list(r=cormean(cors,counts),
+  output<-list(uncorrected=list(r=cormean2(cors),
                                 lowerci=quantile(cors,probs=.025),
                                 upperci=quantile(cors,probs=.975),
-                                pval=r2p(cormean(cors,counts),avg_n),
+                                pval=r2p(cormean2(cors),avg_n),
                                 itercors=cors),
-               spearmanbrown=list(r=cormean(sbcors,counts),
+               spearmanbrown=list(r=cormean2(sbcors),
                                   lowerci=quantile(sbcors,probs=.025),
                                   upperci=quantile(sbcors,probs=.975),
-                                  pval=r2p(cormean(sbcors,counts),avg_n),
+                                  pval=r2p(cormean2(sbcors),avg_n),
                                   itercors=sbcors),
-               flanaganrulon=list(r=cormean(frcorrs,counts),
+               flanaganrulon=list(r=cormean2(frcorrs),
                                   lowerci=quantile(x=frcorrs,probs=.025),
                                   upperci=quantile(x=frcorrs,probs=.975),
-                                  pval=r2p(cormean(frcorrs,counts),avg_n),
+                                  pval=r2p(cormean2(frcorrs),avg_n),
                                   itercors=frcorrs),
-               raju=list(r=cormean(rjcors,counts),
+               raju=list(r=cormean2(rjcors),
                          lowerci=quantile(x=rjcors,probs=.025),
                          upperci=quantile(x=rjcors,probs=.975),
-                         pval=r2p(cormean(rjcors,counts),avg_n),
+                         pval=r2p(cormean2(rjcors),avg_n),
                          itercors=rjcors),
                avg_n=avg_n,
                ordering=ordering,

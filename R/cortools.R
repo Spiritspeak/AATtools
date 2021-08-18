@@ -18,7 +18,8 @@ NULL
 #' @export
 #' @describeIn correlation-tools converts correlation coefficients to z-scores
 r2z<-function(r){
-  return(.5 * (log(1+r) - log(1-r)))
+  z<-.5 * (log(1+r) - log(1-r))
+  return(z)
 }
 #' @export
 #' @describeIn correlation-tools converts z-scores to correlation coefficients
@@ -94,6 +95,11 @@ cormean <- function(r, n, na.rm=F) {
   Den <- sum(n, na.rm) - (length(n)-NaCount)
   if(any(Den == 0)) Den[Den == 0] <- NA
   return(Num / Den)
+}
+
+#' @rdname cormean
+cormean2<-function(r){
+  (mean(r) + z2r(mean( lim(r2z(r),-9,9) )))/2
 }
 
 #' Partial correlation
