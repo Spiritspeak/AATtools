@@ -2,9 +2,12 @@
 % Please edit documentation in R/cortools.R
 \name{cormean}
 \alias{cormean}
+\alias{cormean2}
 \title{Compute a minimally biased average of correlation values}
 \usage{
 cormean(r, n, na.rm = F)
+
+cormean2(r)
 }
 \arguments{
 \item{r}{a vector containing correlation values}

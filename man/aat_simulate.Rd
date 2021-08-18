@@ -7,19 +7,19 @@
 \title{Simulate AAT datasets and predict parameters}
 \usage{
 aat_simulate(
-  npps = 40,
-  nstims = 32,
-  stimreps = 2,
-  meanrt = 743,
-  meanrt_jitter = 66,
-  sdrt = 133,
-  sdrt_jitter = 38,
-  pullfx = 25,
-  pullfx_jitter = 40,
-  stimfx = 10,
-  stimfx_jitter = 35,
-  biasfx = 35,
-  biasfx_jitter = 75,
+  npps = 36,
+  nstims = 16,
+  stimreps = 4,
+  meanrt = 632,
+  meanrt_jitter = 90.1,
+  sdrt = 158,
+  sdrt_jitter = 49.9,
+  pullfx = -39.2,
+  pullfx_jitter = 40.5,
+  stimfx = -30.9,
+  stimfx_jitter = 32.5,
+  biasfx = 39,
+  biasfx_jitter = 60.1,
   empirical = FALSE,
   ...
 )
@@ -87,6 +87,8 @@ the expected reliability of the data given the provided parameters.
 }
 \description{
 \code{aat_simulate()} generates approach-avoidance task datasets.
+
+\code{aat_getstudydata()} retrieves the properties of datasets from a number of pre-existing studies
 }
 \details{
 Defaults of \code{aat_simulate()} are based on
@@ -104,21 +106,12 @@ Kahveci, S., Van Alebeek, H., Berking, M., & Blechert, J. (in review).
 Touchscreen based assessment of food approach biases: investigation of
 reliability and stimulus-specific effects.
 }
-\section{Functions}{
-\itemize{
-\item \code{aat_getstudydata}: Get the properties of pre-existing studies
-}}
-
 \examples{
 ts<- aat_simulate(pullfx = 50, stimfx = 10, biasfx = 100)
 mod<-lm(rt~is_pull*is_target,data=ts)
 coef(mod) #these should be somewhat close to the provided coefficients
-print(q_reliability(ts,"subj",rt~is_pull*is_target,"is_pull:is_target"))
-#these two should be not too far apart,
-# and should converge when the process is repeated a bunch
 
-
-# Here's how to derive the parameters used in this function from a real dataset
+# Here's how one might derive the parameters used in this function from a real dataset
 \dontrun{
 mod<-lmer(decisiontime ~ is_pull * is_food + (is_pull * is_food | subjectid),data=dsa)
 fixef(mod) # from here, all the fx and mean RTs are derived
@@ -126,5 +119,5 @@ ranef(mod)$subjectid \%>\% apply(2,sd) #from here, all the fx jitters are derive
 dsa \%>\% group_by(subjectid) \%>\% summarise(sd=sd(resid)) \%>\%
 summarise(m=mean(sd),s=sd(sd)) # from here, sdrt_jitter is derived
 }
-hist(aat_simulate2(defaults="Lender2018_raw",slowols=10,fastols=10)$rt)
+hist(aat_simulate2(defaults="Lender2018_relevant_raw",slowols=10,fastols=10)$rt)
 }

@@ -20,7 +20,7 @@ NULL
 #' @examples
 #'
 #' SpearmanBrown(.5)
-SpearmanBrown<-function(corr,ntests=2,fix.negative=c("nullify","bilateral","none")){
+SpearmanBrown<-function(corr,ntests=2,fix.negative=c("none","nullify","bilateral")){
   fix.negative<-match.arg(fix.negative)
   if(fix.negative=="bilateral"){
     s<-sign(corr)

@@ -15,6 +15,16 @@ RajuBilateral<-function(x1,x2,prop){
   return(raju)
 }
 
+FlanaganRulonStandard<-function(x1,x2){
+  (1-var(x1-x2)/var(x1+x2))
+}
+
+RajuStandard<-function(x1,x2,prop){
+  covar<-cov(x1,x2)
+  sumvar<-var(x1)+var(x2)+2*covar
+  covar / (prop * (1-prop) * sumvar)
+}
+
 vec.sd<-function(x,na.rm=F){
   if(na.rm){x<-na.omit(x)}
   sqrt(sum((x-mean.default(x))^2) / (length(x)-1))
@@ -32,6 +42,7 @@ vec.madscale<-function(x){
 
 val_between<-function(x,lb,ub){x>lb & x<ub}
 
+lim<-function(x,minx,maxx){ x[x<minx]<-minx; x[x>maxx]<-maxx; x }
 
 drop_empty_cases<-function(iterds,subjvar){
   ids<-vapply(split(iterds$key,iterds[[subjvar]]),

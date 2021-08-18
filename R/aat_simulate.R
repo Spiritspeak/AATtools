@@ -159,7 +159,7 @@ aat_simulate_old<-function(npps=40,nstims=32,stimreps=2,
 #' @export
 #'
 #' @examples
-#' hist(aat_simulate2(defaults="Lender2018_raw",slowols=10,fastols=10)$rt)
+#' hist(aat_simulate2(defaults="Lender2018_relevant_raw",slowols=10,fastols=10)$rt)
 #' @rdname aat_simulate
 aat_simulate2<-function(..., defaults="none",
                         slowols=0,fastols=0,olsd=3){
@@ -203,28 +203,28 @@ aat_properties<-function(ds,subjvar,pullvar,targetvar,rtvar){
 
   ds%<>%group_by(!!sym(subjvar)) %>%
     mutate(.residrt=!!sym(rtvar)+
-             -(!!sym(pullvar)-mean(!!sym(pullvar)))*pulldiff+
-             -(!!sym(targetvar)-mean(!!sym(targetvar)))*targetdiff+
-             +.5*((!!sym(pullvar)==!!sym(targetvar))-mean(!!sym(pullvar)==!!sym(targetvar)))*doublediff)
+             -(!!sym(pullvar)-mean(!!sym(pullvar)))*.data$pulldiff+
+             -(!!sym(targetvar)-mean(!!sym(targetvar)))*.data$targetdiff+
+             +.5*((!!sym(pullvar)==!!sym(targetvar))-mean(!!sym(pullvar)==!!sym(targetvar)))*.data$doublediff)
 
   ppstats<-ds%>%group_by(!!sym(subjvar))%>%
-    summarise(.pullfx=first(pulldiff),
-              .targetfx=first(targetdiff),
-              .biasfx=first(doublediff),
+    summarise(.pullfx=first(.data$pulldiff),
+              .targetfx=first(.data$targetdiff),
+              .biasfx=first(.data$doublediff),
               .meanrt=mean(!!sym(rtvar)),
               .sdrt.full=sd(!!sym(rtvar)),
-              .sdrt.resid=sd(.residrt),
+              .sdrt.resid=sd(.data$.residrt),
               ntrial=n(),
               .groups="drop")
 
   output<-ppstats %>% ungroup() %>%
-    summarise(pullfx=mean(.pullfx),pullfx_jitter=sd(.pullfx),
-              stimfx=mean(.targetfx),stimfx_jitter=sd(.targetfx),
-              biasfx=mean(.biasfx),biasfx_jitter=sd(.biasfx),
-              meanrt=mean(.meanrt),meanrt_jitter=sd(.meanrt),
-              sdrt.full=mean(.sdrt.full),sdrt.full_jitter=sd(.sdrt.full),
-              sdrt.resid=mean(.sdrt.resid),sdrt.resid_jitter=sd(.sdrt.resid),
-              ntrial=mean(ntrial),
+    summarise(pullfx=mean(.data$.pullfx),pullfx_jitter=sd(.data$.pullfx),
+              stimfx=mean(.data$.targetfx),stimfx_jitter=sd(.data$.targetfx),
+              biasfx=mean(.data$.biasfx),biasfx_jitter=sd(.data$.biasfx),
+              meanrt=mean(.data$.meanrt),meanrt_jitter=sd(.data$.meanrt),
+              sdrt.full=mean(.data$.sdrt.full),sdrt.full_jitter=sd(.data$.sdrt.full),
+              sdrt.resid=mean(.data$.sdrt.resid),sdrt.resid_jitter=sd(.data$.sdrt.resid),
+              ntrial=mean(.data$ntrial),
               .groups="drop")
 
   return(list(dataprops=as.list(output),subjectprops=ppstats,ds=ds))

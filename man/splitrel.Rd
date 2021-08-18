@@ -10,7 +10,7 @@
 SpearmanBrown(
   corr,
   ntests = 2,
-  fix.negative = c("nullify", "bilateral", "none")
+  fix.negative = c("none", "nullify", "bilateral")
 )
 
 FlanaganRulon(x1, x2, fix.negative = c("nullify", "bilateral", "none"))
