@@ -45,7 +45,7 @@ SpearmanBrown<-function(corr,ntests=2,fix.negative=c("none","nullify","bilateral
 #'
 #' @examples
 #' FlanaganRulon(a<-rnorm(50),rnorm(50)+a*.5,fix.negative="bilateral")
-FlanaganRulon<-function(x1,x2,fix.negative=c("nullify","bilateral","none")){
+FlanaganRulon<-function(x1,x2,fix.negative=c("none","nullify","bilateral")){
   fix.negative<-match.arg(fix.negative)
   d<-var(x1-x2)
   k<-var(x1+x2)
@@ -74,7 +74,7 @@ FlanaganRulon<-function(x1,x2,fix.negative=c("nullify","bilateral","none")){
 #' a<-rnorm(50)
 #' b<-rnorm(50)+a*.5
 #' RajuCoefficient(a,b,prop=.4,fix.negative="bilateral")
-RajuCoefficient<-function(x1,x2,prop,fix.negative=c("nullify","bilateral","none")){
+RajuCoefficient<-function(x1,x2,prop,fix.negative=c("none","nullify","bilateral")){
   fix.negative<-match.arg(fix.negative)
   covar<-cov(x1,x2)
   if(fix.negative=="bilateral"){

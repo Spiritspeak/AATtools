@@ -47,7 +47,8 @@
 
 
 <meta property="og:title" content="Simulate AAT datasets and predict parameters — aat_simulate" />
-<meta property="og:description" content="aat_simulate() generates approach-avoidance task datasets." />
+<meta property="og:description" content="aat_simulate() generates approach-avoidance task datasets.
+aat_getstudydata() retrieves the properties of datasets from a number of pre-existing studies" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -123,33 +124,30 @@
 
     <div class="ref-description">
     <p><code>aat_simulate()</code> generates approach-avoidance task datasets.</p>
+<p><code>aat_getstudydata()</code> retrieves the properties of datasets from a number of pre-existing studies</p>
     </div>
 
     <pre class="usage"><span class='fu'>aat_simulate</span>(
-  npps = <span class='fl'>40</span>,
-  nstims = <span class='fl'>32</span>,
-  stimreps = <span class='fl'>2</span>,
-  meanrt = <span class='fl'>743</span>,
-  meanrt_jitter = <span class='fl'>66</span>,
-  sdrt = <span class='fl'>133</span>,
-  sdrt_jitter = <span class='fl'>38</span>,
-  pullfx = <span class='fl'>25</span>,
-  pullfx_jitter = <span class='fl'>40</span>,
-  stimfx = <span class='fl'>10</span>,
-  stimfx_jitter = <span class='fl'>35</span>,
-  biasfx = <span class='fl'>35</span>,
-  biasfx_jitter = <span class='fl'>75</span>,
-  empirical = <span class='fl'>FALSE</span>
+  npps = <span class='fl'>36</span>,
+  nstims = <span class='fl'>16</span>,
+  stimreps = <span class='fl'>4</span>,
+  meanrt = <span class='fl'>632</span>,
+  meanrt_jitter = <span class='fl'>90.1</span>,
+  sdrt = <span class='fl'>158</span>,
+  sdrt_jitter = <span class='fl'>49.9</span>,
+  pullfx = <span class='op'>-</span><span class='fl'>39.2</span>,
+  pullfx_jitter = <span class='fl'>40.5</span>,
+  stimfx = <span class='op'>-</span><span class='fl'>30.9</span>,
+  stimfx_jitter = <span class='fl'>32.5</span>,
+  biasfx = <span class='fl'>39</span>,
+  biasfx_jitter = <span class='fl'>60.1</span>,
+  empirical = <span class='fl'>FALSE</span>,
+  <span class='kw'>...</span>
 )
 
-<span class='fu'>aat_simulate2</span>(
-  <span class='kw'>...</span>,
-  defaults = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"none"</span>, <span class='st'>"Lender2018_raw"</span>, <span class='st'>"Lender2018_clean"</span>, <span class='st'>"Kahveci2021_raw"</span>,
-    <span class='st'>"Kahveci2021_clean"</span>),
-  slowols = <span class='fl'>0</span>,
-  fastols = <span class='fl'>0</span>,
-  olsd = <span class='fl'>3</span>
-)</pre>
+<span class='fu'>aat_simulate2</span>(<span class='kw'>...</span>, defaults = <span class='st'>"none"</span>, slowols = <span class='fl'>0</span>, fastols = <span class='fl'>0</span>, olsd = <span class='fl'>3</span>)
+
+<span class='fu'>aat_getstudydata</span>()</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -269,12 +267,8 @@ reliability and stimulus-specific effects.</p>
 <span class='kw'>mod</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='kw'>rt</span><span class='op'>~</span><span class='kw'>is_pull</span><span class='op'>*</span><span class='kw'>is_target</span>,data=<span class='kw'>ts</span>)
 <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='kw'>mod</span>) <span class='co'>#these should be somewhat close to the provided coefficients</span>
 </div><div class='output co'>#&gt;       (Intercept)           is_pull         is_target is_pull:is_target 
-#&gt;         681.98349         125.98664          76.97419        -121.25091 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='fu'><a href='q_reliability.html'>q_reliability</a></span>(<span class='kw'>ts</span>,<span class='st'>"subj"</span>,<span class='kw'>rt</span><span class='op'>~</span><span class='kw'>is_pull</span><span class='op'>*</span><span class='kw'>is_target</span>,<span class='st'>"is_pull:is_target"</span>))
-</div><div class='output co'>#&gt; q = 0.7961374</div><div class='input'><span class='co'>#these two should be not too far apart,</span>
-<span class='co'># and should converge when the process is repeated a bunch</span>
-
-
-<span class='co'># Here's how to derive the parameters used in this function from a real dataset</span>
+#&gt;         565.37150         113.95588          57.83458        -111.85169 </div><div class='input'>
+<span class='co'># Here's how one might derive the parameters used in this function from a real dataset</span>
 <span class='co'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='kw'>mod</span><span class='op'>&lt;-</span><span class='fu'>lmer</span>(<span class='kw'>decisiontime</span> <span class='op'>~</span> <span class='kw'>is_pull</span> <span class='op'>*</span> <span class='kw'>is_food</span> <span class='op'>+</span> (<span class='kw'>is_pull</span> <span class='op'>*</span> <span class='kw'>is_food</span> <span class='op'>|</span> <span class='kw'>subjectid</span>),data=<span class='kw'>dsa</span>)
 <span class='fu'>fixef</span>(<span class='kw'>mod</span>) <span class='co'># from here, all the fx and mean RTs are derived</span>
@@ -282,7 +276,7 @@ reliability and stimulus-specific effects.</p>
 <span class='kw'>dsa</span> <span class='op'>%&gt;%</span> <span class='fu'>group_by</span>(<span class='kw'>subjectid</span>) <span class='op'>%&gt;%</span> <span class='fu'>summarise</span>(sd=<span class='fu'><a href='https://rdrr.io/r/stats/sd.html'>sd</a></span>(<span class='kw'>resid</span>)) <span class='op'>%&gt;%</span>
 <span class='fu'>summarise</span>(m=<span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='kw'>sd</span>),s=<span class='fu'><a href='https://rdrr.io/r/stats/sd.html'>sd</a></span>(<span class='kw'>sd</span>)) <span class='co'># from here, sdrt_jitter is derived</span>
 }
-<span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span>(<span class='fu'>aat_simulate2</span>(defaults=<span class='st'>"Lender2018_raw"</span>,slowols=<span class='fl'>10</span>,fastols=<span class='fl'>10</span>)<span class='op'>$</span><span class='kw'>rt</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span>(<span class='fu'>aat_simulate2</span>(defaults=<span class='st'>"Lender2018_relevant_raw"</span>,slowols=<span class='fl'>10</span>,fastols=<span class='fl'>10</span>)<span class='op'>$</span><span class='kw'>rt</span>)
 </div><div class='img'><img src='aat_simulate-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
