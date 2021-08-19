@@ -98,8 +98,9 @@ cormean <- function(r, n, na.rm=F) {
 }
 
 #' @rdname cormean
+#' @export
 cormean2<-function(r){
-  (mean(r) + z2r(mean( lim(r2z(r),-9,9) )))/2
+  (mean(lim(r,-.999999,.999999)) + z2r(mean( r2z(lim(r,-.999999,.999999)) )))/2
 }
 
 #' Partial correlation
