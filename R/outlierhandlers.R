@@ -13,6 +13,7 @@
 #' \item \code{prune_nothing} excludes no trials (default)
 #' \item \code{trial_prune_3SD} excludes trials deviating more than 3SD from the mean per participant.
 #' \item \code{trial_prune_3MAD} excludes trials deviating more than 3 median absolute deviations from the median per participant.
+#' \item \code{trial_prune_grubbs} applies a Grubbs' test to the data, removing one outlier at a time until the test is no longer significant.
 #' \item \code{trial_prune_SD_dropcases} removes trials deviating more than a specific number of standard deviations from the participant's mean,
 #' and removes participants with an excessive percentage of outliers.
 #' Required arguments:
@@ -159,6 +160,39 @@ trial_recode_SD_alt<-function(ds,subjvar,rtvar,trialsd=3,...){
 
 #' @export
 #' @rdname Preprocessing
+trial_prune_grubbs<-function(ds,subjvar,rtvar,...){
+  ds %>% group_by(!!sym(subjvar)) %>% filter(!grubbsFilter(!!sym(rtvar))) %>% ungroup()
+}
+
+grubbsFilter<-function(x,alphalevel=.05){
+  pval<-0
+  is.ol<-rep(F,length(x))
+  while(pval<alphalevel & sum(is.ol) < length(x)){
+    scaled<-vec.scale(x[!is.ol])
+    biggest<-which.max(abs(scaled))
+    pval<-pgrubbs(scaled[biggest],sum(!is.ol))
+    if(pval<alphalevel)
+      is.ol[!is.ol][biggest]<-T
+  }
+  is.ol
+}
+
+# Borrowed from the {outliers} package
+pgrubbs<-function(p,n){
+  s <- (p^2 * n * (2 - n))/(p^2 * n - (n - 1)^2)
+  t <- sqrt(s)
+  if (is.nan(t)) {
+    res <- 0
+  }
+  else {
+    res <- n * (1 - pt(t, n - 2))
+    res[res > 1] <- 1
+  }
+  return(res)
+}
+
+#' @export
+#' @rdname Preprocessing
 case_prune_3SD<-function(ds,...){
   ds[which(abs(vec.scale(ds$abhalf0))<3 & abs(vec.scale(ds$abhalf1))<3),]
 }
@@ -197,5 +231,6 @@ error_prune_dropcases_alt<-function(ds,subjvar, errorvar, maxerrors = .15, ...){
   ds$merr<-ave(ds[[errorvar]],ds[[subjvar]],ds$key,FUN=mean.default)
   ds[which(ds$merr<maxerrors & !ds[[errorvar]]),]
 }
+
 
 
