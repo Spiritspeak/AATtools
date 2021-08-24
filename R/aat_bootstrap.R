@@ -17,6 +17,7 @@
 #' but not when using d-scores or median double-difference scores.
 #' \itemize{
 #' \item \code{prune_nothing} excludes no trials (default)
+#' \item \code{trial_prune_grubbs} applies a Grubbs' test to the data, removing one outlier at a time until the test is no longer significant.
 #' \item \code{trial_prune_3SD} excludes trials deviating more than 3SD from the mean per participant.
 #' \item \code{trial_prune_SD_dropcases} removes trials deviating more than a specific number of standard deviations from the participant's mean,
 #' and removes participants with an excessive percentage of outliers.
@@ -83,7 +84,8 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,
                                     "aat_singlemeandiff","aat_singlemediandiff"),
                         trialdropfunc=c("prune_nothing","trial_prune_3SD","trial_prune_3MAD",
                                         "trial_prune_SD_dropcases","trial_recode_SD",
-                                        "trial_prune_percent_subject","trial_prune_percent_sample"),
+                                        "trial_prune_percent_subject","trial_prune_percent_sample",
+                                        "trial_prune_grubbs"),
                         errortrialfunc=c("prune_nothing","error_replace_blockmeanplus","error_prune_dropcases"),
                         plot=TRUE,include.raw=FALSE,parallel=TRUE,...){
   packs<-c("magrittr","dplyr","AATtools")
