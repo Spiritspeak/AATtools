@@ -212,10 +212,10 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,
     }
 
   #extract coefs from output
-  rjcors<-sapply(results,FUN=function(x){x$rjcorr})
+  rjcors<-sapply(results,FUN=function(x){x$rjcorr}) %>% lim(-.9999,.9999)
   cors<-sapply(results,FUN=function(x){x$corr})
-  sbcors<-SpearmanBrown(cors,fix.negative="none")
-  frcorrs<-sapply(results,FUN=function(x){x$frcorr})
+  sbcors<-SpearmanBrown(lim(cors,-.9999,.9999),fix.negative="none") %>% lim(-.9999,.9999)
+  frcorrs<-sapply(results,FUN=function(x){x$frcorr})  %>% lim(-.9999,.9999)
 
   #get  sample sizes (for averaging and significance testing)
   counts<-sapply(results,function(x){ sum(!is.na(x$abds$abhalf0) & !is.na(x$abds$abhalf1)) })
