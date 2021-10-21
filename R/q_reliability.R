@@ -66,11 +66,18 @@ q_reliability<-function(ds,subjvar,formula,aatterm=NA){
 #' @examples
 #' q_reliability2(ds=erotica,subjvar="subject",
 #'               splitvars=c("is_pull", "is_target"),rtvar="RT")
-q_reliability2<-function(ds,subjvar,splitvars,rtvar,na.rm=F){
+q_reliability2<-function(ds,subjvar,splitvars,rtvar,na.rm=F,dscore=F){
   #remove missing
   if(na.rm){
     ds<-ds[,c(subjvar,rtvar,splitvars)]
     ds<-ds[rowSums(is.na(ds))<1,]
+  }
+
+  #divide RTs by person-specific SD to make it possible to compute D-score by simply
+  # doing a double mean difference
+  if(dscore){
+    sds<-tapply(ds[[rtvar]],ds[[subjvar]],sd)
+    ds[[rtvar]]<-ds[[rtvar]]/sds[as.character(ds[[subjvar]])]
   }
 
   #scores

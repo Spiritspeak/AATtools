@@ -57,6 +57,7 @@ but not when using d-scores or median double-difference scores.
 prune_nothing excludes no trials (default)
 trial_prune_3SD excludes trials deviating more than 3SD from the mean per participant.
 trial_prune_3MAD excludes trials deviating more than 3 median absolute deviations from the median per participant.
+trial_prune_grubbs applies a Grubbs' test to the data, removing one outlier at a time until the test is no longer significant.
 trial_prune_SD_dropcases removes trials deviating more than a specific number of standard deviations from the participant's mean,
 and removes participants with an excessive percentage of outliers.
 Required arguments:
@@ -178,6 +179,7 @@ but not when using d-scores or median double-difference scores.</p><ul>
 <li><p><code>prune_nothing</code> excludes no trials (default)</p></li>
 <li><p><code>trial_prune_3SD</code> excludes trials deviating more than 3SD from the mean per participant.</p></li>
 <li><p><code>trial_prune_3MAD</code> excludes trials deviating more than 3 median absolute deviations from the median per participant.</p></li>
+<li><p><code>trial_prune_grubbs</code> applies a Grubbs' test to the data, removing one outlier at a time until the test is no longer significant.</p></li>
 <li><p><code>trial_prune_SD_dropcases</code> removes trials deviating more than a specific number of standard deviations from the participant's mean,
 and removes participants with an excessive percentage of outliers.
 Required arguments:</p><ul>
@@ -250,6 +252,8 @@ The way you handle outliers here should mimic the way you do it in your regular 
 )
 
 <span class='fu'>trial_recode_SD</span>(<span class='kw'>ds</span>, <span class='kw'>subjvar</span>, <span class='kw'>rtvar</span>, trialsd = <span class='fl'>3</span>, <span class='kw'>...</span>)
+
+<span class='fu'>trial_prune_grubbs</span>(<span class='kw'>ds</span>, <span class='kw'>subjvar</span>, <span class='kw'>rtvar</span>, <span class='kw'>...</span>)
 
 <span class='fu'>case_prune_3SD</span>(<span class='kw'>ds</span>, <span class='kw'>...</span>)
 

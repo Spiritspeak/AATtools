@@ -50,7 +50,7 @@
 <meta property="og:description" content="This function computes a minimally biased average of correlation values.
 This is needed because simple averaging of correlations is negatively biased,
 and the often used z-transformation method of averaging correlations is positively biased.
-The algorithm was developed by Olkin &amp;amp; Pratt (1958) and implemented by Jan Seifert." />
+The algorithm was developed by Olkin &amp;amp; Pratt (1958)." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -128,12 +128,16 @@ The algorithm was developed by Olkin &amp;amp; Pratt (1958) and implemented by J
     <p>This function computes a minimally biased average of correlation values.
 This is needed because simple averaging of correlations is negatively biased,
 and the often used z-transformation method of averaging correlations is positively biased.
-The algorithm was developed by Olkin &amp; Pratt (1958) and implemented by Jan Seifert.</p>
+The algorithm was developed by Olkin &amp; Pratt (1958).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>cormean</span>(<span class='kw'>r</span>, <span class='kw'>n</span>, na.rm = <span class='kw'>F</span>)
-
-<span class='fu'>cormean2</span>(<span class='kw'>r</span>)</pre>
+    <pre class="usage"><span class='fu'>cormean</span>(
+  <span class='kw'>r</span>,
+  <span class='kw'>n</span>,
+  wts = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"none"</span>, <span class='st'>"n"</span>, <span class='st'>"df"</span>),
+  type = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"OP5"</span>, <span class='st'>"OPK"</span>, <span class='st'>"OP2"</span>),
+  na.rm = <span class='kw'>F</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -145,6 +149,15 @@ The algorithm was developed by Olkin &amp; Pratt (1958) and implemented by Jan S
     <tr>
       <th>n</th>
       <td><p>a single value or vector containing sample sizes</p></td>
+    </tr>
+    <tr>
+      <th>wts</th>
+      <td><p>Character. How should the correlations be weighted?
+<code>none</code> leads to no weighting, <code>n</code> weights by sample size, <code>df</code> weights by sample size minus one.</p></td>
+    </tr>
+    <tr>
+      <th>type</th>
+      <td><p>Character. Determines which averaging algorithm to use, with "OP5" being the most accurate.</p></td>
     </tr>
     <tr>
       <th>na.rm</th>
@@ -159,12 +172,12 @@ The algorithm was developed by Olkin &amp; Pratt (1958) and implemented by Jan S
 
     <p>Olkin, I., &amp; Pratt, J. (1958). Unbiased estimation of certain correlation coefficients.
 The Annals of Mathematical Statistics, 29. https://doi.org/10.1214/aoms/1177706717</p>
-<p>https://github.com/SigurdJanson/AveragingCorrelations/blob/master/CorrAggBias.R</p>
-<p>https://medium.com/@jan.seifert/averaging-correlations-part-ii-9143b546860b</p>
+<p>Shieh, G. (2010). Estimation of the simple correlation coefficient. Behavior Research Methods,
+42(4), 906-917. https://doi.org/10.3758/BRM.42.4.906</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>cormean</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>.3</span>,<span class='fl'>.5</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>30</span>,<span class='fl'>30</span>,<span class='fl'>60</span>))
-</div><div class='output co'>#&gt; [1] 0.3294746</div></pre>
+</div><div class='output co'>#&gt; [1] 0.2695279</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
