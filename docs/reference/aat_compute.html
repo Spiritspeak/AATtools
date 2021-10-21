@@ -137,7 +137,7 @@
     <span class='st'>"aat_singlemediandiff"</span>),
   trialdropfunc = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"prune_nothing"</span>, <span class='st'>"trial_prune_3SD"</span>, <span class='st'>"trial_prune_3MAD"</span>,
     <span class='st'>"trial_prune_SD_dropcases"</span>, <span class='st'>"trial_recode_SD"</span>, <span class='st'>"trial_prune_percent_subject"</span>,
-    <span class='st'>"trial_prune_percent_sample"</span>),
+    <span class='st'>"trial_prune_percent_sample"</span>, <span class='st'>"trial_prune_grubbs"</span>),
   errortrialfunc = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"prune_nothing"</span>, <span class='st'>"error_replace_blockmeanplus"</span>,
     <span class='st'>"error_prune_dropcases"</span>),
   <span class='kw'>...</span>
@@ -178,6 +178,7 @@ It is recommended to exclude outlying trials when computing AAT scores using the
 but not when using d-scores or median double-difference scores.</p><ul>
 <li><p><code>prune_nothing</code> excludes no trials (default)</p></li>
 <li><p><code>trial_prune_3SD</code> excludes trials deviating more than 3SD from the mean per participant.</p></li>
+<li><p><code>trial_prune_grubbs</code> applies a Grubbs' test to the data, removing one outlier at a time until the test is no longer significant.</p></li>
 <li><p><code>trial_prune_SD_dropcases</code> removes trials deviating more than a specific number of standard deviations from the participant's mean,
 and removes participants with an excessive percentage of outliers.
 Required arguments:</p><ul>

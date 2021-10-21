@@ -2,17 +2,25 @@
 % Please edit documentation in R/cortools.R
 \name{cormean}
 \alias{cormean}
-\alias{cormean2}
 \title{Compute a minimally biased average of correlation values}
 \usage{
-cormean(r, n, na.rm = F)
-
-cormean2(r)
+cormean(
+  r,
+  n,
+  wts = c("none", "n", "df"),
+  type = c("OP5", "OPK", "OP2"),
+  na.rm = F
+)
 }
 \arguments{
 \item{r}{a vector containing correlation values}
 
 \item{n}{a single value or vector containing sample sizes}
+
+\item{wts}{Character. How should the correlations be weighted?
+\code{none} leads to no weighting, \code{n} weights by sample size, \code{df} weights by sample size minus one.}
+
+\item{type}{Character. Determines which averaging algorithm to use, with "OP5" being the most accurate.}
 
 \item{na.rm}{Logical. Should missing values be removed?}
 }
@@ -23,7 +31,7 @@ An average correlation.
 This function computes a minimally biased average of correlation values.
 This is needed because simple averaging of correlations is negatively biased,
 and the often used z-transformation method of averaging correlations is positively biased.
-The algorithm was developed by Olkin & Pratt (1958) and implemented by Jan Seifert.
+The algorithm was developed by Olkin & Pratt (1958).
 }
 \examples{
 cormean(c(0,.3,.5),c(30,30,60))
@@ -32,7 +40,6 @@ cormean(c(0,.3,.5),c(30,30,60))
 Olkin, I., & Pratt, J. (1958). Unbiased estimation of certain correlation coefficients.
 The Annals of Mathematical Statistics, 29. https://doi.org/10.1214/aoms/1177706717
 
-https://github.com/SigurdJanson/AveragingCorrelations/blob/master/CorrAggBias.R
-
-https://medium.com/@jan.seifert/averaging-correlations-part-ii-9143b546860b
+Shieh, G. (2010). Estimation of the simple correlation coefficient. Behavior Research Methods,
+42(4), 906-917. https://doi.org/10.3758/BRM.42.4.906
 }

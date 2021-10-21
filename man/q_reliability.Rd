@@ -9,7 +9,7 @@
 \usage{
 q_reliability(ds, subjvar, formula, aatterm = NA)
 
-q_reliability2(ds, subjvar, splitvars, rtvar, na.rm = F)
+q_reliability2(ds, subjvar, splitvars, rtvar, na.rm = F, dscore = F)
 
 \method{print}{qreliability}(x, ...)
 

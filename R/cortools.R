@@ -62,10 +62,13 @@ print.compcorr<-function(x,...){
 #' This function computes a minimally biased average of correlation values.
 #' This is needed because simple averaging of correlations is negatively biased,
 #' and the often used z-transformation method of averaging correlations is positively biased.
-#' The algorithm was developed by Olkin & Pratt (1958) and implemented by Jan Seifert.
+#' The algorithm was developed by Olkin & Pratt (1958).
 #'
 #' @param r a vector containing correlation values
 #' @param n a single value or vector containing sample sizes
+#' @param wts Character. How should the correlations be weighted?
+#' \code{none} leads to no weighting, \code{n} weights by sample size, \code{df} weights by sample size minus one.
+#' @param type Character. Determines which averaging algorithm to use, with "OP5" being the most accurate.
 #' @param na.rm Logical. Should missing values be removed?
 #'
 #' @return An average correlation.
@@ -76,31 +79,45 @@ print.compcorr<-function(x,...){
 #' Olkin, I., & Pratt, J. (1958). Unbiased estimation of certain correlation coefficients.
 #' The Annals of Mathematical Statistics, 29. https://doi.org/10.1214/aoms/1177706717
 #'
-#' https://github.com/SigurdJanson/AveragingCorrelations/blob/master/CorrAggBias.R
-#'
-#' https://medium.com/@jan.seifert/averaging-correlations-part-ii-9143b546860b
+#' Shieh, G. (2010). Estimation of the simple correlation coefficient. Behavior Research Methods,
+#' 42(4), 906-917. https://doi.org/10.3758/BRM.42.4.906
 #'
 #' @examples
 #' cormean(c(0,.3,.5),c(30,30,60))
-cormean <- function(r, n, na.rm=F) {
-  if(any(n <= 4)) stop("Sample size must be at least 5")
-  df <- n-1
-  k <- (9*sqrt(2)-7)/2
-  G <- r * (1 + ((1-r^2) / (2 * (df - k))))
+cormean<-function(r,n,wts=c("none","n","df"),type=c("OP5","OPK","OP2"),na.rm=F){
+  type<-match.arg(type)
+  wts<-match.arg(wts)
 
-  NaCount <- ifelse(na.rm == TRUE, sum(is.na(G)), 0)
-  if(length(n) < length(G)) n <- rep(n, length.out = length(G))
+  if(na.rm){
+    missing<-which(is.na(r) | is.na(n))
+    if(length(missing)>0){
+      r<-r[-missing]
+      n<-n[-missing]
+    }
+  }
+  weight<-list(rep(1,times=length(n)),n,n-1)[[1+(wts=="n")+2*(wts=="df")]]
+  if(length(r)!=length(n)){
+    stop("Length of r and n not equal!")
+  }
 
-  Num <- sum(df * G, na.rm)
-  Den <- sum(n, na.rm) - (length(n)-NaCount)
-  if(any(Den == 0)) Den[Den == 0] <- NA
-  return(Num / Den)
-}
-
-#' @rdname cormean
-#' @export
-cormean2<-function(r){
-  (mean(lim(r,-.999999,.999999)) + z2r(mean( r2z(lim(r,-.999999,.999999)) )))/2
+  if(type=="OP5"){
+    sizevec<-unique(n)
+    gammalist<-sapply(sizevec,function(nr) (gamma(.5+1:5)^2 * gamma(nr/2-1))/
+                        (gamma(.5)^2 * gamma(nr/2-1+1:5)))
+    rmean<-weighted.mean(x= sapply(seq_along(r),
+                                   function(i)
+                                     r[i]*(1+ sum(gammalist[,match(n[i],sizevec)] *
+                                                    (1-r[i]^2)^(1:5)/factorial(1:5)))),
+                         w= weight)
+  }else if(type=="OPK"){
+    rmean<-weighted.mean(x= r*(1+(1-r^2)/(2*(n-(9*sqrt(2)-7)/2))),
+                         w= weight)
+  }else if(type=="OP2"){
+    rmean<-weighted.mean(x= r*(1+ (1-r^2)/(2*(n-2)) +
+                                 (9*(1-r^2)^2)/(8*n*(n-2))),
+                         w= weight)
+  }
+  return(rmean)
 }
 
 #' Partial correlation
