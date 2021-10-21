@@ -29,18 +29,18 @@ install.packages("AATtools")
 ## Rationale
 
 Reliability scores are typically not computed for psychological tasks
-that produce a sum score. This has led to a literature full of
-inconsistent results and methodological decisions that have been guided
-by intuition rather than empirical decisionmaking. AATtools tries to
-solve these problems by providing multiple methods of computing the
-reliability of the Approach-Avoidance task as well as other implicit
-psychological tasks. Importantly, it enables researchers to compute the
-reliability of their entire data processing pipeline, factoring in the
-influence of decisions to remove or keep outliers in the final
-reliability score. This gives the researcher a clear overview over how
-reliable the data are that have actually been used in the study’s
-analyses and enables them to explore the best ways to deal with
-non-normality, outliers and error trials.
+that produce scores. This has led to a literature with inconsistent
+results and methodological decisions that have been guided by intuition
+rather than empirical decisionmaking. AATtools tries to solve these
+problems by providing multiple methods of computing the reliability of
+the Approach-Avoidance task as well as other implicit psychological
+tasks. Importantly, it enables researchers to compute the reliability of
+their entire data processing pipeline, factoring in the influence of
+decisions to remove or keep outliers in the final reliability score.
+This gives the researcher a clear overview over how reliable the data
+are that have actually been used in the study’s analyses and enables
+them to explore the best ways to deal with non-normality, outliers and
+error trials.
 
 ## Getting your data in the right format
 
@@ -78,8 +78,11 @@ print(split)
 ```
 
     ## 
-    ## r (58) = 0.52, p = 1.54e-06, 95%CI = [0.38, 0.65]
-    ## Spearman-Brown-corrected r (58) = 0.69, p = 1.35e-13
+    ## Full-length reliability (Raju's beta):
+    ## beta (57.905) = .68, 95%CI [.54, .78], p = 0
+    ## 
+    ## Uncorrected, average split-half correlation:
+    ## r (57.905) = .52, 95%CI [.37, .65], p = 0
 
 ``` r
 plot(split)
@@ -92,7 +95,10 @@ reliability score for your data.
 
 ## An exact reliability score for all implicit tasks with difference scores: `q_reliability()`
 
-This function performs a linear regression to the data of each
+This function computes the reliability of the task in one go and without
+performing many splits, saving time.
+
+`q_reliability()` performs a linear regression to the data of each
 participant, and derives the unstandardized beta and variance of one of
 the predictors. If this predictor is the intercept, the resulting beta
 is functionally equivalent to the simple mean reaction time of the
@@ -100,14 +106,18 @@ participant; if it is a binary main effect, the beta is equivalent to
 the difference between condition 1 and condition 0; and if it’s an
 interaction term, the beta is equivalent to a double-difference score.
 The variance among betas is then compared to the overall variance within
-betas. The reliability computed by `q_reliability` thus represents the
+betas. `q_reliability2()` computes the within- and between-subjects
+variance without performing any regressions and is thus faster and more
+accurate. It allows for the computation of reliability for single or
+double mean difference scores, as well as any difference scores
+standardized by the participant’s standard deviation. The reliability
+computed by `q_reliability()` and `q_reliability2()` represents the
 ratio between between-subjects variance and within-subjects variance,
 where 0 means there is equal variance within and between subjects, and 1
-means the bias scores are entirely accurate. Despite its exact nature,
-`q_reliability` is less representative of your actual experimental data,
-because it does not use the exact algorithms and outlier rejection rules
-that the researcher used - it does not model, for example, the inherent
-variability that is caused by outlier rejection.
+means the bias scores are entirely accurate. These functions do not
+factor in variability caused by the outlier rejection rules that the
+researcher used; therefore, they cannot model the confidence intervals
+for the reliability coefficient.
 
 ``` r
 dataset_relevant <- erotica[erotica$is_irrelevant==0,] 
@@ -123,20 +133,20 @@ qreliability_relevant <-
 print(qreliability_relevant)
 ```
 
-    ## q = 0.5010847
+    ## q = 0.6676301
 
 ``` r
 # Reliability of the irrelevant-feature AAT
 qreliability_irrelevant <- 
-  q_reliability(ds=dataset_irrelevant,
+  q_reliability2(ds=dataset_irrelevant,
                 subjvar="subject",
-                formula=RT~is_pull*is_target,
-                aatterm="is_pull:is_target"
+                splitvars=c("is_pull","is_target"),
+                rtvar="RT"
                 )
 print(qreliability_irrelevant)
 ```
 
-    ## q = -0.1108101
+    ## q = -0.2478222
 
 ## Computing Cronbach’s alpha for your experiment
 
@@ -145,11 +155,10 @@ reliability of psychological experiments. In the context of the AAT,
 approach bias scores are computed per stimulus for each participant,
 after which Cronbach’s alpha is computed by treating each stimulus
 approach bias score as a separate item in a questionnaire. This method
-is heavily dependent on the number of stimuli included in the
-experiment, rather than the number of trials as a whole. Additionally,
-it does not tolerate missing trials, meaning either outliers need to be
-included or winsorized, or entire stimuli or participants must be
-excluded. It has been included for the sake of completeness.
+does not take into account variability in raw reaction times and is
+heavily dependent on the number of stimuli included in the experiment,
+rather than the number of trials as a whole. Despite its inaccuracy, it
+has been included for the sake of completeness.
 
 ``` r
 dataset <- erotica
@@ -157,20 +166,24 @@ dataset <- erotica
 dataset$stimulus<- substr(as.character(dataset$stimulus),5,5)
 
 #We use the special jackknife function, which allows us to diagnose flaws in the experiment by computing Cronbach's alpha while single stimuli or participants are excluded.
-alpha<-aat_alpha_jackknife(ds=dataset, #The dataset
-                           subjvar="subject", #Name of the column with participant IDs
-                           stimvar="stimulus",#Name of the column with stimulus IDs
-                           pullvar="is_pull", #Name of the column indicating approach or avoid trial
-                           rtvar="RT",        #Name of the column indicating reaction time
-                           algorithm="aat_singlemeandiff") #Method to compute stimulus-specific approach bias scores with. Currently limited to mean and median difference scores.
+alpha<-aat_covreliability_jackknife(ds=dataset, #The dataset
+                                    subjvar="subject", #Name of the column with participant IDs
+                                    stimvar="stimulus",#Name of the column with stimulus IDs
+                                    pullvar="is_pull", #Name of the column indicating approach or avoid trial
+                                    rtvar="RT",        #Name of the column indicating reaction time
+                                    algorithm="calpha") #Reliability computation method. calpha is Cronbach's alpha
+```
 
+    ## Warning in if ("cross" == holdout) {: the condition has length > 1 and only the
+    ## first element will be used
+
+``` r
 print(alpha)
 ```
 
-    ## Alpha = 0.21
-    ## Based on 10 valid stimuli and 58 valid participants.
-    ## Largest alpha achieveable through single stimulus omission = 0.28 (3)
-    ## Largest alpha achieveable through single participant omission = 0.27 (subject-56)
+    ## Reliability: r = .21
+    ## Maximum achieveable reliability is with removal of participant 56: r = .27
+    ## Maximum achieveable reliability is with removal of stimulus 3: r = .28
 
 ``` r
 plot(alpha)
@@ -184,7 +197,8 @@ The `aat_bootstrap` function can be used to compute bias scores from
 random permutations of the data, and derive per-participant confidence
 intervals from these bootstrapped bias scores. This lets users quantify
 for which participants the bias scores are accurate and for which
-participants they are not.
+participants they are not. This method also allows for the computation
+of reliability through bootstrapping.
 
 ``` r
 dataset <- erotica
@@ -204,9 +218,9 @@ print(boot)
 ```
 
     ## Bootstrapped bias scores and confidence intervals
-    ## Mean bias score: 0.1385118
-    ## Mean confidence interval: 0.8995987
-    ## reliability: q = 0.1385118
+    ## Mean bias score: 0.1381435
+    ## Mean confidence interval: 0.8862338
+    ## reliability: q = 0.3243185
     ## Number of iterations: 1000
 
 ``` r
@@ -239,3 +253,21 @@ plot(all_scores$ab.x,all_scores$ab.y)
 
 Evidently, there is no relationship between relevant-feature and
 irrelevant-feature bias scores in this dataset.
+
+## Simulating datasets
+
+For the sake of power analysis or methodological research, it may be
+desired to generate a random dataset. `aat_simulate()` can be used for
+this purpose. A lot of parameters can be adjusted, but one can opt-in to
+use default values derived from pre-existing datasets as well.
+
+``` r
+ds<-aat_simulate2(defaults="Lender2018_relevant_clean")
+par(mfrow=c(1,2))
+hist(ds$rt)
+q_reliability2(ds=ds,subjvar="subj",splitvars=c("is_pull","is_target"),rtvar="rt",dscore=T)
+```
+
+    ## q = 0.686825
+
+![](man/figures/simulate-1.png)<!-- -->

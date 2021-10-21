@@ -270,10 +270,10 @@ University of Wisconsin.</p>
               algorithm=<span class='st'>"aat_doublemeandiff"</span>,iters=<span class='fl'>100</span>,plot=<span class='fl'>FALSE</span>)
 </div><div class='output co'>#&gt; 
 #&gt; Full-length reliability (Raju's beta):
-#&gt; beta (36) = .42, 95%CI [.1, .64], p = .011
+#&gt; beta (36) = .47, 95%CI [.14, .71], p = .004
 #&gt; 
 #&gt; Uncorrected, average split-half correlation:
-#&gt; r (36) = .28, 95%CI [.05, .47], p = .095</div><div class='input'>
+#&gt; r (36) = .32, 95%CI [.08, .56], p = .055</div><div class='input'>
 <span class='co'>#Testing reliability for single-difference scores</span>
 <span class='kw'>ds</span><span class='op'>&lt;-</span><span class='kw'>ds</span>[<span class='kw'>ds</span><span class='op'>$</span><span class='kw'>is_target</span><span class='op'>==</span><span class='fl'>1</span>,]
 <span class='fu'>aat_covreliability</span>(ds=<span class='kw'>ds</span>,subjvar=<span class='st'>"subj"</span>,stimvar=<span class='st'>"stim"</span>,pullvar=<span class='st'>"is_pull"</span>,rtvar=<span class='st'>"rt"</span>)

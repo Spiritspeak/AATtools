@@ -9,7 +9,7 @@
 \usage{
 q_reliability(ds, subjvar, formula, aatterm = NA)
 
-q_reliability2(ds, subjvar, splitvars, rtvar, na.rm = F, dscore = F)
+q_reliability2(ds, subjvar, splitvars, rtvar, dscore = F, na.rm = F)
 
 \method{print}{qreliability}(x, ...)
 
@@ -29,6 +29,9 @@ to compute difference scores. This can be used to compute the
 reliability of single, double, or even triple difference scores.}
 
 \item{rtvar}{Column name of the variable containing reaction times}
+
+\item{dscore}{If true, reliability will be computed for a difference score
+that is divided by the subject's standard deviation (as in D-scores)}
 
 \item{na.rm}{If true, remove rows with missing values from the data}
 
