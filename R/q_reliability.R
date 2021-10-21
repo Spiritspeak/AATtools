@@ -61,12 +61,14 @@ q_reliability<-function(ds,subjvar,formula,aatterm=NA){
 #' to compute difference scores. This can be used to compute the
 #' reliability of single, double, or even triple difference scores.
 #' @param rtvar Column name of the variable containing reaction times
+#' @param dscore If true, reliability will be computed for a difference score
+#' that is divided by the subject's standard deviation (as in D-scores)
 #' @param na.rm If true, remove rows with missing values from the data
 #' @export
 #' @examples
 #' q_reliability2(ds=erotica,subjvar="subject",
 #'               splitvars=c("is_pull", "is_target"),rtvar="RT")
-q_reliability2<-function(ds,subjvar,splitvars,rtvar,na.rm=F,dscore=F){
+q_reliability2<-function(ds,subjvar,splitvars,rtvar,dscore=F,na.rm=F){
   #remove missing
   if(na.rm){
     ds<-ds[,c(subjvar,rtvar,splitvars)]
@@ -96,6 +98,11 @@ q_reliability2<-function(ds,subjvar,splitvars,rtvar,na.rm=F,dscore=F){
                     INDEX = ds[,c(splitvars,subjvar)],
                     FUN=function(x){var(x)/length(x)}) %>%
     apply(X=.,MARGIN=length(dim(.)),sum)
+
+  #remove missing
+  unmissing<-which(!is.na(variances) & !is.na(sc))
+  sc<-sc[unmissing]
+  variances<-variances[unmissing]
 
   #rel
   bv<-var(sc)
