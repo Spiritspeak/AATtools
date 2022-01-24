@@ -9,6 +9,7 @@
 #' @param pullvar Name of the movement-direction identifying variable
 #' @param targetvar Optional. Name of the stimulus-category identifying variable
 #' @param rtvar Name of the reaction-time identifying variable
+#' @param aggfunc The function with which to aggregate the RTs before computing difference scores. Defaults to mean but can be changed to median.
 #' @param iters If there are missing values (which is almost inevitable) then
 #' multiple imputation will be used to complete the covariance matrix - this argument sets
 #' the number of multiple imputations to be used.
@@ -23,7 +24,7 @@
 #' ds<-aat_simulate(biasfx_jitter=40,nstims=16)
 #' ds$stim<-paste0(ds$stim,"-",ds$is_target)
 #' aat_stimulusscores(ds,"subj","stim","is_pull","is_target","rt")
-aat_stimulusscores<-function(ds,subjvar,stimvar,pullvar,targetvar=NULL,rtvar,iters=5){
+aat_stimulusscores<-function(ds,subjvar,stimvar,pullvar,targetvar=NULL,rtvar,aggfunc=c("mean","median"),iters=5){
   ds<-aat_preparedata(ds,subjvar=subjvar,pullvar=pullvar,stimvar=stimvar,targetvar=targetvar,rtvar=rtvar)
 
   pps<-unique(ds[[subjvar]])
@@ -35,10 +36,17 @@ aat_stimulusscores<-function(ds,subjvar,stimvar,pullvar,targetvar=NULL,rtvar,ite
     stimcats<-data.frame(stim=stims,cat=0,stringsAsFactors=F)
   }
 
+  aggfunc<-match.arg(aggfunc)
+  if(aggfunc=="median"){
+    scorefunc<-aat_singlemediandiff
+  }else{
+    scorefunc<-aat_singlemeandiff
+  }
+
   biases<-list()
   for(u in seq_along(pps)){
     biases[[u]]<-
-      do.call(aat_singlemeandiff,list(ds=ds[ds[[subjvar]]==pps[u],],
+      do.call(scorefunc,list(ds=ds[ds[[subjvar]]==pps[u],],
                                       subjvar=stimvar,pullvar=pullvar,rtvar=rtvar)) %>%
       setNames(c(stimvar,paste0("",pps[u]))) #subject-
   }
@@ -77,6 +85,7 @@ aat_stimulusscores<-function(ds,subjvar,stimvar,pullvar,targetvar=NULL,rtvar,ite
 #' @param pullvar Name of the movement-direction identifying variable
 #' @param targetvar Optional. Name of the stimulus-category identifying variable
 #' @param rtvar Name of the reaction-time identifying variable
+#' @param aggfunc The function with which to aggregate the RTs before computing difference scores. Defaults to mean but can be changed to median.
 #' @param algorithm The reliability formula to use. Defaults to Cronbach's alpha, but Guttman's Lambda-2 is recommended instead.
 #' @param iters If there are missing values (which is almost inevitable) then
 #' multiple imputation will be used to complete the covariance matrix - this option sets
@@ -110,10 +119,12 @@ aat_stimulusscores<-function(ds,subjvar,stimvar,pullvar,targetvar=NULL,rtvar,ite
 #' #Testing reliability for single-difference scores
 #' ds<-ds[ds$is_target==1,]
 #' aat_covreliability(ds=ds,subjvar="subj",stimvar="stim",pullvar="is_pull",rtvar="rt")
-aat_covreliability<-function(ds,subjvar,stimvar,pullvar,targetvar=NULL,rtvar,algorithm=c("calpha","lambda2","lambda4"),iters=5){
+aat_covreliability<-function(ds,subjvar,stimvar,pullvar,targetvar=NULL,rtvar,aggfunc=c("mean","median"),
+                             algorithm=c("calpha","lambda2","lambda4"),iters=5){
   algorithm<-match.arg(algorithm)
+  aggfunc<-match.arg(aggfunc)
   sc<-aat_stimulusscores(ds,subjvar=subjvar,stimvar=stimvar,pullvar=pullvar,targetvar=targetvar,
-                         rtvar=rtvar,iters=iters)
+                         rtvar=rtvar,aggfunc=aggfunc,iters=iters)
 
   if(!is.null(targetvar)){
     dia<-diag(sc$covmat)

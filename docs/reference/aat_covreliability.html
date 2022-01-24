@@ -140,6 +140,7 @@ allowing for the diagnosis of potential sources of unreliability within the data
   <span class='kw'>pullvar</span>,
   targetvar = <span class='kw'>NULL</span>,
   <span class='kw'>rtvar</span>,
+  aggfunc = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"mean"</span>, <span class='st'>"median"</span>),
   algorithm = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"calpha"</span>, <span class='st'>"lambda2"</span>, <span class='st'>"lambda4"</span>),
   iters = <span class='fl'>5</span>
 )
@@ -191,6 +192,10 @@ allowing for the diagnosis of potential sources of unreliability within the data
     <tr>
       <th>rtvar</th>
       <td><p>Name of the reaction-time identifying variable</p></td>
+    </tr>
+    <tr>
+      <th>aggfunc</th>
+      <td><p>The function with which to aggregate the RTs before computing difference scores. Defaults to mean but can be changed to median.</p></td>
     </tr>
     <tr>
       <th>algorithm</th>
@@ -270,10 +275,10 @@ University of Wisconsin.</p>
               algorithm=<span class='st'>"aat_doublemeandiff"</span>,iters=<span class='fl'>100</span>,plot=<span class='fl'>FALSE</span>)
 </div><div class='output co'>#&gt; 
 #&gt; Full-length reliability (Raju's beta):
-#&gt; beta (36) = .4, 95%CI [-0.03, .69], p = .015
+#&gt; beta (36) = .45, 95%CI [.13, .69], p = .006
 #&gt; 
 #&gt; Uncorrected, average split-half correlation:
-#&gt; r (36) = .27, 95%CI [-0.01, .54], p = .109</div><div class='input'>
+#&gt; r (36) = .31, 95%CI [.07, .53], p = .07</div><div class='input'>
 <span class='co'>#Testing reliability for single-difference scores</span>
 <span class='kw'>ds</span><span class='op'>&lt;-</span><span class='kw'>ds</span>[<span class='kw'>ds</span><span class='op'>$</span><span class='kw'>is_target</span><span class='op'>==</span><span class='fl'>1</span>,]
 <span class='fu'>aat_covreliability</span>(ds=<span class='kw'>ds</span>,subjvar=<span class='st'>"subj"</span>,stimvar=<span class='st'>"stim"</span>,pullvar=<span class='st'>"is_pull"</span>,rtvar=<span class='st'>"rt"</span>)

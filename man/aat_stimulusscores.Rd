@@ -12,6 +12,7 @@ aat_stimulusscores(
   pullvar,
   targetvar = NULL,
   rtvar,
+  aggfunc = c("mean", "median"),
   iters = 5
 )
 }
@@ -27,6 +28,8 @@ aat_stimulusscores(
 \item{targetvar}{Optional. Name of the stimulus-category identifying variable}
 
 \item{rtvar}{Name of the reaction-time identifying variable}
+
+\item{aggfunc}{The function with which to aggregate the RTs before computing difference scores. Defaults to mean but can be changed to median.}
 
 \item{iters}{If there are missing values (which is almost inevitable) then
 multiple imputation will be used to complete the covariance matrix - this argument sets
