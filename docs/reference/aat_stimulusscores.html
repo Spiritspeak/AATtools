@@ -137,6 +137,7 @@ Computes mean single-difference scores (push - pull) for each stimulus.</p>
   <span class='kw'>pullvar</span>,
   targetvar = <span class='kw'>NULL</span>,
   <span class='kw'>rtvar</span>,
+  aggfunc = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"mean"</span>, <span class='st'>"median"</span>),
   iters = <span class='fl'>5</span>
 )</pre>
 
@@ -166,6 +167,10 @@ Computes mean single-difference scores (push - pull) for each stimulus.</p>
     <tr>
       <th>rtvar</th>
       <td><p>Name of the reaction-time identifying variable</p></td>
+    </tr>
+    <tr>
+      <th>aggfunc</th>
+      <td><p>The function with which to aggregate the RTs before computing difference scores. Defaults to mean but can be changed to median.</p></td>
     </tr>
     <tr>
       <th>iters</th>

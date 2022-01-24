@@ -139,7 +139,7 @@ aat_bootstrap<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,
       #Split data
       # iterds<-ds %>% group_by(!!sym(subjvar), !!sym(pullvar), !!sym(targetvar)) %>%
       #   sample_n(size=n(),replace=TRUE) %>% ungroup()
-      iterds<-ds[unlist(sapply(split(x=seq_len(nrow(ds)),f=ds[c(subjvar,pullvar,targetvar)]),
+      iterds<-ds[unlist(lapply(split(x=seq_len(nrow(ds)),f=ds[c(subjvar,pullvar,targetvar)]),
                         FUN=function(x){ x[sample.int(length(x),replace=T)] })),]
 
       #Handle outlying trials

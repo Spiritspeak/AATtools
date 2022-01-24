@@ -15,6 +15,7 @@ aat_covreliability(
   pullvar,
   targetvar = NULL,
   rtvar,
+  aggfunc = c("mean", "median"),
   algorithm = c("calpha", "lambda2", "lambda4"),
   iters = 5
 )
@@ -49,6 +50,8 @@ aat_covreliability_jackknife(
 \item{targetvar}{Optional. Name of the stimulus-category identifying variable}
 
 \item{rtvar}{Name of the reaction-time identifying variable}
+
+\item{aggfunc}{The function with which to aggregate the RTs before computing difference scores. Defaults to mean but can be changed to median.}
 
 \item{algorithm}{The reliability formula to use. Defaults to Cronbach's alpha, but Guttman's Lambda-2 is recommended instead.}
 
