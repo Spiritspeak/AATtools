@@ -126,7 +126,7 @@ trial_prune_3SD_alt<-function(ds,subjvar,rtvar,...){
 #' @rdname Preprocessing
 trial_prune_SD_dropcases<-function(ds,subjvar,rtvar,trialsd=3,maxoutliers=.15,...){
   ds %>% group_by(!!sym(subjvar),key) %>%
-    mutate(is.ol=as.numeric(abs(vec.scale(!!sym(rtvar))) >=3),
+    mutate(is.ol=as.numeric(abs(vec.scale(!!sym(rtvar))) >=trialsd),
            avg.ol=mean.default(.data$is.ol)) %>%
     ungroup() %>% filter(.data$is.ol==0 & .data$avg.ol<maxoutliers)
 }
