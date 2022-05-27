@@ -92,6 +92,8 @@ aat_compute<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,
   }
   trialdropfunc<-ifelse(is.function(trialdropfunc),deparse(substitute(trialdropfunc)),match.arg(trialdropfunc))
   errortrialfunc<-ifelse(is.function(errortrialfunc),deparse(substitute(errortrialfunc)),match.arg(errortrialfunc))
+  errorpenalizefunc<-ifelse(errortrialfunc=="error_replace_blockmeanplus",errortrialfunc,"prune_nothing")
+  errorremovefunc<-ifelse(errortrialfunc=="error_replace_blockmeanplus","prune_nothing",errortrialfunc)
   if(errortrialfunc=="error_replace_blockmeanplus"){
     stopifnot(!is.null(args$blockvar),!is.null(args$errorvar))
     if(is.null(args$errorbonus)){ args$errorbonus<- 0.6 }
@@ -113,12 +115,12 @@ aat_compute<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,
   }
   ds<-do.call(aat_preparedata,c(list(ds=ds,subjvar=subjvar,pullvar=pullvar,targetvar=targetvar,rtvar=rtvar),args)) %>% mutate(key=1)
 
+  #Handle error removal
+  iterds<-do.call(errorremovefunc,c(args,list(ds=ds,subjvar=subjvar,rtvar=rtvar)))
   #Handle outlying trials
-  ds<-do.call(trialdropfunc,list(ds=ds,subjvar=subjvar,rtvar=rtvar))
-  #Handle error trials
-  ds<-do.call(errortrialfunc,list(ds=ds,subjvar=subjvar,rtvar=rtvar,
-                                  blockvar=args$blockvar,errorvar=args$errorvar,
-                                  errorbonus=args$errorbonus))
+  iterds<-do.call(trialdropfunc,c(args,list(ds=ds,subjvar=subjvar,rtvar=rtvar)))
+  #Handle error penalization
+  iterds<-do.call(errorpenalizefunc,c(args,list(ds=ds,subjvar=subjvar,rtvar=rtvar)))
 
   abds<-do.call(algorithm,c(list(ds=ds,subjvar=subjvar,pullvar=pullvar,
                                  targetvar=targetvar,rtvar=rtvar),args))

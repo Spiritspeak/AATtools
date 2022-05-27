@@ -126,12 +126,15 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,
   trialdropfunc<-match.arg(trialdropfunc)
   casedropfunc<-match.arg(casedropfunc)
   errortrialfunc<-match.arg(errortrialfunc)
+  errorpenalizefunc<-ifelse(errortrialfunc=="error_replace_blockmeanplus",errortrialfunc,"prune_nothing")
+  errorremovefunc<-ifelse(errortrialfunc=="error_replace_blockmeanplus","prune_nothing",errortrialfunc)
   if(errortrialfunc=="error_replace_blockmeanplus"){
     stopifnot(!is.null(args$blockvar),!is.null(args$errorvar))
     if(is.null(args$errorbonus)){ args$errorbonus<- 0.6 }
     if(is.null(args$blockvar)){ args$blockvar<- 0 }
     if(is.null(args$errorvar)){ args$errorvar<- 0 }
   }
+
   stopifnot(!(algorithm=="aat_dscore_multiblock" & is.null(args$blockvar)))
   if(algorithm %in% c("aat_regression","aat_standardregression")){
     if(!("formula" %in% names(args))){
@@ -177,10 +180,12 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,
         iterds$key<-0
         iterds$key[h]<-1
       }
+      #Handle error removal
+      iterds<-do.call(errorremovefunc,c(args,list(ds=iterds,subjvar=subjvar,rtvar=rtvar)))
       #Handle outlying trials
       iterds<-do.call(trialdropfunc,c(args,list(ds=iterds,subjvar=subjvar,rtvar=rtvar)))
-      #Handle error trials
-      iterds<-do.call(errortrialfunc,c(args,list(ds=iterds,subjvar=subjvar,rtvar=rtvar)))
+      #Handle error penalization
+      iterds<-do.call(errorpenalizefunc,c(args,list(ds=iterds,subjvar=subjvar,rtvar=rtvar)))
       #intermediate prune of empty cases
       iterds<-drop_empty_cases(iterds,subjvar)
 
