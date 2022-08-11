@@ -133,83 +133,104 @@ The way you handle outliers here should mimic the way you do it in your regular 
 </ul></div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">prune_nothing</span><span class="op">(</span><span class="va">ds</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">trial_prune_percent_subject</span><span class="op">(</span>
-  <span class="va">ds</span>,
-  <span class="va">subjvar</span>,
-  <span class="va">rtvar</span>,
-  lowerpercent <span class="op">=</span> <span class="fl">0.01</span>,
-  upperpercent <span class="op">=</span> <span class="fl">0.99</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="fu">trial_prune_percent_sample</span><span class="op">(</span>
-  <span class="va">ds</span>,
-  <span class="va">rtvar</span>,
-  lowerpercent <span class="op">=</span> <span class="fl">0.01</span>,
-  upperpercent <span class="op">=</span> <span class="fl">0.99</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="fu">trial_prune_3SD</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">rtvar</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">trial_prune_3MAD</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">rtvar</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">trial_prune_SD_dropcases</span><span class="op">(</span>
-  <span class="va">ds</span>,
-  <span class="va">subjvar</span>,
-  <span class="va">rtvar</span>,
-  trialsd <span class="op">=</span> <span class="fl">3</span>,
-  maxoutliers <span class="op">=</span> <span class="fl">0.15</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="fu">trial_recode_SD</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">rtvar</span>, trialsd <span class="op">=</span> <span class="fl">3</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">trial_prune_grubbs</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">rtvar</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">case_prune_3SD</span><span class="op">(</span><span class="va">ds</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">error_replace_blockmeanplus</span><span class="op">(</span>
-  <span class="va">ds</span>,
-  <span class="va">subjvar</span>,
-  <span class="va">rtvar</span>,
-  <span class="va">blockvar</span>,
-  <span class="va">errorvar</span>,
-  <span class="va">errorbonus</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="fu">error_prune_dropcases</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">errorvar</span>, maxerrors <span class="op">=</span> <span class="fl">0.15</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">prune_nothing</span><span class="op">(</span><span class="va">ds</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">trial_prune_percent_subject</span><span class="op">(</span></span>
+<span>  <span class="va">ds</span>,</span>
+<span>  <span class="va">subjvar</span>,</span>
+<span>  <span class="va">rtvar</span>,</span>
+<span>  lowerpercent <span class="op">=</span> <span class="fl">0.01</span>,</span>
+<span>  upperpercent <span class="op">=</span> <span class="fl">0.99</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">trial_prune_percent_sample</span><span class="op">(</span></span>
+<span>  <span class="va">ds</span>,</span>
+<span>  <span class="va">rtvar</span>,</span>
+<span>  lowerpercent <span class="op">=</span> <span class="fl">0.01</span>,</span>
+<span>  upperpercent <span class="op">=</span> <span class="fl">0.99</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">trial_prune_3SD</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">rtvar</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">trial_prune_3MAD</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">rtvar</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">trial_prune_SD_dropcases</span><span class="op">(</span></span>
+<span>  <span class="va">ds</span>,</span>
+<span>  <span class="va">subjvar</span>,</span>
+<span>  <span class="va">rtvar</span>,</span>
+<span>  trialsd <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  maxoutliers <span class="op">=</span> <span class="fl">0.15</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">trial_recode_SD</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">rtvar</span>, trialsd <span class="op">=</span> <span class="fl">3</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">trial_prune_grubbs</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">rtvar</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">case_prune_3SD</span><span class="op">(</span><span class="va">ds</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">error_replace_blockmeanplus</span><span class="op">(</span></span>
+<span>  <span class="va">ds</span>,</span>
+<span>  <span class="va">subjvar</span>,</span>
+<span>  <span class="va">rtvar</span>,</span>
+<span>  <span class="va">blockvar</span>,</span>
+<span>  <span class="va">errorvar</span>,</span>
+<span>  <span class="va">errorbonus</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">error_prune_dropcases</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">errorvar</span>, maxerrors <span class="op">=</span> <span class="fl">0.15</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>ds</dt>
 <dd><p>A data.frame.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Other arguments (ignored).</p></dd>
+
+
 <dt>subjvar</dt>
 <dd><p>The name of the subject variable.</p></dd>
+
+
 <dt>rtvar</dt>
 <dd><p>The name of the reaction time variable.</p></dd>
+
+
 <dt>lowerpercent, upperpercent</dt>
 <dd><p>for <code>trial_prune_percent_subject</code> and <code>trial_prune_percent_sample</code>,
 the lower and upper proportions beyond which trials are considered outliers and removed (defaults to .01 and .99).</p></dd>
+
+
 <dt>trialsd</dt>
 <dd><p>The amount of deviation from the participant mean (in SD) after which a trial is considered an outlier and excluded (defaults to 3).</p></dd>
+
+
 <dt>maxoutliers</dt>
 <dd><p>for <code>trial_prune_SD_dropcases</code>, the maximum percentage of outliers, after which a participant is excluded from the data.</p></dd>
+
+
 <dt>blockvar</dt>
 <dd><p>The name of the block variable.</p></dd>
+
+
 <dt>errorvar</dt>
 <dd><p>The name of the error variable.</p></dd>
+
+
 <dt>errorbonus</dt>
 <dd><p>for <code>error_replace_blockmeanplus</code>, the amount of seconds to add to the block mean
 and use as a replacement for error trial reaction times (default is 0.6).</p></dd>
+
+
 <dt>maxerrors</dt>
 <dd><p>for <code>error_prune_dropcases</code>, the maximum percentage of errors, after which a participant is excluded from the data.</p></dd>
+
 </dl></div>
 
   </div>
@@ -224,7 +245,7 @@ and use as a replacement for error trial reaction times (default is 0.6).</p></d
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

@@ -36,19 +36,19 @@ Helper functions to compute important statistics from correlation coefficients.
 }
 \section{Functions}{
 \itemize{
-\item \code{r2z}: converts correlation coefficients to z-scores
+\item \code{r2z()}: converts correlation coefficients to z-scores
 
-\item \code{z2r}: converts z-scores to correlation coefficients
+\item \code{z2r()}: converts z-scores to correlation coefficients
 
-\item \code{r2t}: Converts correlation coefficients to t-scores
+\item \code{r2t()}: Converts correlation coefficients to t-scores
 
-\item \code{r2p}: Computes the two-sided p-value for a given correlation
+\item \code{r2p()}: Computes the two-sided p-value for a given correlation
 
-\item \code{rconfint}: Computes confidence intervals for a given correlation coefficient
+\item \code{rconfint()}: Computes confidence intervals for a given correlation coefficient
 
-\item \code{compcorr}: computes the significance of the difference between two correlation coefficients
+\item \code{compcorr()}: computes the significance of the difference between two correlation coefficients
+
 }}
-
 \examples{
 z <- r2z(.5)
 r <- z2r(z)

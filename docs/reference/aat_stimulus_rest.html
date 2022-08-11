@@ -90,44 +90,63 @@ computed by averaging every such subtraction-rest correlation involving a specif
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">aat_stimulus_rest</span><span class="op">(</span>
-  <span class="va">ds</span>,
-  <span class="va">subjvar</span>,
-  <span class="va">stimvar</span>,
-  <span class="va">pullvar</span>,
-  <span class="va">targetvar</span>,
-  <span class="va">rtvar</span>,
-  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pearson"</span>, <span class="st">"spearman"</span>, <span class="st">"kendall"</span><span class="op">)</span>
-<span class="op">)</span>
-
-<span class="co"># S3 method for aat_stimulus_rest</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">aat_stimulus_rest</span><span class="op">(</span></span>
+<span>  <span class="va">ds</span>,</span>
+<span>  <span class="va">subjvar</span>,</span>
+<span>  <span class="va">stimvar</span>,</span>
+<span>  <span class="va">pullvar</span>,</span>
+<span>  <span class="va">targetvar</span>,</span>
+<span>  <span class="va">rtvar</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pearson"</span>, <span class="st">"spearman"</span>, <span class="st">"kendall"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for aat_stimulus_rest</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>ds</dt>
 <dd><p>a <code>data.frame</code></p></dd>
+
+
 <dt>subjvar</dt>
 <dd><p>the label of the participant identifier variable</p></dd>
+
+
 <dt>stimvar</dt>
 <dd><p>the label of the stimulus identifier variable</p></dd>
+
+
 <dt>pullvar</dt>
 <dd><p>the label of the movement direction identifier variable</p></dd>
+
+
 <dt>targetvar</dt>
 <dd><p>the label of the stimulus category identifier variable</p></dd>
+
+
 <dt>rtvar</dt>
 <dd><p>the label of the reaction time variable</p></dd>
+
+
 <dt>method</dt>
 <dd><p>Optional, the correlation method to be used (pearson, spearman, kendall)</p></dd>
+
+
 <dt>x</dt>
 <dd><p>an <code>aat_stimulus_rest</code> object</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Ignored.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Returns a <code>aat_stimulus_rest</code> object containing statistics for each stimulus.
+    
+
+<p>Returns a <code>aat_stimulus_rest</code> object containing statistics for each stimulus.
 Stats include the average stimulus-rest correlation (mcor); the standard deviation of
 dyad-rest correlations for this stimulus (sdcor);
 the number of valid correlations involved in these statistic (n);
@@ -138,46 +157,46 @@ as well as z-scores (zpercentile) and p-values for this percentile (pval).</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="va">ds</span><span class="op">&lt;-</span><span class="fu"><a href="aat_simulate.html">aat_simulate</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">stimrest</span><span class="op">&lt;-</span><span class="fu">aat_stimulus_rest</span><span class="op">(</span><span class="va">ds</span>,subjvar<span class="op">=</span><span class="st">"subj"</span>,stimvar<span class="op">=</span><span class="st">"stim"</span>,pullvar<span class="op">=</span><span class="st">"is_pull"</span>,</span>
-<span class="r-in">                     targetvar<span class="op">=</span><span class="st">"is_target"</span>,rtvar<span class="op">=</span><span class="st">"rt"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">stimrest</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">ds</span><span class="op">&lt;-</span><span class="fu"><a href="aat_simulate.html">aat_simulate</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">stimrest</span><span class="op">&lt;-</span><span class="fu">aat_stimulus_rest</span><span class="op">(</span><span class="va">ds</span>,subjvar<span class="op">=</span><span class="st">"subj"</span>,stimvar<span class="op">=</span><span class="st">"stim"</span>,pullvar<span class="op">=</span><span class="st">"is_pull"</span>,</span></span>
+<span class="r-in"><span>                     targetvar<span class="op">=</span><span class="st">"is_target"</span>,rtvar<span class="op">=</span><span class="st">"rt"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">stimrest</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="aat_stimulus_rest-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">stimrest</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">stimrest</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    stim is_target      mcor</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   0-1         0 0.4484540</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0-10         0 0.4352570</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0-11         0 0.5033479</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0-12         0 0.5790396</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  0-13         0 0.5198891</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0-14         0 0.5850239</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0-15         0 0.4929117</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  0-16         0 0.4380202</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   0-2         0 0.5655537</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  0-3         0 0.1548874</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11  0-4         0 0.4437599</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12  0-5         0 0.6767618</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13  0-6         0 0.1879904</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14  0-7         0 0.1029929</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15  0-8         0 0.4415206</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16  0-9         0 0.1628794</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17  1-1         1 0.4768545</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18 1-10         1 0.6586239</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19 1-11         1 0.4332771</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20 1-12         1 0.3163816</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21 1-13         1 0.4956408</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22 1-14         1 0.3887371</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23 1-15         1 0.4063010</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24 1-16         1 0.4587637</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25  1-2         1 0.1735937</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26  1-3         1 0.1284997</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27  1-4         1 0.3445617</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28  1-5         1 0.4017571</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29  1-6         1 0.4742619</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30  1-7         1 0.4029811</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31  1-8         1 0.3525065</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32  1-9         1 0.5392661</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   0-1         0 0.4549021</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0-10         0 0.6279534</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0-11         0 0.5386106</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0-12         0 0.5785917</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  0-13         0 0.7523761</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0-14         0 0.5461529</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0-15         0 0.5896460</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  0-16         0 0.6503039</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   0-2         0 0.7401813</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  0-3         0 0.5956798</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11  0-4         0 0.6105284</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12  0-5         0 0.6382323</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13  0-6         0 0.6162211</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14  0-7         0 0.6821865</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15  0-8         0 0.4747019</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16  0-9         0 0.5768693</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17  1-1         1 0.5356102</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18 1-10         1 0.7261467</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19 1-11         1 0.7353422</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20 1-12         1 0.6331742</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21 1-13         1 0.5320415</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22 1-14         1 0.6100041</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23 1-15         1 0.4201637</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24 1-16         1 0.4244033</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25  1-2         1 0.7378575</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26  1-3         1 0.7659828</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27  1-4         1 0.3263179</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28  1-5         1 0.6630513</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29  1-6         1 0.5161714</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30  1-7         1 0.6460748</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31  1-8         1 0.6015216</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32  1-9         1 0.7708117</span>
 </code></pre></div>
     </div>
   </div>
@@ -192,7 +211,7 @@ as well as z-scores (zpercentile) and p-values for this percentile (pval).</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

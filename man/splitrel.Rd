@@ -42,15 +42,15 @@ Split Half-Based Reliability Coefficients
 }
 \section{Functions}{
 \itemize{
-\item \code{SpearmanBrown}: Perform a Spearman-Brown correction on the provided correlation score.
+\item \code{SpearmanBrown()}: Perform a Spearman-Brown correction on the provided correlation score.
 
-\item \code{FlanaganRulon}: Compute the true reliability using the Flanagan-Rulon formula,
+\item \code{FlanaganRulon()}: Compute the true reliability using the Flanagan-Rulon formula,
 which takes into account inequal variances between split halves.
 
-\item \code{RajuCoefficient}: Compute split-half reliability using the Raju formula,
+\item \code{RajuCoefficient()}: Compute split-half reliability using the Raju formula,
 which takes into account unequal split-halves and variances.
-}}
 
+}}
 \examples{
 
 SpearmanBrown(.5)

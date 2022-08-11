@@ -12,6 +12,7 @@ aat_splithalf(
   pullvar,
   targetvar = NULL,
   rtvar,
+  stratvars = NULL,
   iters,
   algorithm = c("aat_doublemeandiff", "aat_doublemediandiff", "aat_dscore",
     "aat_dscore_multiblock", "aat_regression", "aat_standardregression",
@@ -28,7 +29,7 @@ aat_splithalf(
   ...
 )
 
-\method{print}{aat_splithalf}(x, coef = c("Raju", "FlanaganRulon", "SpearmanBrown"), ...)
+\method{print}{aat_splithalf}(x, coef = c("SpearmanBrown", "Raju", "FlanaganRulon"), ...)
 
 \method{plot}{aat_splithalf}(x, type = c("median", "minimum", "maximum", "random"), ...)
 }
@@ -45,8 +46,9 @@ Target stimuli should either be represented by 1, or by the second level of a fa
 
 \item{rtvar}{Name of the reaction time column.}
 
-\item{iters}{Total number of desired iterations. At least 200 are recommended for reasonable confidence intervals;
-If you want to see plots of your data, 1 iteration is enough.}
+\item{stratvars}{Names of additional variables to stratify splits by.}
+
+\item{iters}{Total number of desired iterations. At least 6000 are recommended for reasonable estimates.}
 
 \item{algorithm}{Function (without brackets or quotes) to be used to compute AAT scores. See \link{Algorithms} for a list of usable algorithms.}
 
@@ -134,10 +136,11 @@ The calculated split-half coefficients are described in Warrens (2016).
 }
 \examples{
 split <- aat_splithalf(ds=erotica[erotica$is_irrelevant==0,],
-                       subjvar="subject",pullvar="is_pull",targetvar="is_target",
-                       rtvar="RT",iters=10,trialdropfunc="trial_prune_3SD",
-                       casedropfunc="case_prune_3SD",algorithm="aat_dscore",
-                       plot=FALSE,parallel=FALSE)
+                       subjvar="subject", pullvar="is_pull", targetvar="is_target",
+                       rtvar="RT", stratvars="stimuluscode", iters=10,
+                       trialdropfunc="trial_prune_3SD",
+                       casedropfunc="case_prune_3SD", algorithm="aat_dscore",
+                       plot=FALSE, parallel=FALSE)
 
 print(split)
 #Mean reliability: 0.521959

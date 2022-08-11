@@ -83,10 +83,10 @@ unregisterDoParallel <- function(cluster) {
   #rm(list=ls(name=env), pos=env)
 }
 
-aat_preparedata<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,...){
+aat_preparedata<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,stratvars=NULL,...){
   args<-list(...)
 
-  cols<-c(subjvar,pullvar,targetvar,rtvar,args$errorvar,args$blockvar,args$stimvar)
+  cols<-c(subjvar,pullvar,targetvar,rtvar,stratvars,args$errorvar,args$blockvar,args$stimvar)
   if("formula" %in% names(args)){
     formterms <- args$formula %>% as.formula() %>% terms() %>%
       attr("variables") %>% as.character()

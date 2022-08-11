@@ -60,21 +60,28 @@ of variables in <code>ymat</code> with the variable <code>x</code></p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">multiple.cor</span><span class="op">(</span><span class="va">x</span>, <span class="va">ymat</span>, use <span class="op">=</span> <span class="st">"everything"</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">multiple.cor</span><span class="op">(</span><span class="va">x</span>, <span class="va">ymat</span>, use <span class="op">=</span> <span class="st">"everything"</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>Either a matrix of variables whose multiple correlation with each other is to be estimated; or a vector of which the multiple correlation with variables in <code>ymat</code> is to be estimated</p></dd>
+
+
 <dt>ymat</dt>
 <dd><p>a matrix or data.frame of variables of which the multiple correlation with <code>x</code> is to be estimated</p></dd>
+
+
 <dt>use</dt>
 <dd><p>optional character indicating how to handle missing values (see <a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a>)</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>The multiple correlation coefficient</p>
+    
+
+<p>The multiple correlation coefficient</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -83,7 +90,7 @@ of variables in <code>ymat</code> with the variable <code>x</code></p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu">multiple.cor</span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,<span class="va">mtcars</span><span class="op">[</span>,<span class="fl">2</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">multiple.cor</span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,<span class="va">mtcars</span><span class="op">[</span>,<span class="fl">2</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.876292</span>
 </code></pre></div>
     </div>
@@ -99,7 +106,7 @@ of variables in <code>ymat</code> with the variable <code>x</code></p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

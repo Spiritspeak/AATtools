@@ -22,13 +22,13 @@ from the covariance matrix of its variables.
 }
 \section{Functions}{
 \itemize{
-\item \code{calpha}: Cronbach's alpha
+\item \code{calpha()}: Cronbach's alpha
 
-\item \code{lambda2}: Guttman's Lambda-2
+\item \code{lambda2()}: Guttman's Lambda-2
 
-\item \code{lambda4}: Guttman's Lambda-4. This algorithm tries to get the highest attainable reliability by
+\item \code{lambda4()}: Guttman's Lambda-4. This algorithm tries to get the highest attainable reliability by
+
 }}
-
 \examples{
 # compute reliability from covariance
 h<-cov(iris[,1:4])

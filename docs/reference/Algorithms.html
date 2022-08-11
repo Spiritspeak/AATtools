@@ -50,77 +50,96 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">aat_doublemeandiff</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">pullvar</span>, <span class="va">targetvar</span>, <span class="va">rtvar</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">aat_doublemediandiff</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">pullvar</span>, <span class="va">targetvar</span>, <span class="va">rtvar</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">aat_dscore</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">pullvar</span>, <span class="va">targetvar</span>, <span class="va">rtvar</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">aat_mediandscore</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">pullvar</span>, <span class="va">targetvar</span>, <span class="va">rtvar</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">aat_dscore_multiblock</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">pullvar</span>, <span class="va">targetvar</span>, <span class="va">rtvar</span>, <span class="va">blockvar</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">aat_regression</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">formula</span>, <span class="va">aatterm</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">aat_standardregression</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">formula</span>, <span class="va">aatterm</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">aat_singlemeandiff</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">pullvar</span>, <span class="va">rtvar</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">aat_singlemediandiff</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">pullvar</span>, <span class="va">rtvar</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">aat_doublemeandiff</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">pullvar</span>, <span class="va">targetvar</span>, <span class="va">rtvar</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">aat_doublemediandiff</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">pullvar</span>, <span class="va">targetvar</span>, <span class="va">rtvar</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">aat_dscore</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">pullvar</span>, <span class="va">targetvar</span>, <span class="va">rtvar</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">aat_mediandscore</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">pullvar</span>, <span class="va">targetvar</span>, <span class="va">rtvar</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">aat_dscore_multiblock</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">pullvar</span>, <span class="va">targetvar</span>, <span class="va">rtvar</span>, <span class="va">blockvar</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">aat_regression</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">formula</span>, <span class="va">aatterm</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">aat_standardregression</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">formula</span>, <span class="va">aatterm</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">aat_singlemeandiff</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">pullvar</span>, <span class="va">rtvar</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">aat_singlemediandiff</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">pullvar</span>, <span class="va">rtvar</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>ds</dt>
 <dd><p>A long-format data.frame</p></dd>
+
+
 <dt>subjvar</dt>
 <dd><p>Column name of the participant identifier variable</p></dd>
+
+
 <dt>pullvar</dt>
 <dd><p>Column name of the movement variable (0: avoid; 1: approach)</p></dd>
+
+
 <dt>targetvar</dt>
 <dd><p>Column name of the stimulus category variable (0: control stimulus; 1: target stimulus)</p></dd>
+
+
 <dt>rtvar</dt>
 <dd><p>Column name of the reaction time variable</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Other arguments passed on by functions (ignored)</p></dd>
+
+
 <dt>blockvar</dt>
 <dd><p>name of the variable indicating block number</p></dd>
+
+
 <dt>formula</dt>
 <dd><p>A regression formula to fit to the data to compute an AAT score</p></dd>
+
+
 <dt>aatterm</dt>
 <dd><p>A character naming the formula term representing the approach bias.
 Usually this is the interaction of the movement-direction and stimulus-category terms.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A data.frame containing participant number and computed AAT score.</p>
+    
+
+<p>A data.frame containing participant number and computed AAT score.</p>
     </div>
     <div id="functions">
     <h2>Functions</h2>
     
-<ul><li><p><code>aat_doublemeandiff</code>: computes a mean-based double-difference score:
+<ul><li><p><code>aat_doublemeandiff()</code>: computes a mean-based double-difference score:
 <code>(mean(push_target) - mean(pull_target)) - (mean(push_control) - mean(pull_control))</code></p></li>
-<li><p><code>aat_doublemediandiff</code>: computes a median-based double-difference score:
+<li><p><code>aat_doublemediandiff()</code>: computes a median-based double-difference score:
 <code>(median(push_target) - median(pull_target)) - (median(push_control) - median(pull_control))</code></p></li>
-<li><p><code>aat_dscore</code>: computes D-scores for a 2-block design (see Greenwald, Nosek, and Banaji, 2003):
+<li><p><code>aat_dscore()</code>: computes D-scores for a 2-block design (see Greenwald, Nosek, and Banaji, 2003):
 <code>((mean(push_target) - mean(pull_target)) - (mean(push_control) - mean(pull_control))) / sd(participant_reaction_times)</code></p></li>
-<li><p><code>aat_mediandscore</code>: computes a double-difference score usign medians,
+<li><p><code>aat_mediandscore()</code>: computes a double-difference score usign medians,
 and divides it by the median absolute deviation of the participant's overall reaction times:
 <code>((median(push_target) - median(pull_target)) - (median(push_control) - median(pull_control))) / mad(participant_reaction_times)</code></p></li>
-<li><p><code>aat_dscore_multiblock</code>: computes D-scores for pairs of sequential blocks
+<li><p><code>aat_dscore_multiblock()</code>: computes D-scores for pairs of sequential blocks
 and averages the resulting score (see Greenwald, Nosek, and Banaji, 2003).
 Requires extra <code>blockvar</code> argument, indicating the name of the block variable.</p></li>
-<li><p><code>aat_regression</code>: <code>aat_regression</code> and <code>aat_standardregression</code> fit regression models to participants' reaction times and extract a term that serves as AAT score.
+<li><p><code>aat_regression()</code>: <code>aat_regression</code> and <code>aat_standardregression</code> fit regression models to participants' reaction times and extract a term that serves as AAT score.
 <code>aat_regression</code> extracts the raw coefficient, equivalent to a mean difference score.
 <code>aat_standardregression</code> extracts the t-score of the coefficient, standardized on the basis of the variability of the participant's reaction times.
 These algorithms can be used to regress nuisance variables out of the data before computing AAT scores.
 When using these functions, additional arguments must be provided:</p><ul><li><p><code>formula</code> - a formula to fit to the data</p></li>
 <li><p><code>aatterm</code> - the term within the formula that indicates the approach bias; this is usually the interaction of the pull and target terms.</p></li>
 </ul></li>
-<li><p><code>aat_standardregression</code>: See above</p></li>
-<li><p><code>aat_singlemeandiff</code>: subtracts the mean approach reaction time from the mean avoidance reaction time.
+<li><p><code>aat_standardregression()</code>: See above</p></li>
+<li><p><code>aat_singlemeandiff()</code>: subtracts the mean approach reaction time from the mean avoidance reaction time.
 Using this algorithm is only sensible if the supplied data contain a single stimulus category.</p></li>
-<li><p><code>aat_singlemediandiff</code>: subtracts the median approach reaction time from the median avoidance reaction time.
+<li><p><code>aat_singlemediandiff()</code>: subtracts the median approach reaction time from the median avoidance reaction time.
 Using this algorithm is only sensible if the supplied data contain a single stimulus category.</p></li>
 </ul></div>
 
@@ -136,7 +155,7 @@ Using this algorithm is only sensible if the supplied data contain a single stim
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

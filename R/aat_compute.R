@@ -116,11 +116,11 @@ aat_compute<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,
   ds<-do.call(aat_preparedata,c(list(ds=ds,subjvar=subjvar,pullvar=pullvar,targetvar=targetvar,rtvar=rtvar),args)) %>% mutate(key=1)
 
   #Handle error removal
-  iterds<-do.call(errorremovefunc,c(args,list(ds=ds,subjvar=subjvar,rtvar=rtvar)))
+  ds<-do.call(errorremovefunc,c(args,list(ds=ds,subjvar=subjvar,rtvar=rtvar)))
   #Handle outlying trials
-  iterds<-do.call(trialdropfunc,c(args,list(ds=ds,subjvar=subjvar,rtvar=rtvar)))
+  ds<-do.call(trialdropfunc,c(args,list(ds=ds,subjvar=subjvar,rtvar=rtvar)))
   #Handle error penalization
-  iterds<-do.call(errorpenalizefunc,c(args,list(ds=ds,subjvar=subjvar,rtvar=rtvar)))
+  ds<-do.call(errorpenalizefunc,c(args,list(ds=ds,subjvar=subjvar,rtvar=rtvar)))
 
   abds<-do.call(algorithm,c(list(ds=ds,subjvar=subjvar,pullvar=pullvar,
                                  targetvar=targetvar,rtvar=rtvar),args))

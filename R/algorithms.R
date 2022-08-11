@@ -3,7 +3,7 @@
 
 #' @title AAT score computation algorithms
 #' @name Algorithms
-#' @description
+#' @description AAT score computation algorithms
 #' @param ds A long-format data.frame
 #' @param subjvar Column name of the participant identifier variable
 #' @param pullvar Column name of the movement variable (0: avoid; 1: approach)
