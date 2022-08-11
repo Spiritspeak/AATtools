@@ -12,7 +12,7 @@ for(pack in c("magrittr","dplyr","AATtools")){require(pack,character.only=TRUE)}
 
 <!-- badges: start -->
 ![CRAN status](https://www.r-pkg.org/badges/version/AATtools)
-[![Travis build status](https://travis-ci.org/Spiritspeak/AATtools.svg?branch=master)](https://travis-ci.org/Spiritspeak/AATtools)
+
 [![metacran downloads](https://cranlogs.r-pkg.org/badges/grand-total/AATtools)](https://cran.r-project.org/package=AATtools)
 [![metacran downloads](https://cranlogs.r-pkg.org/badges/AATtools)](https://cran.r-project.org/package=AATtools)
 <!-- badges: end -->
