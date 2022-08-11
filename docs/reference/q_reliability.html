@@ -58,48 +58,71 @@ and 0 implying that within-subjects and between-subjects variability contribute 
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">q_reliability</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">formula</span>, aatterm <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span>
-
-<span class="fu">q_reliability2</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">splitvars</span>, <span class="va">rtvar</span>, dscore <span class="op">=</span> <span class="cn">F</span>, na.rm <span class="op">=</span> <span class="cn">F</span><span class="op">)</span>
-
-<span class="co"># S3 method for qreliability</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S3 method for qreliability</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">q_reliability</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">formula</span>, aatterm <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">q_reliability2</span><span class="op">(</span><span class="va">ds</span>, <span class="va">subjvar</span>, <span class="va">splitvars</span>, <span class="va">rtvar</span>, dscore <span class="op">=</span> <span class="cn">F</span>, na.rm <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for qreliability</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for qreliability</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>ds</dt>
 <dd><p>a long-format data.frame</p></dd>
+
+
 <dt>subjvar</dt>
 <dd><p>name of the subject variable</p></dd>
+
+
 <dt>formula</dt>
 <dd><p>a formula predicting the participant's reaction time using trial-level variables such as movement direction and stimulus category</p></dd>
+
+
 <dt>aatterm</dt>
 <dd><p>a string denoting the term in the formula that contains the participant's approach bias</p></dd>
+
+
 <dt>splitvars</dt>
 <dd><p>Vector of column names over which to split the data
 to compute difference scores. This can be used to compute the
 reliability of single, double, or even triple difference scores.</p></dd>
+
+
 <dt>rtvar</dt>
 <dd><p>Column name of the variable containing reaction times</p></dd>
+
+
 <dt>dscore</dt>
 <dd><p>If true, reliability will be computed for a difference score
 that is divided by the subject's standard deviation (as in D-scores)</p></dd>
+
+
 <dt>na.rm</dt>
 <dd><p>If true, remove rows with missing values from the data</p></dd>
+
+
 <dt>x</dt>
 <dd><p>a <code>qreliability</code> object</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Other arguments passed to the generic <code>print</code> and <code>plot</code> functions.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>a qreliability object, containing the reliability coefficient,
-and a data.frame with participants' bias scores and score variance.
-Please note that the valence of the bias scores may or may not correspond with
+    
+
+<p>a qreliability object, containing the reliability coefficient,
+and a data.frame with participants' bias scores and score variance.</p>
+
+
+<p>Please note that the valence of the bias scores may or may not correspond with
 approach and avoidance. If you plan to use these scores in your analyses,
 always verify that they are in the right direction by correlating them with
 independently calculated bias scores, for example using <code><a href="aat_compute.html">aat_compute()</a></code>.</p>
@@ -111,23 +134,23 @@ independently calculated bias scores, for example using <code><a href="aat_compu
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># Double-difference score reliability</span></span>
-<span class="r-in"><span class="fu">q_reliability</span><span class="op">(</span>ds<span class="op">=</span><span class="va">erotica</span>,subjvar<span class="op">=</span><span class="st">"subject"</span>,</span>
-<span class="r-in">              formula<span class="op">=</span> <span class="va">RT</span> <span class="op">~</span> <span class="va">is_pull</span> <span class="op">*</span> <span class="va">is_target</span>, aatterm <span class="op">=</span> <span class="st">"is_pull:is_target"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Double-difference score reliability</span></span></span>
+<span class="r-in"><span><span class="fu">q_reliability</span><span class="op">(</span>ds<span class="op">=</span><span class="va">erotica</span>,subjvar<span class="op">=</span><span class="st">"subject"</span>,</span></span>
+<span class="r-in"><span>              formula<span class="op">=</span> <span class="va">RT</span> <span class="op">~</span> <span class="va">is_pull</span> <span class="op">*</span> <span class="va">is_target</span>, aatterm <span class="op">=</span> <span class="st">"is_pull:is_target"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> q = 0.3757258</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Single-difference reliability for target stimuli</span></span>
-<span class="r-in"><span class="fu">q_reliability</span><span class="op">(</span>ds<span class="op">=</span><span class="va">erotica</span><span class="op">[</span><span class="va">erotica</span><span class="op">$</span><span class="va">is_target</span> <span class="op">==</span><span class="fl">1</span>,<span class="op">]</span>,subjvar<span class="op">=</span><span class="st">"subject"</span>,</span>
-<span class="r-in">              formula<span class="op">=</span> <span class="va">RT</span> <span class="op">~</span> <span class="va">is_pull</span>, aatterm <span class="op">=</span> <span class="st">"is_pull"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Single-difference reliability for target stimuli</span></span></span>
+<span class="r-in"><span><span class="fu">q_reliability</span><span class="op">(</span>ds<span class="op">=</span><span class="va">erotica</span><span class="op">[</span><span class="va">erotica</span><span class="op">$</span><span class="va">is_target</span> <span class="op">==</span><span class="fl">1</span>,<span class="op">]</span>,subjvar<span class="op">=</span><span class="st">"subject"</span>,</span></span>
+<span class="r-in"><span>              formula<span class="op">=</span> <span class="va">RT</span> <span class="op">~</span> <span class="va">is_pull</span>, aatterm <span class="op">=</span> <span class="st">"is_pull"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> q = 0.3755559</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Reliability of the mean reaction time of approaching target stimuli (no difference score)</span></span>
-<span class="r-in"><span class="fu">q_reliability</span><span class="op">(</span>ds<span class="op">=</span><span class="va">erotica</span><span class="op">[</span><span class="va">erotica</span><span class="op">$</span><span class="va">is_target</span> <span class="op">==</span><span class="fl">1</span> <span class="op">&amp;</span> <span class="va">erotica</span><span class="op">$</span><span class="va">is_pull</span> <span class="op">==</span><span class="fl">1</span>,<span class="op">]</span>,subjvar<span class="op">=</span><span class="st">"subject"</span>,</span>
-<span class="r-in">              formula<span class="op">=</span> <span class="va">RT</span> <span class="op">~</span> <span class="fl">1</span>, aatterm <span class="op">=</span> <span class="st">"1"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Reliability of the mean reaction time of approaching target stimuli (no difference score)</span></span></span>
+<span class="r-in"><span><span class="fu">q_reliability</span><span class="op">(</span>ds<span class="op">=</span><span class="va">erotica</span><span class="op">[</span><span class="va">erotica</span><span class="op">$</span><span class="va">is_target</span> <span class="op">==</span><span class="fl">1</span> <span class="op">&amp;</span> <span class="va">erotica</span><span class="op">$</span><span class="va">is_pull</span> <span class="op">==</span><span class="fl">1</span>,<span class="op">]</span>,subjvar<span class="op">=</span><span class="st">"subject"</span>,</span></span>
+<span class="r-in"><span>              formula<span class="op">=</span> <span class="va">RT</span> <span class="op">~</span> <span class="fl">1</span>, aatterm <span class="op">=</span> <span class="st">"1"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> q = 0.9275666</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">q_reliability2</span><span class="op">(</span>ds<span class="op">=</span><span class="va">erotica</span>,subjvar<span class="op">=</span><span class="st">"subject"</span>,</span>
-<span class="r-in">              splitvars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"is_pull"</span>, <span class="st">"is_target"</span><span class="op">)</span>,rtvar<span class="op">=</span><span class="st">"RT"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">q_reliability2</span><span class="op">(</span>ds<span class="op">=</span><span class="va">erotica</span>,subjvar<span class="op">=</span><span class="st">"subject"</span>,</span></span>
+<span class="r-in"><span>              splitvars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"is_pull"</span>, <span class="st">"is_target"</span><span class="op">)</span>,rtvar<span class="op">=</span><span class="st">"RT"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> q = 0.3758841</span>
 </code></pre></div>
     </div>
@@ -143,7 +166,7 @@ independently calculated bias scores, for example using <code><a href="aat_compu
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

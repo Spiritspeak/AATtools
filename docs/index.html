@@ -75,13 +75,14 @@
 <div class="page-header"><h1 id="aattools-">AATtools <img src="reference/figures/logo.png" align="right"><a class="anchor" aria-label="anchor" href="#aattools-"></a>
 </h1></div>
 <!-- badges: start -->
+
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
 <p>AATtools provides tools to deal with data from implicit psychological tasks. It provides methods to compute reliability and aggregate data into bias scores.</p>
 <p>Install it this way:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"AATtools"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"AATtools"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="rationale">Rationale<a class="anchor" aria-label="anchor" href="#rationale"></a>
@@ -98,22 +99,22 @@
 </h2>
 <p>If your data is in the right format, you can get started right away. The <code>aat_splithalf</code> function allows you to approximate the reliability of any kind of summary score and data cleaning pipeline.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">#This is a built-in dataset </span>
-<span class="va">dataset</span> <span class="op">&lt;-</span> <span class="va">erotica</span><span class="op">[</span><span class="va">erotica</span><span class="op">$</span><span class="va">is_irrelevant</span><span class="op">==</span><span class="fl">0</span>,<span class="op">]</span> 
-
-<span class="va">split</span> <span class="op">&lt;-</span> 
-  <span class="fu"><a href="reference/aat_splithalf.html">aat_splithalf</a></span><span class="op">(</span>ds<span class="op">=</span><span class="va">dataset</span>, <span class="co">#our dataset</span>
-                subjvar<span class="op">=</span><span class="st">"subject"</span>, <span class="co">#the column designating participant IDs</span>
-                pullvar<span class="op">=</span><span class="st">"is_pull"</span>, <span class="co">#the column designating approach (1) and avoidance (0) trials</span>
-                targetvar<span class="op">=</span><span class="st">"is_target"</span>, <span class="co">#the column designating target (1) and control (0) stimulus trials</span>
-                rtvar<span class="op">=</span><span class="st">"RT"</span>, <span class="co">#the column designating reaction times</span>
-                iters<span class="op">=</span><span class="fl">1000</span>, <span class="co">#Set the number of bootstrapping iterations (more is better)</span>
-                trialdropfunc<span class="op">=</span><span class="st">"trial_prune_3SD"</span>, <span class="co">#Indicate whether outliers should be removed, and if so, how</span>
-                casedropfunc<span class="op">=</span><span class="st">"case_prune_3SD"</span>, <span class="co">#Indicate whether outlying approach bias scores should be removed</span>
-                algorithm<span class="op">=</span><span class="st">"aat_dscore"</span>, <span class="co">#The algorithm by which approach bias scores should be computed</span>
-                plot<span class="op">=</span><span class="cn">F</span> <span class="co">#Should the results be plotted immediately?</span>
-                <span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">split</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co">#This is a built-in dataset </span></span>
+<span><span class="va">dataset</span> <span class="op">&lt;-</span> <span class="va">erotica</span><span class="op">[</span><span class="va">erotica</span><span class="op">$</span><span class="va">is_irrelevant</span><span class="op">==</span><span class="fl">0</span>,<span class="op">]</span> </span>
+<span></span>
+<span><span class="va">split</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu"><a href="reference/aat_splithalf.html">aat_splithalf</a></span><span class="op">(</span>ds<span class="op">=</span><span class="va">dataset</span>, <span class="co">#our dataset</span></span>
+<span>                subjvar<span class="op">=</span><span class="st">"subject"</span>, <span class="co">#the column designating participant IDs</span></span>
+<span>                pullvar<span class="op">=</span><span class="st">"is_pull"</span>, <span class="co">#the column designating approach (1) and avoidance (0) trials</span></span>
+<span>                targetvar<span class="op">=</span><span class="st">"is_target"</span>, <span class="co">#the column designating target (1) and control (0) stimulus trials</span></span>
+<span>                rtvar<span class="op">=</span><span class="st">"RT"</span>, <span class="co">#the column designating reaction times</span></span>
+<span>                iters<span class="op">=</span><span class="fl">1000</span>, <span class="co">#Set the number of bootstrapping iterations (more is better)</span></span>
+<span>                trialdropfunc<span class="op">=</span><span class="st">"trial_prune_3SD"</span>, <span class="co">#Indicate whether outliers should be removed, and if so, how</span></span>
+<span>                casedropfunc<span class="op">=</span><span class="st">"case_prune_3SD"</span>, <span class="co">#Indicate whether outlying approach bias scores should be removed</span></span>
+<span>                algorithm<span class="op">=</span><span class="st">"aat_dscore"</span>, <span class="co">#The algorithm by which approach bias scores should be computed</span></span>
+<span>                plot<span class="op">=</span><span class="cn">F</span> <span class="co">#Should the results be plotted immediately?</span></span>
+<span>                <span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">split</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="do">## Full-length reliability (Raju's beta):</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="do">## beta (57.905) = .68, 95%CI [.54, .78], p = 0</span></span>
@@ -121,7 +122,7 @@
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Uncorrected, average split-half correlation:</span></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="do">## r (57.905) = .52, 95%CI [.37, .65], p = 0</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">split</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">split</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/splithalf-1.png"><!-- --></p>
 <p>Alternatively, you can use <code>q_reliability</code> to compute an exact reliability score for your data.</p>
 </div>
@@ -132,27 +133,27 @@
 <p>This function computes the reliability of the task in one go and without performing many splits, saving time.</p>
 <p><code><a href="reference/q_reliability.html">q_reliability()</a></code> performs a linear regression to the data of each participant, and derives the unstandardized beta and variance of one of the predictors. If this predictor is the intercept, the resulting beta is functionally equivalent to the simple mean reaction time of the participant; if it is a binary main effect, the beta is equivalent to the difference between condition 1 and condition 0; and if it’s an interaction term, the beta is equivalent to a double-difference score. The variance among betas is then compared to the overall variance within betas. <code><a href="reference/q_reliability.html">q_reliability2()</a></code> computes the within- and between-subjects variance without performing any regressions and is thus faster and more accurate. It allows for the computation of reliability for single or double mean difference scores, as well as any difference scores standardized by the participant’s standard deviation. The reliability computed by <code><a href="reference/q_reliability.html">q_reliability()</a></code> and <code><a href="reference/q_reliability.html">q_reliability2()</a></code> represents the ratio between between-subjects variance and within-subjects variance, where 0 means there is equal variance within and between subjects, and 1 means the bias scores are entirely accurate. These functions do not factor in variability caused by the outlier rejection rules that the researcher used; therefore, they cannot model the confidence intervals for the reliability coefficient.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">dataset_relevant</span> <span class="op">&lt;-</span> <span class="va">erotica</span><span class="op">[</span><span class="va">erotica</span><span class="op">$</span><span class="va">is_irrelevant</span><span class="op">==</span><span class="fl">0</span>,<span class="op">]</span> 
-<span class="va">dataset_irrelevant</span> <span class="op">&lt;-</span> <span class="va">erotica</span><span class="op">[</span><span class="va">erotica</span><span class="op">$</span><span class="va">is_irrelevant</span><span class="op">==</span><span class="fl">1</span>,<span class="op">]</span> 
-
-<span class="co"># Reliability of the relevant-feature AAT</span>
-<span class="va">qreliability_relevant</span> <span class="op">&lt;-</span> 
-  <span class="fu"><a href="reference/q_reliability.html">q_reliability</a></span><span class="op">(</span>ds<span class="op">=</span><span class="va">dataset_relevant</span>, <span class="co">#the data</span>
-                subjvar<span class="op">=</span><span class="st">"subject"</span>, <span class="co">#the name of the column containing participant IDs</span>
-                formula<span class="op">=</span><span class="va">RT</span><span class="op">~</span><span class="va">is_pull</span><span class="op">*</span><span class="va">is_target</span>, <span class="co">#Here we specify the way bias scores are to be computed (see above)</span>
-                aatterm<span class="op">=</span><span class="st">"is_pull:is_target"</span> <span class="co">#The term in the regression formula which represents the bias score</span>
-                <span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">qreliability_relevant</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">dataset_relevant</span> <span class="op">&lt;-</span> <span class="va">erotica</span><span class="op">[</span><span class="va">erotica</span><span class="op">$</span><span class="va">is_irrelevant</span><span class="op">==</span><span class="fl">0</span>,<span class="op">]</span> </span>
+<span><span class="va">dataset_irrelevant</span> <span class="op">&lt;-</span> <span class="va">erotica</span><span class="op">[</span><span class="va">erotica</span><span class="op">$</span><span class="va">is_irrelevant</span><span class="op">==</span><span class="fl">1</span>,<span class="op">]</span> </span>
+<span></span>
+<span><span class="co"># Reliability of the relevant-feature AAT</span></span>
+<span><span class="va">qreliability_relevant</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu"><a href="reference/q_reliability.html">q_reliability</a></span><span class="op">(</span>ds<span class="op">=</span><span class="va">dataset_relevant</span>, <span class="co">#the data</span></span>
+<span>                subjvar<span class="op">=</span><span class="st">"subject"</span>, <span class="co">#the name of the column containing participant IDs</span></span>
+<span>                formula<span class="op">=</span><span class="va">RT</span><span class="op">~</span><span class="va">is_pull</span><span class="op">*</span><span class="va">is_target</span>, <span class="co">#Here we specify the way bias scores are to be computed (see above)</span></span>
+<span>                aatterm<span class="op">=</span><span class="st">"is_pull:is_target"</span> <span class="co">#The term in the regression formula which represents the bias score</span></span>
+<span>                <span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">qreliability_relevant</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="do">## q = 0.6676301</span></span></code></pre></div>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Reliability of the irrelevant-feature AAT</span>
-<span class="va">qreliability_irrelevant</span> <span class="op">&lt;-</span> 
-  <span class="fu"><a href="reference/q_reliability.html">q_reliability2</a></span><span class="op">(</span>ds<span class="op">=</span><span class="va">dataset_irrelevant</span>,
-                subjvar<span class="op">=</span><span class="st">"subject"</span>,
-                splitvars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"is_pull"</span>,<span class="st">"is_target"</span><span class="op">)</span>,
-                rtvar<span class="op">=</span><span class="st">"RT"</span>
-                <span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">qreliability_irrelevant</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Reliability of the irrelevant-feature AAT</span></span>
+<span><span class="va">qreliability_irrelevant</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu"><a href="reference/q_reliability.html">q_reliability2</a></span><span class="op">(</span>ds<span class="op">=</span><span class="va">dataset_irrelevant</span>,</span>
+<span>                subjvar<span class="op">=</span><span class="st">"subject"</span>,</span>
+<span>                splitvars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"is_pull"</span>,<span class="st">"is_target"</span><span class="op">)</span>,</span>
+<span>                rtvar<span class="op">=</span><span class="st">"RT"</span></span>
+<span>                <span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">qreliability_irrelevant</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="do">## q = -0.2478222</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -160,26 +161,26 @@
 </h2>
 <p>Cronbach’s alpha is a common, but suboptimal method to compute the reliability of psychological experiments. In the context of the AAT, approach bias scores are computed per stimulus for each participant, after which Cronbach’s alpha is computed by treating each stimulus approach bias score as a separate item in a questionnaire. This method does not take into account variability in raw reaction times and is heavily dependent on the number of stimuli included in the experiment, rather than the number of trials as a whole. Despite its inaccuracy, it has been included for the sake of completeness.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">dataset</span> <span class="op">&lt;-</span> <span class="va">erotica</span>
-<span class="co">#This dataset is unfortunately not suitable for the application of this method. We artificially make it compatible by pretending there are only 10 stimuli per category rather than 40.</span>
-<span class="va">dataset</span><span class="op">$</span><span class="va">stimulus</span><span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">dataset</span><span class="op">$</span><span class="va">stimulus</span><span class="op">)</span>,<span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span>
-
-<span class="co">#We use the special jackknife function, which allows us to diagnose flaws in the experiment by computing Cronbach's alpha while single stimuli or participants are excluded.</span>
-<span class="va">alpha</span><span class="op">&lt;-</span><span class="fu"><a href="reference/aat_covreliability.html">aat_covreliability_jackknife</a></span><span class="op">(</span>ds<span class="op">=</span><span class="va">dataset</span>, <span class="co">#The dataset</span>
-                                    subjvar<span class="op">=</span><span class="st">"subject"</span>, <span class="co">#Name of the column with participant IDs</span>
-                                    stimvar<span class="op">=</span><span class="st">"stimulus"</span>,<span class="co">#Name of the column with stimulus IDs</span>
-                                    pullvar<span class="op">=</span><span class="st">"is_pull"</span>, <span class="co">#Name of the column indicating approach or avoid trial</span>
-                                    rtvar<span class="op">=</span><span class="st">"RT"</span>,        <span class="co">#Name of the column indicating reaction time</span>
-                                    algorithm<span class="op">=</span><span class="st">"calpha"</span><span class="op">)</span> <span class="co">#Reliability computation method. calpha is Cronbach's alpha</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">dataset</span> <span class="op">&lt;-</span> <span class="va">erotica</span></span>
+<span><span class="co">#This dataset is unfortunately not suitable for the application of this method. We artificially make it compatible by pretending there are only 10 stimuli per category rather than 40.</span></span>
+<span><span class="va">dataset</span><span class="op">$</span><span class="va">stimulus</span><span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">dataset</span><span class="op">$</span><span class="va">stimulus</span><span class="op">)</span>,<span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#We use the special jackknife function, which allows us to diagnose flaws in the experiment by computing Cronbach's alpha while single stimuli or participants are excluded.</span></span>
+<span><span class="va">alpha</span><span class="op">&lt;-</span><span class="fu"><a href="reference/aat_covreliability.html">aat_covreliability_jackknife</a></span><span class="op">(</span>ds<span class="op">=</span><span class="va">dataset</span>, <span class="co">#The dataset</span></span>
+<span>                                    subjvar<span class="op">=</span><span class="st">"subject"</span>, <span class="co">#Name of the column with participant IDs</span></span>
+<span>                                    stimvar<span class="op">=</span><span class="st">"stimulus"</span>,<span class="co">#Name of the column with stimulus IDs</span></span>
+<span>                                    pullvar<span class="op">=</span><span class="st">"is_pull"</span>, <span class="co">#Name of the column indicating approach or avoid trial</span></span>
+<span>                                    rtvar<span class="op">=</span><span class="st">"RT"</span>,        <span class="co">#Name of the column indicating reaction time</span></span>
+<span>                                    algorithm<span class="op">=</span><span class="st">"calpha"</span><span class="op">)</span> <span class="co">#Reliability computation method. calpha is Cronbach's alpha</span></span></code></pre></div>
 <div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Warning in if ("cross" == holdout) {: the condition has length &gt; 1 and only the</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="do">## first element will be used</span></span></code></pre></div>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">alpha</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">alpha</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb12"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Reliability: r = .21</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="do">## Maximum achieveable reliability is with removal of participant 56: r = .27</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Maximum achieveable reliability is with removal of stimulus 3: r = .28</span></span></code></pre></div>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">alpha</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">alpha</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/alpha-1.png"><!-- --></p>
 </div>
 <div class="section level2">
@@ -187,27 +188,27 @@
 </h2>
 <p>The <code>aat_bootstrap</code> function can be used to compute bias scores from random permutations of the data, and derive per-participant confidence intervals from these bootstrapped bias scores. This lets users quantify for which participants the bias scores are accurate and for which participants they are not. This method also allows for the computation of reliability through bootstrapping.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">dataset</span> <span class="op">&lt;-</span> <span class="va">erotica</span>
-
-<span class="va">boot</span> <span class="op">&lt;-</span> 
-  <span class="fu"><a href="reference/aat_bootstrap.html">aat_bootstrap</a></span><span class="op">(</span>ds<span class="op">=</span><span class="va">dataset</span>,
-                subjvar<span class="op">=</span><span class="st">"subject"</span>,
-                pullvar<span class="op">=</span><span class="st">"is_pull"</span>,
-                targetvar<span class="op">=</span><span class="st">"is_target"</span>,
-                rtvar<span class="op">=</span><span class="st">"RT"</span>,
-                iters<span class="op">=</span><span class="fl">1000</span>,
-                trialdropfunc<span class="op">=</span><span class="st">"trial_prune_3SD"</span>,
-                algorithm<span class="op">=</span><span class="st">"aat_dscore"</span>,
-                plot<span class="op">=</span><span class="cn">F</span>
-                <span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">dataset</span> <span class="op">&lt;-</span> <span class="va">erotica</span></span>
+<span></span>
+<span><span class="va">boot</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu"><a href="reference/aat_bootstrap.html">aat_bootstrap</a></span><span class="op">(</span>ds<span class="op">=</span><span class="va">dataset</span>,</span>
+<span>                subjvar<span class="op">=</span><span class="st">"subject"</span>,</span>
+<span>                pullvar<span class="op">=</span><span class="st">"is_pull"</span>,</span>
+<span>                targetvar<span class="op">=</span><span class="st">"is_target"</span>,</span>
+<span>                rtvar<span class="op">=</span><span class="st">"RT"</span>,</span>
+<span>                iters<span class="op">=</span><span class="fl">1000</span>,</span>
+<span>                trialdropfunc<span class="op">=</span><span class="st">"trial_prune_3SD"</span>,</span>
+<span>                algorithm<span class="op">=</span><span class="st">"aat_dscore"</span>,</span>
+<span>                plot<span class="op">=</span><span class="cn">F</span></span>
+<span>                <span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb15"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Bootstrapped bias scores and confidence intervals</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="do">## Mean bias score: 0.1381435</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Mean confidence interval: 0.8862338</span></span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="do">## reliability: q = 0.3243185</span></span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Number of iterations: 1000</span></span></code></pre></div>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/bootstrap-1.png"><!-- --></p>
 </div>
 <div class="section level2">
@@ -215,18 +216,18 @@
 </h2>
 <p>The <code>aat_compute</code> function can be used to compute bias scores. This can save a lot of coding time.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">dataset_relevant</span> <span class="op">&lt;-</span> <span class="va">erotica</span><span class="op">[</span><span class="va">erotica</span><span class="op">$</span><span class="va">is_irrelevant</span><span class="op">==</span><span class="fl">0</span>,<span class="op">]</span> 
-<span class="va">dataset_irrelevant</span> <span class="op">&lt;-</span> <span class="va">erotica</span><span class="op">[</span><span class="va">erotica</span><span class="op">$</span><span class="va">is_irrelevant</span><span class="op">==</span><span class="fl">1</span>,<span class="op">]</span> 
-
-<span class="va">relevant_scores</span> <span class="op">&lt;-</span> 
-  <span class="fu"><a href="reference/aat_compute.html">aat_compute</a></span><span class="op">(</span>ds<span class="op">=</span><span class="va">dataset_relevant</span>, subjvar<span class="op">=</span><span class="st">"subject"</span>, pullvar<span class="op">=</span><span class="st">"is_pull"</span>, targetvar<span class="op">=</span><span class="st">"is_target"</span>, 
-              rtvar<span class="op">=</span><span class="st">"RT"</span>, trialdropfunc<span class="op">=</span><span class="st">"trial_prune_3SD"</span>, algorithm<span class="op">=</span><span class="st">"aat_dscore"</span><span class="op">)</span>
-<span class="va">irrelevant_scores</span> <span class="op">&lt;-</span> 
-  <span class="fu"><a href="reference/aat_compute.html">aat_compute</a></span><span class="op">(</span>ds<span class="op">=</span><span class="va">dataset_irrelevant</span>, subjvar<span class="op">=</span><span class="st">"subject"</span>, pullvar<span class="op">=</span><span class="st">"is_pull"</span>, targetvar<span class="op">=</span><span class="st">"is_target"</span>, 
-              rtvar<span class="op">=</span><span class="st">"RT"</span>, trialdropfunc<span class="op">=</span><span class="st">"trial_prune_3SD"</span>, algorithm<span class="op">=</span><span class="st">"aat_dscore"</span><span class="op">)</span>
-
-<span class="va">all_scores</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">relevant_scores</span>,<span class="va">irrelevant_scores</span>, by<span class="op">=</span><span class="st">"subject"</span>, all<span class="op">=</span><span class="cn">T</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">all_scores</span><span class="op">$</span><span class="va">ab.x</span>,<span class="va">all_scores</span><span class="op">$</span><span class="va">ab.y</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">dataset_relevant</span> <span class="op">&lt;-</span> <span class="va">erotica</span><span class="op">[</span><span class="va">erotica</span><span class="op">$</span><span class="va">is_irrelevant</span><span class="op">==</span><span class="fl">0</span>,<span class="op">]</span> </span>
+<span><span class="va">dataset_irrelevant</span> <span class="op">&lt;-</span> <span class="va">erotica</span><span class="op">[</span><span class="va">erotica</span><span class="op">$</span><span class="va">is_irrelevant</span><span class="op">==</span><span class="fl">1</span>,<span class="op">]</span> </span>
+<span></span>
+<span><span class="va">relevant_scores</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu"><a href="reference/aat_compute.html">aat_compute</a></span><span class="op">(</span>ds<span class="op">=</span><span class="va">dataset_relevant</span>, subjvar<span class="op">=</span><span class="st">"subject"</span>, pullvar<span class="op">=</span><span class="st">"is_pull"</span>, targetvar<span class="op">=</span><span class="st">"is_target"</span>, </span>
+<span>              rtvar<span class="op">=</span><span class="st">"RT"</span>, trialdropfunc<span class="op">=</span><span class="st">"trial_prune_3SD"</span>, algorithm<span class="op">=</span><span class="st">"aat_dscore"</span><span class="op">)</span></span>
+<span><span class="va">irrelevant_scores</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu"><a href="reference/aat_compute.html">aat_compute</a></span><span class="op">(</span>ds<span class="op">=</span><span class="va">dataset_irrelevant</span>, subjvar<span class="op">=</span><span class="st">"subject"</span>, pullvar<span class="op">=</span><span class="st">"is_pull"</span>, targetvar<span class="op">=</span><span class="st">"is_target"</span>, </span>
+<span>              rtvar<span class="op">=</span><span class="st">"RT"</span>, trialdropfunc<span class="op">=</span><span class="st">"trial_prune_3SD"</span>, algorithm<span class="op">=</span><span class="st">"aat_dscore"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">all_scores</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">relevant_scores</span>,<span class="va">irrelevant_scores</span>, by<span class="op">=</span><span class="st">"subject"</span>, all<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">all_scores</span><span class="op">$</span><span class="va">ab.x</span>,<span class="va">all_scores</span><span class="op">$</span><span class="va">ab.y</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/compute-1.png"><!-- --></p>
 <p>Evidently, there is no relationship between relevant-feature and irrelevant-feature bias scores in this dataset.</p>
 </div>
@@ -235,10 +236,10 @@
 </h2>
 <p>For the sake of power analysis or methodological research, it may be desired to generate a random dataset. <code><a href="reference/aat_simulate.html">aat_simulate()</a></code> can be used for this purpose. A lot of parameters can be adjusted, but one can opt-in to use default values derived from pre-existing datasets as well.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ds</span><span class="op">&lt;-</span><span class="fu"><a href="reference/aat_simulate.html">aat_simulate2</a></span><span class="op">(</span>defaults<span class="op">=</span><span class="st">"Lender2018_relevant_clean"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">ds</span><span class="op">$</span><span class="va">rt</span><span class="op">)</span>
-<span class="fu"><a href="reference/q_reliability.html">q_reliability2</a></span><span class="op">(</span>ds<span class="op">=</span><span class="va">ds</span>,subjvar<span class="op">=</span><span class="st">"subj"</span>,splitvars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"is_pull"</span>,<span class="st">"is_target"</span><span class="op">)</span>,rtvar<span class="op">=</span><span class="st">"rt"</span>,dscore<span class="op">=</span><span class="cn">T</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">ds</span><span class="op">&lt;-</span><span class="fu"><a href="reference/aat_simulate.html">aat_simulate2</a></span><span class="op">(</span>defaults<span class="op">=</span><span class="st">"Lender2018_relevant_clean"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">ds</span><span class="op">$</span><span class="va">rt</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/q_reliability.html">q_reliability2</a></span><span class="op">(</span>ds<span class="op">=</span><span class="va">ds</span>,subjvar<span class="op">=</span><span class="st">"subj"</span>,splitvars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"is_pull"</span>,<span class="st">"is_target"</span><span class="op">)</span>,rtvar<span class="op">=</span><span class="st">"rt"</span>,dscore<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb19"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="do">## q = 0.686825</span></span></code></pre></div>
 <p><img src="reference/figures/simulate-1.png"><!-- --></p>
 </div>
@@ -298,7 +299,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

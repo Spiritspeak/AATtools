@@ -50,39 +50,46 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">r2z</span><span class="op">(</span><span class="va">r</span><span class="op">)</span>
-
-<span class="fu">z2r</span><span class="op">(</span><span class="va">z</span><span class="op">)</span>
-
-<span class="fu">r2t</span><span class="op">(</span><span class="va">r</span>, <span class="va">n</span><span class="op">)</span>
-
-<span class="fu">r2p</span><span class="op">(</span><span class="va">r</span>, <span class="va">n</span><span class="op">)</span>
-
-<span class="fu">rconfint</span><span class="op">(</span><span class="va">r</span>, <span class="va">n</span>, alpha <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span>
-
-<span class="fu">compcorr</span><span class="op">(</span><span class="va">r1</span>, <span class="va">r2</span>, <span class="va">n1</span>, <span class="va">n2</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">r2z</span><span class="op">(</span><span class="va">r</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">z2r</span><span class="op">(</span><span class="va">z</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">r2t</span><span class="op">(</span><span class="va">r</span>, <span class="va">n</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">r2p</span><span class="op">(</span><span class="va">r</span>, <span class="va">n</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">rconfint</span><span class="op">(</span><span class="va">r</span>, <span class="va">n</span>, alpha <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">compcorr</span><span class="op">(</span><span class="va">r1</span>, <span class="va">r2</span>, <span class="va">n1</span>, <span class="va">n2</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>r, r1, r2</dt>
 <dd><p>a correlation value</p></dd>
+
+
 <dt>z</dt>
 <dd><p>a Z-score</p></dd>
+
+
 <dt>n, n1, n2</dt>
 <dd><p>sample sizes</p></dd>
+
+
 <dt>alpha</dt>
 <dd><p>the significance level to use</p></dd>
+
 </dl></div>
     <div id="functions">
     <h2>Functions</h2>
     
-<ul><li><p><code>r2z</code>: converts correlation coefficients to z-scores</p></li>
-<li><p><code>z2r</code>: converts z-scores to correlation coefficients</p></li>
-<li><p><code>r2t</code>: Converts correlation coefficients to t-scores</p></li>
-<li><p><code>r2p</code>: Computes the two-sided p-value for a given correlation</p></li>
-<li><p><code>rconfint</code>: Computes confidence intervals for a given correlation coefficient</p></li>
-<li><p><code>compcorr</code>: computes the significance of the difference between two correlation coefficients</p></li>
+<ul><li><p><code>r2z()</code>: converts correlation coefficients to z-scores</p></li>
+<li><p><code>z2r()</code>: converts z-scores to correlation coefficients</p></li>
+<li><p><code>r2t()</code>: Converts correlation coefficients to t-scores</p></li>
+<li><p><code>r2p()</code>: Computes the two-sided p-value for a given correlation</p></li>
+<li><p><code>rconfint()</code>: Computes confidence intervals for a given correlation coefficient</p></li>
+<li><p><code>compcorr()</code>: computes the significance of the difference between two correlation coefficients</p></li>
 </ul></div>
     <div id="see-also">
     <h2>See also</h2>
@@ -91,12 +98,12 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">z</span> <span class="op">&lt;-</span> <span class="fu">r2z</span><span class="op">(</span><span class="fl">.5</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">z2r</span><span class="op">(</span><span class="va">z</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">t</span><span class="op">&lt;-</span><span class="fu">r2t</span><span class="op">(</span><span class="va">r</span>,<span class="fl">30</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">r2p</span><span class="op">(</span><span class="va">r</span>,<span class="fl">30</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">z</span> <span class="op">&lt;-</span> <span class="fu">r2z</span><span class="op">(</span><span class="fl">.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">z2r</span><span class="op">(</span><span class="va">z</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">t</span><span class="op">&lt;-</span><span class="fu">r2t</span><span class="op">(</span><span class="va">r</span>,<span class="fl">30</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">r2p</span><span class="op">(</span><span class="va">r</span>,<span class="fl">30</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.004899934</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu">rconfint</span><span class="op">(</span><span class="va">r</span>,<span class="fl">30</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu">rconfint</span><span class="op">(</span><span class="va">r</span>,<span class="fl">30</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function (r, n, alpha = 0.05) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     z &lt;- r2z(r)</span>
@@ -104,9 +111,9 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>     confints &lt;- c(z2r(z - zint), z2r(z + zint))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     return(rconfint)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000000001f14bbf8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001da5ce19ba8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: namespace:AATtools&gt;</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu">compcorr</span><span class="op">(</span><span class="fl">.5</span>,<span class="fl">.7</span>,<span class="fl">20</span>,<span class="fl">20</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu">compcorr</span><span class="op">(</span><span class="fl">.5</span>,<span class="fl">.7</span>,<span class="fl">20</span>,<span class="fl">20</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $zscore</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.927105</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -129,7 +136,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

@@ -59,24 +59,24 @@ AAT score computation algorithms
 }
 \section{Functions}{
 \itemize{
-\item \code{aat_doublemeandiff}: computes a mean-based double-difference score:
+\item \code{aat_doublemeandiff()}: computes a mean-based double-difference score:
 \code{(mean(push_target) - mean(pull_target)) - (mean(push_control) - mean(pull_control))}
 
-\item \code{aat_doublemediandiff}: computes a median-based double-difference score:
+\item \code{aat_doublemediandiff()}: computes a median-based double-difference score:
 \code{(median(push_target) - median(pull_target)) - (median(push_control) - median(pull_control))}
 
-\item \code{aat_dscore}: computes D-scores for a 2-block design (see Greenwald, Nosek, and Banaji, 2003):
+\item \code{aat_dscore()}: computes D-scores for a 2-block design (see Greenwald, Nosek, and Banaji, 2003):
 \code{((mean(push_target) - mean(pull_target)) - (mean(push_control) - mean(pull_control))) / sd(participant_reaction_times)}
 
-\item \code{aat_mediandscore}: computes a double-difference score usign medians,
+\item \code{aat_mediandscore()}: computes a double-difference score usign medians,
 and divides it by the median absolute deviation of the participant's overall reaction times:
 \code{((median(push_target) - median(pull_target)) - (median(push_control) - median(pull_control))) / mad(participant_reaction_times)}
 
-\item \code{aat_dscore_multiblock}: computes D-scores for pairs of sequential blocks
+\item \code{aat_dscore_multiblock()}: computes D-scores for pairs of sequential blocks
 and averages the resulting score (see Greenwald, Nosek, and Banaji, 2003).
 Requires extra \code{blockvar} argument, indicating the name of the block variable.
 
-\item \code{aat_regression}: \code{aat_regression} and \code{aat_standardregression} fit regression models to participants' reaction times and extract a term that serves as AAT score.
+\item \code{aat_regression()}: \code{aat_regression} and \code{aat_standardregression} fit regression models to participants' reaction times and extract a term that serves as AAT score.
 \code{aat_regression} extracts the raw coefficient, equivalent to a mean difference score.
 \code{aat_standardregression} extracts the t-score of the coefficient, standardized on the basis of the variability of the participant's reaction times.
 These algorithms can be used to regress nuisance variables out of the data before computing AAT scores.
@@ -86,12 +86,12 @@ When using these functions, additional arguments must be provided:
 \item \code{aatterm} - the term within the formula that indicates the approach bias; this is usually the interaction of the pull and target terms.
 }
 
-\item \code{aat_standardregression}: See above
+\item \code{aat_standardregression()}: See above
 
-\item \code{aat_singlemeandiff}: subtracts the mean approach reaction time from the mean avoidance reaction time.
+\item \code{aat_singlemeandiff()}: subtracts the mean approach reaction time from the mean avoidance reaction time.
 Using this algorithm is only sensible if the supplied data contain a single stimulus category.
 
-\item \code{aat_singlemediandiff}: subtracts the median approach reaction time from the median avoidance reaction time.
+\item \code{aat_singlemediandiff()}: subtracts the median approach reaction time from the median avoidance reaction time.
 Using this algorithm is only sensible if the supplied data contain a single stimulus category.
+
 }}
-

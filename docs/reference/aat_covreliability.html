@@ -58,78 +58,105 @@ allowing for the diagnosis of potential sources of unreliability within the data
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">aat_covreliability</span><span class="op">(</span>
-  <span class="va">ds</span>,
-  <span class="va">subjvar</span>,
-  <span class="va">stimvar</span>,
-  <span class="va">pullvar</span>,
-  targetvar <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">rtvar</span>,
-  aggfunc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"median"</span><span class="op">)</span>,
-  algorithm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"calpha"</span>, <span class="st">"lambda2"</span>, <span class="st">"lambda4"</span><span class="op">)</span>,
-  iters <span class="op">=</span> <span class="fl">5</span>
-<span class="op">)</span>
-
-<span class="co"># S3 method for aat_covreliability</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">aat_covreliability_jackknife</span><span class="op">(</span>
-  <span class="va">ds</span>,
-  <span class="va">subjvar</span>,
-  <span class="va">stimvar</span>,
-  <span class="va">pullvar</span>,
-  targetvar <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">rtvar</span>,
-  algorithm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"calpha"</span>, <span class="st">"lambda2"</span>, <span class="st">"lambda4"</span><span class="op">)</span>,
-  iters <span class="op">=</span> <span class="fl">5</span>,
-  holdout <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"both"</span>, <span class="st">"participant"</span>, <span class="st">"stimulus"</span>, <span class="st">"cross"</span><span class="op">)</span>
-<span class="op">)</span>
-
-<span class="co"># S3 method for aat_covreliability_jackknife</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S3 method for aat_covreliability_jackknife</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">aat_covreliability</span><span class="op">(</span></span>
+<span>  <span class="va">ds</span>,</span>
+<span>  <span class="va">subjvar</span>,</span>
+<span>  <span class="va">stimvar</span>,</span>
+<span>  <span class="va">pullvar</span>,</span>
+<span>  targetvar <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">rtvar</span>,</span>
+<span>  aggfunc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"median"</span><span class="op">)</span>,</span>
+<span>  algorithm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"calpha"</span>, <span class="st">"lambda2"</span>, <span class="st">"lambda4"</span><span class="op">)</span>,</span>
+<span>  iters <span class="op">=</span> <span class="fl">5</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for aat_covreliability</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">aat_covreliability_jackknife</span><span class="op">(</span></span>
+<span>  <span class="va">ds</span>,</span>
+<span>  <span class="va">subjvar</span>,</span>
+<span>  <span class="va">stimvar</span>,</span>
+<span>  <span class="va">pullvar</span>,</span>
+<span>  targetvar <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">rtvar</span>,</span>
+<span>  algorithm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"calpha"</span>, <span class="st">"lambda2"</span>, <span class="st">"lambda4"</span><span class="op">)</span>,</span>
+<span>  iters <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  holdout <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"both"</span>, <span class="st">"participant"</span>, <span class="st">"stimulus"</span>, <span class="st">"cross"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for aat_covreliability_jackknife</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for aat_covreliability_jackknife</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>ds</dt>
 <dd><p>the <code>data.frame</code> to use</p></dd>
+
+
 <dt>subjvar</dt>
 <dd><p>Name of the subject-identifying variable</p></dd>
+
+
 <dt>stimvar</dt>
 <dd><p>Name of the stimulus-identifying variable</p></dd>
+
+
 <dt>pullvar</dt>
 <dd><p>Name of the movement-direction identifying variable</p></dd>
+
+
 <dt>targetvar</dt>
 <dd><p>Optional. Name of the stimulus-category identifying variable</p></dd>
+
+
 <dt>rtvar</dt>
 <dd><p>Name of the reaction-time identifying variable</p></dd>
+
+
 <dt>aggfunc</dt>
 <dd><p>The function with which to aggregate the RTs before computing difference scores. Defaults to mean but can be changed to median.</p></dd>
+
+
 <dt>algorithm</dt>
 <dd><p>The reliability formula to use. Defaults to Cronbach's alpha, but Guttman's Lambda-2 is recommended instead.</p></dd>
+
+
 <dt>iters</dt>
 <dd><p>If there are missing values (which is almost inevitable) then
 multiple imputation will be used to complete the covariance matrix - this option sets
 the number of multiple imputations to be used.</p></dd>
+
+
 <dt>x</dt>
 <dd><p>Object to be printed</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Ignored</p></dd>
+
+
 <dt>holdout</dt>
 <dd><p>What should be removed from the data for computation of jackknife statistics?
 "both" computes reliability when stimuli and participants are separately removed,
 while "cross" computes  reliability when stimuli and participants are simultaneously removed.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Returns an <code>aat_covreliability</code> object containing the reliability value
+    
+
+<p>Returns an <code>aat_covreliability</code> object containing the reliability value
 as well as the dataset and covariance matrix with replaced missing values. When
 the argument <code>targetvar</code> is provided, the output also contains the reliability of the
-individual stimulus categories and their intercorrelation.
-<code>aat_covreliability_jackknife()</code> returns an <code>aat_covreliability_jackknife</code> object,
+individual stimulus categories and their intercorrelation.</p>
+
+
+<p><code>aat_covreliability_jackknife()</code> returns an <code>aat_covreliability_jackknife</code> object,
 containing jackknife reliability statistics. If argument <code>holdout</code> was set to "cross",
 then these statistics are provided in a matrix where rows represent participants and columns represent stimuli.
 Otherwise, they are provided in <code>data.frame</code>s where the stimulus or participant is represented in a column
@@ -148,9 +175,13 @@ to estimate the reliability of indiviau lstimulus categories.</p>
     <div id="methods-by-generic-">
     <h2>Methods (by generic)</h2>
     
-<ul><li><p><code>print</code>: Print an <code>aat_covreliability</code> object</p></li>
-<li><p><code>print</code>: Print an <code>aat_covreliability_jackknife</code> object</p></li>
-<li><p><code>plot</code>: Plot an <code>aat_covreliability_jackknife</code> object</p></li>
+<ul><li><p><code>print(aat_covreliability)</code>: Print an <code>aat_covreliability</code> object</p></li>
+</ul></div>
+    <div id="functions">
+    <h2>Functions</h2>
+    
+<ul><li><p><code>print(aat_covreliability_jackknife)</code>: Print an <code>aat_covreliability_jackknife</code> object</p></li>
+<li><p><code>plot(aat_covreliability_jackknife)</code>: Plot an <code>aat_covreliability_jackknife</code> object</p></li>
 </ul></div>
     <div id="references">
     <h2>References</h2>
@@ -161,41 +192,41 @@ University of Wisconsin.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">#We generate a dataset with 16 stimuli in each category</span></span>
-<span class="r-in"><span class="va">ds</span><span class="op">&lt;-</span><span class="fu"><a href="aat_simulate.html">aat_simulate</a></span><span class="op">(</span>biasfx_jitter<span class="op">=</span><span class="fl">40</span>,nstims<span class="op">=</span><span class="fl">16</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">ds</span><span class="op">$</span><span class="va">stim</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">ds</span><span class="op">$</span><span class="va">stim</span>,<span class="st">"-"</span>,<span class="va">ds</span><span class="op">$</span><span class="va">is_target</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># If Lord's formula and</span></span>
-<span class="r-in"><span class="co"># bootstrapped splithalf measure something similar,</span></span>
-<span class="r-in"><span class="co"># then the outcomes should be close to each other.</span></span>
-<span class="r-in"><span class="fu">aat_covreliability</span><span class="op">(</span>ds<span class="op">=</span><span class="va">ds</span>,subjvar<span class="op">=</span><span class="st">"subj"</span>,stimvar<span class="op">=</span><span class="st">"stim"</span>,pullvar<span class="op">=</span><span class="st">"is_pull"</span>,</span>
-<span class="r-in">                           targetvar<span class="op">=</span><span class="st">"is_target"</span>,rtvar<span class="op">=</span><span class="st">"rt"</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> r = .35</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">#We generate a dataset with 16 stimuli in each category</span></span></span>
+<span class="r-in"><span><span class="va">ds</span><span class="op">&lt;-</span><span class="fu"><a href="aat_simulate.html">aat_simulate</a></span><span class="op">(</span>biasfx_jitter<span class="op">=</span><span class="fl">40</span>,nstims<span class="op">=</span><span class="fl">16</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="va">stim</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">ds</span><span class="op">$</span><span class="va">stim</span>,<span class="st">"-"</span>,<span class="va">ds</span><span class="op">$</span><span class="va">is_target</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># If Lord's formula and</span></span></span>
+<span class="r-in"><span><span class="co"># bootstrapped splithalf measure something similar,</span></span></span>
+<span class="r-in"><span><span class="co"># then the outcomes should be close to each other.</span></span></span>
+<span class="r-in"><span><span class="fu">aat_covreliability</span><span class="op">(</span>ds<span class="op">=</span><span class="va">ds</span>,subjvar<span class="op">=</span><span class="st">"subj"</span>,stimvar<span class="op">=</span><span class="st">"stim"</span>,pullvar<span class="op">=</span><span class="st">"is_pull"</span>,</span></span>
+<span class="r-in"><span>                           targetvar<span class="op">=</span><span class="st">"is_target"</span>,rtvar<span class="op">=</span><span class="st">"rt"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> r = .33</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Based on 32 valid stimuli, 36 valid participants, and the calpha algorithm.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Reliability of stimulus category 1: r = .71, n = 16, sd = 54.03</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Reliability of stimulus category 2: r = .73, n = 16, sd = 59.78</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Category intercorrelation: r = .57</span>
-<span class="r-in"><span class="fu"><a href="aat_splithalf.html">aat_splithalf</a></span><span class="op">(</span>ds<span class="op">=</span><span class="va">ds</span>,subjvar<span class="op">=</span><span class="st">"subj"</span>,pullvar<span class="op">=</span><span class="st">"is_pull"</span>,targetvar<span class="op">=</span><span class="st">"is_target"</span>,rtvar<span class="op">=</span><span class="st">"rt"</span>,</span>
-<span class="r-in">              algorithm<span class="op">=</span><span class="st">"aat_doublemeandiff"</span>,iters<span class="op">=</span><span class="fl">100</span>,plot<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Reliability of stimulus category 1: r = .76, n = 16, sd = 58.45</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Reliability of stimulus category 2: r = .68, n = 16, sd = 53.14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Category intercorrelation: r = .59</span>
+<span class="r-in"><span><span class="fu"><a href="aat_splithalf.html">aat_splithalf</a></span><span class="op">(</span>ds<span class="op">=</span><span class="va">ds</span>,subjvar<span class="op">=</span><span class="st">"subj"</span>,pullvar<span class="op">=</span><span class="st">"is_pull"</span>,targetvar<span class="op">=</span><span class="st">"is_target"</span>,rtvar<span class="op">=</span><span class="st">"rt"</span>,</span></span>
+<span class="r-in"><span>              algorithm<span class="op">=</span><span class="st">"aat_doublemeandiff"</span>,iters<span class="op">=</span><span class="fl">100</span>,plot<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Full-length reliability (Raju's beta):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> beta (36) = .39, 95%CI [-0.06, .67], p = .02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Full-length reliability (Spearman-Brown coefficient):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SB (36) = .35, 95%CI [-0.04, .61], p = .038</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Uncorrected, average split-half correlation:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> r (36) = .26, 95%CI [-0.03, .51], p = .127</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">#Testing reliability for single-difference scores</span></span>
-<span class="r-in"><span class="va">ds</span><span class="op">&lt;-</span><span class="va">ds</span><span class="op">[</span><span class="va">ds</span><span class="op">$</span><span class="va">is_target</span><span class="op">==</span><span class="fl">1</span>,<span class="op">]</span></span>
-<span class="r-in"><span class="fu">aat_covreliability</span><span class="op">(</span>ds<span class="op">=</span><span class="va">ds</span>,subjvar<span class="op">=</span><span class="st">"subj"</span>,stimvar<span class="op">=</span><span class="st">"stim"</span>,pullvar<span class="op">=</span><span class="st">"is_pull"</span>,rtvar<span class="op">=</span><span class="st">"rt"</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> r = .73</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> r (36) = .22, 95%CI [-0.02, .44], p = .191</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">#Testing reliability for single-difference scores</span></span></span>
+<span class="r-in"><span><span class="va">ds</span><span class="op">&lt;-</span><span class="va">ds</span><span class="op">[</span><span class="va">ds</span><span class="op">$</span><span class="va">is_target</span><span class="op">==</span><span class="fl">1</span>,<span class="op">]</span></span></span>
+<span class="r-in"><span><span class="fu">aat_covreliability</span><span class="op">(</span>ds<span class="op">=</span><span class="va">ds</span>,subjvar<span class="op">=</span><span class="st">"subj"</span>,stimvar<span class="op">=</span><span class="st">"stim"</span>,pullvar<span class="op">=</span><span class="st">"is_pull"</span>,rtvar<span class="op">=</span><span class="st">"rt"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> r = .68</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Based on 16 valid stimuli, 36 valid participants, and the calpha algorithm.</span>
-<span class="r-in"><span class="va">hh</span><span class="op">&lt;-</span><span class="fu"><a href="aat_simulate.html">aat_simulate</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">test</span><span class="op">&lt;-</span><span class="fu">aat_covreliability_jackknife</span><span class="op">(</span>ds<span class="op">=</span><span class="va">hh</span>,subjvar<span class="op">=</span><span class="st">"subj"</span>,stimvar<span class="op">=</span><span class="st">"stim"</span>,pullvar<span class="op">=</span><span class="st">"is_pull"</span>,</span>
-<span class="r-in">                                   targetvar<span class="op">=</span><span class="st">"is_target"</span>,rtvar<span class="op">=</span><span class="st">"rt"</span>,holdout<span class="op">=</span><span class="st">"cross"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">test</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Reliability: r = .59</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Maximum achieveable reliability is with removal of stimulus 0-8 and participant 14: r = .67</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="va">hh</span><span class="op">&lt;-</span><span class="fu"><a href="aat_simulate.html">aat_simulate</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">test</span><span class="op">&lt;-</span><span class="fu">aat_covreliability_jackknife</span><span class="op">(</span>ds<span class="op">=</span><span class="va">hh</span>,subjvar<span class="op">=</span><span class="st">"subj"</span>,stimvar<span class="op">=</span><span class="st">"stim"</span>,pullvar<span class="op">=</span><span class="st">"is_pull"</span>,</span></span>
+<span class="r-in"><span>                                   targetvar<span class="op">=</span><span class="st">"is_target"</span>,rtvar<span class="op">=</span><span class="st">"rt"</span>,holdout<span class="op">=</span><span class="st">"cross"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">test</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Reliability: r = .72</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Maximum achieveable reliability is with removal of stimulus 0-4 and participant 36: r = .77</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="aat_covreliability-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
@@ -211,7 +242,7 @@ University of Wisconsin.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

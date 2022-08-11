@@ -99,13 +99,16 @@ When one wants to compute the reliability of a double median difference score or
 }
 \section{Methods (by generic)}{
 \itemize{
-\item \code{print}: Print an \code{aat_covreliability} object
+\item \code{print(aat_covreliability)}: Print an \code{aat_covreliability} object
 
-\item \code{print}: Print an \code{aat_covreliability_jackknife} object
-
-\item \code{plot}: Plot an \code{aat_covreliability_jackknife} object
 }}
+\section{Functions}{
+\itemize{
+\item \code{print(aat_covreliability_jackknife)}: Print an \code{aat_covreliability_jackknife} object
 
+\item \code{plot(aat_covreliability_jackknife)}: Plot an \code{aat_covreliability_jackknife} object
+
+}}
 \examples{
 #We generate a dataset with 16 stimuli in each category
 ds<-aat_simulate(biasfx_jitter=40,nstims=16)

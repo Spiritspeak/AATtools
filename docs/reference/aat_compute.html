@@ -50,39 +50,51 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">aat_compute</span><span class="op">(</span>
-  <span class="va">ds</span>,
-  <span class="va">subjvar</span>,
-  <span class="va">pullvar</span>,
-  targetvar <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">rtvar</span>,
-  algorithm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"aat_doublemeandiff"</span>, <span class="st">"aat_doublemediandiff"</span>, <span class="st">"aat_dscore"</span>,
-    <span class="st">"aat_dscore_multiblock"</span>, <span class="st">"aat_regression"</span>, <span class="st">"aat_standardregression"</span>,
-    <span class="st">"aat_doublemeanquotient"</span>, <span class="st">"aat_doublemedianquotient"</span>, <span class="st">"aat_singlemeandiff"</span>,
-    <span class="st">"aat_singlemediandiff"</span><span class="op">)</span>,
-  trialdropfunc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"prune_nothing"</span>, <span class="st">"trial_prune_3SD"</span>, <span class="st">"trial_prune_3MAD"</span>,
-    <span class="st">"trial_prune_SD_dropcases"</span>, <span class="st">"trial_recode_SD"</span>, <span class="st">"trial_prune_percent_subject"</span>,
-    <span class="st">"trial_prune_percent_sample"</span>, <span class="st">"trial_prune_grubbs"</span><span class="op">)</span>,
-  errortrialfunc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"prune_nothing"</span>, <span class="st">"error_replace_blockmeanplus"</span>,
-    <span class="st">"error_prune_dropcases"</span><span class="op">)</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">aat_compute</span><span class="op">(</span></span>
+<span>  <span class="va">ds</span>,</span>
+<span>  <span class="va">subjvar</span>,</span>
+<span>  <span class="va">pullvar</span>,</span>
+<span>  targetvar <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">rtvar</span>,</span>
+<span>  algorithm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"aat_doublemeandiff"</span>, <span class="st">"aat_doublemediandiff"</span>, <span class="st">"aat_dscore"</span>,</span>
+<span>    <span class="st">"aat_dscore_multiblock"</span>, <span class="st">"aat_regression"</span>, <span class="st">"aat_standardregression"</span>,</span>
+<span>    <span class="st">"aat_doublemeanquotient"</span>, <span class="st">"aat_doublemedianquotient"</span>, <span class="st">"aat_singlemeandiff"</span>,</span>
+<span>    <span class="st">"aat_singlemediandiff"</span><span class="op">)</span>,</span>
+<span>  trialdropfunc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"prune_nothing"</span>, <span class="st">"trial_prune_3SD"</span>, <span class="st">"trial_prune_3MAD"</span>,</span>
+<span>    <span class="st">"trial_prune_SD_dropcases"</span>, <span class="st">"trial_recode_SD"</span>, <span class="st">"trial_prune_percent_subject"</span>,</span>
+<span>    <span class="st">"trial_prune_percent_sample"</span>, <span class="st">"trial_prune_grubbs"</span><span class="op">)</span>,</span>
+<span>  errortrialfunc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"prune_nothing"</span>, <span class="st">"error_replace_blockmeanplus"</span>,</span>
+<span>    <span class="st">"error_prune_dropcases"</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>ds</dt>
 <dd><p>a long-format data.frame</p></dd>
+
+
 <dt>subjvar</dt>
 <dd><p>column name of subject variable</p></dd>
+
+
 <dt>pullvar</dt>
 <dd><p>column name of pull/push indicator variable, must be numeric or logical (where pull is 1 or TRUE)</p></dd>
+
+
 <dt>targetvar</dt>
 <dd><p>column name of target stimulus indicator, must be numeric or logical (where target is 1 or TRUE)</p></dd>
+
+
 <dt>rtvar</dt>
 <dd><p>column name of reaction time variable</p></dd>
+
+
 <dt>algorithm</dt>
 <dd><p>Function (without brackets or quotes) to be used to compute AAT scores. See <a href="Algorithms.html">Algorithms</a> for a list of usable algorithms.</p></dd>
+
+
 <dt>trialdropfunc</dt>
 <dd><p>Function (without brackets or quotes) to be used to exclude outlying trials in each half.
 The way you handle outliers for the reliability computation should mimic the way you do it in your regular analyses.
@@ -102,6 +114,8 @@ with outliers defined as reaction times deviating more than a certain number of 
 on a subject-by-subject basis or sample-wide, respectively. The following arguments are available:</p><ul><li><p><code>lowerpercent</code> and <code>uppperpercent</code> (optional; defaults are .01 and .99).</p></li>
 </ul></li>
 </ul></dd>
+
+
 <dt>errortrialfunc</dt>
 <dd><p>Function (without brackets or quotes) to apply to an error trial.</p>
 <ul><li><p><code>prune_nothing</code> removes no errors (default).</p></li>
@@ -114,33 +128,33 @@ If used, the following additional arguments are required:</p><ul><li><p><code>bl
 <li><p><code>maxerrors</code> - participants with a higher percentage of errors are excluded from the dataset. Default is .15.</p></li>
 </ul></li>
 </ul></dd>
+
+
 <dt>...</dt>
 <dd><p>Other arguments, to be passed on to the algorithm or outlier rejection functions (see arguments above)</p></dd>
+
 </dl></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">#Compute the correlation between relevant-feature and irrelevant-feature AAT scores</span></span>
-<span class="r-in"><span class="va">ds</span><span class="op">&lt;-</span><span class="va">erotica</span><span class="op">[</span><span class="va">erotica</span><span class="op">$</span><span class="va">correct</span><span class="op">==</span><span class="fl">1</span>,<span class="op">]</span></span>
-<span class="r-in"><span class="va">relevant</span> <span class="op">&lt;-</span> <span class="fu">aat_compute</span><span class="op">(</span>ds<span class="op">=</span><span class="va">ds</span><span class="op">[</span><span class="va">ds</span><span class="op">$</span><span class="va">is_irrelevant</span><span class="op">==</span><span class="fl">0</span>,<span class="op">]</span>,</span>
-<span class="r-in">                        pullvar<span class="op">=</span><span class="st">"is_pull"</span>,targetvar<span class="op">=</span><span class="st">"is_target"</span>,</span>
-<span class="r-in">                        rtvar<span class="op">=</span><span class="st">"RT"</span>,subjvar<span class="op">=</span><span class="st">"subject"</span>,</span>
-<span class="r-in">                        trialdropfunc<span class="op">=</span><span class="st">"trial_prune_3SD"</span>,</span>
-<span class="r-in">                        algorithm<span class="op">=</span><span class="st">"aat_doublemediandiff"</span><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in do.call(errorremovefunc, c(args, list(ds = iterds, subjvar = subjvar,     rtvar = rtvar))):</span> object 'iterds' not found</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">irrelevant</span> <span class="op">&lt;-</span> <span class="fu">aat_compute</span><span class="op">(</span>ds<span class="op">=</span><span class="va">ds</span><span class="op">[</span><span class="va">ds</span><span class="op">$</span><span class="va">is_irrelevant</span><span class="op">==</span><span class="fl">1</span>,<span class="op">]</span>,</span>
-<span class="r-in">                        pullvar<span class="op">=</span><span class="st">"is_pull"</span>,targetvar<span class="op">=</span><span class="st">"is_target"</span>,</span>
-<span class="r-in">                        rtvar<span class="op">=</span><span class="st">"RT"</span>,subjvar<span class="op">=</span><span class="st">"subject"</span>,</span>
-<span class="r-in">                        trialdropfunc<span class="op">=</span><span class="st">"trial_prune_3SD"</span>,</span>
-<span class="r-in">                        algorithm<span class="op">=</span><span class="st">"aat_doublemediandiff"</span><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in do.call(errorremovefunc, c(args, list(ds = iterds, subjvar = subjvar,     rtvar = rtvar))):</span> object 'iterds' not found</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">comparison.df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">relevant</span>, <span class="va">irrelevant</span>, by <span class="op">=</span> <span class="st">"subject"</span><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in merge(relevant, irrelevant, by = "subject"):</span> object 'relevant' not found</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">comparison.df</span><span class="op">$</span><span class="va">ab.x</span>, <span class="va">comparison.df</span><span class="op">$</span><span class="va">ab.y</span><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in is.data.frame(y):</span> object 'comparison.df' not found</span>
-<span class="r-in"><span class="co"># 0.1145726</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">#Compute the correlation between relevant-feature and irrelevant-feature AAT scores</span></span></span>
+<span class="r-in"><span><span class="va">ds</span><span class="op">&lt;-</span><span class="va">erotica</span><span class="op">[</span><span class="va">erotica</span><span class="op">$</span><span class="va">correct</span><span class="op">==</span><span class="fl">1</span>,<span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">relevant</span> <span class="op">&lt;-</span> <span class="fu">aat_compute</span><span class="op">(</span>ds<span class="op">=</span><span class="va">ds</span><span class="op">[</span><span class="va">ds</span><span class="op">$</span><span class="va">is_irrelevant</span><span class="op">==</span><span class="fl">0</span>,<span class="op">]</span>,</span></span>
+<span class="r-in"><span>                        pullvar<span class="op">=</span><span class="st">"is_pull"</span>,targetvar<span class="op">=</span><span class="st">"is_target"</span>,</span></span>
+<span class="r-in"><span>                        rtvar<span class="op">=</span><span class="st">"RT"</span>,subjvar<span class="op">=</span><span class="st">"subject"</span>,</span></span>
+<span class="r-in"><span>                        trialdropfunc<span class="op">=</span><span class="st">"trial_prune_3SD"</span>,</span></span>
+<span class="r-in"><span>                        algorithm<span class="op">=</span><span class="st">"aat_doublemediandiff"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">irrelevant</span> <span class="op">&lt;-</span> <span class="fu">aat_compute</span><span class="op">(</span>ds<span class="op">=</span><span class="va">ds</span><span class="op">[</span><span class="va">ds</span><span class="op">$</span><span class="va">is_irrelevant</span><span class="op">==</span><span class="fl">1</span>,<span class="op">]</span>,</span></span>
+<span class="r-in"><span>                        pullvar<span class="op">=</span><span class="st">"is_pull"</span>,targetvar<span class="op">=</span><span class="st">"is_target"</span>,</span></span>
+<span class="r-in"><span>                        rtvar<span class="op">=</span><span class="st">"RT"</span>,subjvar<span class="op">=</span><span class="st">"subject"</span>,</span></span>
+<span class="r-in"><span>                        trialdropfunc<span class="op">=</span><span class="st">"trial_prune_3SD"</span>,</span></span>
+<span class="r-in"><span>                        algorithm<span class="op">=</span><span class="st">"aat_doublemediandiff"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">comparison.df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">relevant</span>, <span class="va">irrelevant</span>, by <span class="op">=</span> <span class="st">"subject"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">comparison.df</span><span class="op">$</span><span class="va">ab.x</span>, <span class="va">comparison.df</span><span class="op">$</span><span class="va">ab.y</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
+<span class="r-in"><span><span class="co"># 0.1145726</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -155,7 +169,7 @@ If used, the following additional arguments are required:</p><ul><li><p><code>bl
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

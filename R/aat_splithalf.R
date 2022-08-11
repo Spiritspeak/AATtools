@@ -10,8 +10,8 @@
 #' @param targetvar Name of the column indicating trials featuring the target stimulus.
 #' Target stimuli should either be represented by 1, or by the second level of a factor.
 #' @param rtvar Name of the reaction time column.
-#' @param iters Total number of desired iterations. At least 200 are recommended for reasonable confidence intervals;
-#' If you want to see plots of your data, 1 iteration is enough.
+#' @param stratvars Names of additional variables to stratify splits by.
+#' @param iters Total number of desired iterations. At least 6000 are recommended for reasonable estimates.
 #' @param algorithm Function (without brackets or quotes) to be used to compute AAT scores. See \link{Algorithms} for a list of usable algorithms.
 #' @param trialdropfunc Function (without brackets or quotes) to be used to exclude outlying trials in each half.
 #' The way you handle outliers for the reliability computation should mimic the way you do it in your regular analyses.
@@ -77,10 +77,11 @@
 #' @seealso \link{q_reliability}
 #' @examples
 #' split <- aat_splithalf(ds=erotica[erotica$is_irrelevant==0,],
-#'                        subjvar="subject",pullvar="is_pull",targetvar="is_target",
-#'                        rtvar="RT",iters=10,trialdropfunc="trial_prune_3SD",
-#'                        casedropfunc="case_prune_3SD",algorithm="aat_dscore",
-#'                        plot=FALSE,parallel=FALSE)
+#'                        subjvar="subject", pullvar="is_pull", targetvar="is_target",
+#'                        rtvar="RT", stratvars="stimuluscode", iters=10,
+#'                        trialdropfunc="trial_prune_3SD",
+#'                        casedropfunc="case_prune_3SD", algorithm="aat_dscore",
+#'                        plot=FALSE, parallel=FALSE)
 #'
 #' print(split)
 #' #Mean reliability: 0.521959
@@ -102,7 +103,7 @@
 #' #95%CI: [0.2687186, 0.6749176]
 #' }
 #' @export
-aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,
+aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,stratvars=NULL,iters,
                         algorithm=c("aat_doublemeandiff","aat_doublemediandiff",
                                     "aat_dscore","aat_dscore_multiblock",
                                     "aat_regression","aat_standardregression",
@@ -120,7 +121,8 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,
   #Handle arguments
   args<-list(...)
   algorithm<-match.arg(algorithm)
-  if(!(algorithm %in% c("aat_singlemeandiff","aat_singlemediandiff","aat_regression","aat_standardregression")) & is.null(targetvar)){
+  if(!(algorithm %in% c("aat_singlemeandiff","aat_singlemediandiff",
+                        "aat_regression","aat_standardregression")) & is.null(targetvar)){
     stop("Argument targetvar missing but required for algorithm!")
   }
   trialdropfunc<-match.arg(trialdropfunc)
@@ -148,7 +150,8 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,
       warning("No AAT-term provided. Defaulting to AAT-term ",args$aatterm)
     }
   }
-  ds<-do.call(aat_preparedata,c(list(ds=ds,subjvar=subjvar,pullvar=pullvar,targetvar=targetvar,rtvar=rtvar),args))
+  ds<-do.call(aat_preparedata,c(list(ds=ds,subjvar=subjvar,pullvar=pullvar,targetvar=targetvar,
+                                     rtvar=rtvar,stratvars=stratvars),args))
 
   #Prepare the cluster
   if(parallel){
@@ -167,19 +170,24 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,
   results<-
     foreach(iter = seq_len(iters), .packages=packs) %dofunc% {
       #Split data
-      if(is.null(targetvar)){
-        iterds<-ds%>%group_by(!! sym(subjvar), !! sym(pullvar))%>%
-          mutate(key=sample(n())%%2)%>%ungroup()
-      }else{
-        # iterds<-ds%>%group_by(!! sym(subjvar), !! sym(pullvar), !! sym(targetvar))%>%
-        #   mutate(key=sample(n())%%2)%>%ungroup()
+      # if(is.null(targetvar)){
+      #   iterds<-ds%>%group_by(!! sym(subjvar), !! sym(pullvar))%>%
+      #     mutate(key=sample(n())%%2)%>%ungroup()
+      # }else{
+      #   # iterds<-ds%>%group_by(!! sym(subjvar), !! sym(pullvar), !! sym(targetvar))%>%
+      #   #   mutate(key=sample(n())%%2)%>%ungroup()
+      #
+      #   h<-tapply(seq_len(nrow(ds)),ds[c(subjvar,pullvar,targetvar)],
+      #             function(x){sample(x,size=round(length(x)/2))})%>%unlist()
+      #   iterds<-ds
+      #   iterds$key<-0
+      #   iterds$key[h]<-1
+      # }
 
-        h<-tapply(seq_len(nrow(ds)),ds[c(subjvar,pullvar,targetvar)],
-                  function(x){sample(x,size=round(length(x)/2))})%>%unlist()
-        iterds<-ds
-        iterds$key<-0
-        iterds$key[h]<-1
-      }
+      #Split data
+      iterds<-ds
+      iterds$key<-datasplitter(iterds[,c(subjvar,pullvar,targetvar,stratvars)])
+
       #Handle error removal
       iterds<-do.call(errorremovefunc,c(args,list(ds=iterds,subjvar=subjvar,rtvar=rtvar)))
       #Handle outlying trials
@@ -292,7 +300,7 @@ aat_splithalf<-function(ds,subjvar,pullvar,targetvar=NULL,rtvar,iters,
 #' Advances in Data Analysis and Classification, 10(1), 71-84.
 #' @export
 #' @rdname aat_splithalf
-print.aat_splithalf<-function(x,coef=c("Raju","FlanaganRulon","SpearmanBrown"),...){
+print.aat_splithalf<-function(x,coef=c("SpearmanBrown","Raju","FlanaganRulon"),...){
   coef<-match.arg(coef)
   if(coef=="Raju"){
     coefstr<-paste0("\nFull-length reliability (Raju's beta):\n",
@@ -347,3 +355,8 @@ plot.aat_splithalf<-function(x,type=c("median","minimum","maximum","random"),...
        xlab="Half 1 computed bias",ylab="Half 2 computed bias")
   text(abds$abhalf0,abds$abhalf1,abds[,1],cex= 0.7, pos=3, offset=0.3)
 }
+
+
+
+
+
