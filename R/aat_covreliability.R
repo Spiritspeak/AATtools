@@ -24,7 +24,8 @@
 #' ds<-aat_simulate(biasfx_jitter=40,nstims=16)
 #' ds$stim<-paste0(ds$stim,"-",ds$is_target)
 #' aat_stimulusscores(ds,"subj","stim","is_pull","is_target","rt")
-aat_stimulusscores<-function(ds,subjvar,stimvar,pullvar,targetvar=NULL,rtvar,aggfunc=c("mean","median"),iters=5){
+aat_stimulusscores<-function(ds,subjvar,stimvar,pullvar,targetvar=NULL,rtvar,
+                             aggfunc=c("mean","median"),iters=5){
   ds<-aat_preparedata(ds,subjvar=subjvar,pullvar=pullvar,stimvar=stimvar,targetvar=targetvar,rtvar=rtvar)
 
   pps<-unique(ds[[subjvar]])
@@ -130,14 +131,15 @@ aat_covreliability<-function(ds,subjvar,stimvar,pullvar,targetvar=NULL,rtvar,agg
     dia<-diag(sc$covmat)
     firstcat <-which(names(dia) %in% sc$stimcats$stim[sc$stimcats$cat==0])
     secondcat<-which(names(dia) %in% sc$stimcats$stim[sc$stimcats$cat==1])
-    n1<-length(firstcat )
+    n1<-length(firstcat)
     n2<-length(secondcat)
 
     r11<-do.call(algorithm,list(covmat=sc$covmat[firstcat, firstcat ]))
     r22<-do.call(algorithm,list(covmat=sc$covmat[secondcat,secondcat]))
     # r12<-cor(x=rowSums(sc$dataset[,firstcat]),
     #          y=rowSums(sc$dataset[,secondcat]))
-    r12<-sum(sc$covmat[firstcat,secondcat])/sqrt(sum(sc$covmat[firstcat,firstcat])*sum(sc$covmat[secondcat,secondcat]))
+    r12<-sum(sc$covmat[firstcat,secondcat])/
+      sqrt(sum(sc$covmat[firstcat,firstcat])*sum(sc$covmat[secondcat,secondcat]))
     s1<-sqrt(sum(sc$covmat[firstcat,firstcat]))/n1
     s2<-sqrt(sum(sc$covmat[secondcat,secondcat]))/n2
     rel<-(s1^2*r11+s2^2*r22-2*s1*s2*r12)/

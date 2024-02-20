@@ -8,7 +8,7 @@ cormean(
   r,
   n,
   wts = c("none", "n", "df"),
-  type = c("OP5", "OPK", "OP2"),
+  type = c("OP5", "OP2", "OPK"),
   na.rm = F
 )
 }

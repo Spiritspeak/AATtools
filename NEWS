@@ -1,1 +1,0 @@
-0.0.2: aat_alpha() and aat_alpha_jackknife() have been newly added. These functions allow for the computation of task reliability through the suboptimal but common Cronbach's alpha method, wherein stimulus-specific approach bias scores are treated as items in a questionnaire. See Cousijn, Goudriaan, & Wiers (2011) for a description of this method.

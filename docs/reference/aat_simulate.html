@@ -195,7 +195,7 @@ reliability and stimulus-specific effects.</p>
 <span class="r-in"><span><span class="va">mod</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">rt</span><span class="op">~</span><span class="va">is_pull</span><span class="op">*</span><span class="va">is_target</span>,data<span class="op">=</span><span class="va">ts</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span> <span class="co">#these should be somewhat close to the provided coefficients</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       (Intercept)           is_pull         is_target is_pull:is_target </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         580.33945         114.49482          52.36634        -103.10536 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         575.61992          93.16357          51.58842         -96.08522 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Here's how one might derive the parameters used in this function from a real dataset</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
@@ -221,7 +221,7 @@ reliability and stimulus-specific effects.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

@@ -5,9 +5,11 @@
 \alias{r2z}
 \alias{z2r}
 \alias{r2t}
+\alias{t2r}
 \alias{r2p}
 \alias{rconfint}
 \alias{compcorr}
+\alias{print.compcorr}
 \title{Correlation tools}
 \usage{
 r2z(r)
@@ -16,11 +18,15 @@ z2r(z)
 
 r2t(r, n)
 
+t2r(t, n)
+
 r2p(r, n)
 
 rconfint(r, n, alpha = 0.05)
 
 compcorr(r1, r2, n1, n2)
+
+\method{print}{compcorr}(x, ...)
 }
 \arguments{
 \item{r, r1, r2}{a correlation value}
@@ -42,11 +48,15 @@ Helper functions to compute important statistics from correlation coefficients.
 
 \item \code{r2t()}: Converts correlation coefficients to t-scores
 
+\item \code{t2r()}: Converts t-scores to correlation coefficients
+
 \item \code{r2p()}: Computes the two-sided p-value for a given correlation
 
 \item \code{rconfint()}: Computes confidence intervals for a given correlation coefficient
 
 \item \code{compcorr()}: computes the significance of the difference between two correlation coefficients
+
+\item \code{print(compcorr)}: computes the significance of the difference between two correlation coefficients
 
 }}
 \examples{

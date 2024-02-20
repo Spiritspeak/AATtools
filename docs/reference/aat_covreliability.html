@@ -201,31 +201,31 @@ University of Wisconsin.</p>
 <span class="r-in"><span><span class="co"># then the outcomes should be close to each other.</span></span></span>
 <span class="r-in"><span><span class="fu">aat_covreliability</span><span class="op">(</span>ds<span class="op">=</span><span class="va">ds</span>,subjvar<span class="op">=</span><span class="st">"subj"</span>,stimvar<span class="op">=</span><span class="st">"stim"</span>,pullvar<span class="op">=</span><span class="st">"is_pull"</span>,</span></span>
 <span class="r-in"><span>                           targetvar<span class="op">=</span><span class="st">"is_target"</span>,rtvar<span class="op">=</span><span class="st">"rt"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> r = .33</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> r = .61</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Based on 32 valid stimuli, 36 valid participants, and the calpha algorithm.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Reliability of stimulus category 1: r = .76, n = 16, sd = 58.45</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Reliability of stimulus category 2: r = .68, n = 16, sd = 53.14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Category intercorrelation: r = .59</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Reliability of stimulus category 1: r = .6, n = 16, sd = 50.54</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Reliability of stimulus category 2: r = .66, n = 16, sd = 53.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Category intercorrelation: r = .05</span>
 <span class="r-in"><span><span class="fu"><a href="aat_splithalf.html">aat_splithalf</a></span><span class="op">(</span>ds<span class="op">=</span><span class="va">ds</span>,subjvar<span class="op">=</span><span class="st">"subj"</span>,pullvar<span class="op">=</span><span class="st">"is_pull"</span>,targetvar<span class="op">=</span><span class="st">"is_target"</span>,rtvar<span class="op">=</span><span class="st">"rt"</span>,</span></span>
 <span class="r-in"><span>              algorithm<span class="op">=</span><span class="st">"aat_doublemeandiff"</span>,iters<span class="op">=</span><span class="fl">100</span>,plot<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Full-length reliability (Spearman-Brown coefficient):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SB (36) = .35, 95%CI [-0.04, .61], p = .038</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SB (36) = .59, 95%CI [.31, .77], p = 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Uncorrected, average split-half correlation:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> r (36) = .22, 95%CI [-0.02, .44], p = .191</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> r (36) = .43, 95%CI [.19, .62], p = .01</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#Testing reliability for single-difference scores</span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">&lt;-</span><span class="va">ds</span><span class="op">[</span><span class="va">ds</span><span class="op">$</span><span class="va">is_target</span><span class="op">==</span><span class="fl">1</span>,<span class="op">]</span></span></span>
 <span class="r-in"><span><span class="fu">aat_covreliability</span><span class="op">(</span>ds<span class="op">=</span><span class="va">ds</span>,subjvar<span class="op">=</span><span class="st">"subj"</span>,stimvar<span class="op">=</span><span class="st">"stim"</span>,pullvar<span class="op">=</span><span class="st">"is_pull"</span>,rtvar<span class="op">=</span><span class="st">"rt"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> r = .68</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> r = .66</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Based on 16 valid stimuli, 36 valid participants, and the calpha algorithm.</span>
 <span class="r-in"><span><span class="va">hh</span><span class="op">&lt;-</span><span class="fu"><a href="aat_simulate.html">aat_simulate</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">test</span><span class="op">&lt;-</span><span class="fu">aat_covreliability_jackknife</span><span class="op">(</span>ds<span class="op">=</span><span class="va">hh</span>,subjvar<span class="op">=</span><span class="st">"subj"</span>,stimvar<span class="op">=</span><span class="st">"stim"</span>,pullvar<span class="op">=</span><span class="st">"is_pull"</span>,</span></span>
 <span class="r-in"><span>                                   targetvar<span class="op">=</span><span class="st">"is_target"</span>,rtvar<span class="op">=</span><span class="st">"rt"</span>,holdout<span class="op">=</span><span class="st">"cross"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">test</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Reliability: r = .72</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Maximum achieveable reliability is with removal of stimulus 0-4 and participant 36: r = .77</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Reliability: r = .66</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Maximum achieveable reliability is with removal of stimulus 1-10 and participant 15: r = .72</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="aat_covreliability-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
@@ -242,7 +242,7 @@ University of Wisconsin.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

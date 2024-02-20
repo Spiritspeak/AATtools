@@ -32,6 +32,8 @@ z2r<-function(z){
 #' @export
 #' @describeIn correlation-tools Converts correlation coefficients to t-scores
 r2t<-function(r,n){ (r*sqrt(n-2))/sqrt(1-r^2) }
+#' @export
+#' @describeIn correlation-tools Converts t-scores to correlation coefficients
 t2r<-function(t,n){ sqrt(t/sqrt(t^2+n-2)) }
 #' @export
 #' @describeIn correlation-tools Computes the two-sided p-value for a given correlation
@@ -51,7 +53,8 @@ compcorr<-function(r1,r2,n1,n2){
   pval<-min(1,pnorm(abs(zval),lower.tail=F)*2)
   return(structure(list(zscore=zval,pvalue=pval),class="compcorr"))
 }
-
+#' @export
+#' @describeIn correlation-tools computes the significance of the difference between two correlation coefficients
 print.compcorr<-function(x,...){
   cat("Two-tailed Z-test for the difference between two correlation coefficients.",
       "\nZ =",x$zscore,"\np =",x$pvalue,"\n")
@@ -84,9 +87,15 @@ print.compcorr<-function(x,...){
 #'
 #' @examples
 #' cormean(c(0,.3,.5),c(30,30,60))
-cormean<-function(r,n,wts=c("none","n","df"),type=c("OP5","OPK","OP2"),na.rm=F){
+cormean<-function(r,n,wts=c("none","n","df"),type=c("OP5","OP2","OPK"),na.rm=F){
   type<-match.arg(type)
   wts<-match.arg(wts)
+
+  if(length(r)==1){
+    return(r)
+  }else if(length(n)==1){
+    n<-rep(n,length(r))
+  }
 
   if(na.rm){
     missing<-which(is.na(r) | is.na(n))
@@ -100,15 +109,21 @@ cormean<-function(r,n,wts=c("none","n","df"),type=c("OP5","OPK","OP2"),na.rm=F){
     stop("Length of r and n not equal!")
   }
 
+  if(any(n<5)){
+    stop("This function cannot accurately average correlations when any have n<5")
+  }
+
   if(type=="OP5"){
     sizevec<-unique(n)
-    gammalist<-sapply(sizevec,function(nr) (gamma(.5+1:5)^2 * gamma(nr/2-1))/
-                        (gamma(.5)^2 * gamma(nr/2-1+1:5)))
-    rmean<-weighted.mean(x= sapply(seq_along(r),
-                                   function(i)
-                                     r[i]*(1+ sum(gammalist[,match(n[i],sizevec)] *
-                                                    (1-r[i]^2)^(1:5)/factorial(1:5)))),
-                         w= weight)
+    lgammachain1<-lgamma(.5+1:5)*2
+    lgammachain2<-lgamma(.5)*2
+    factorialchain<-factorial(1:5)
+    gammalist<-exp(sapply(sizevec,function(nr){
+      (lgammachain1 + lgamma(nr/2-1)) - (lgammachain2 + lgamma(nr/2-1+1:5))}))
+    corlist<-sapply(seq_along(r),
+                    function(i){ r[i]*(1+ sum(gammalist[,match(n[i],sizevec)] *
+                                                (1-r[i]^2)^(1:5)/factorialchain))})
+    rmean<-weighted.mean(x= corlist,w= weight)
   }else if(type=="OPK"){
     rmean<-weighted.mean(x= r*(1+(1-r^2)/(2*(n-(9*sqrt(2)-7)/2))),
                          w= weight)
@@ -246,4 +261,5 @@ covEM<-function(dat_missing,iters=1000){
   }
   return(list(sigma=sigma,data=dat_impute))
 }
+
 

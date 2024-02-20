@@ -13,4 +13,4 @@ Encoding: UTF-8
 BugReports: https://github.com/Spiritspeak/AATtools/issues
 LazyData: true
 ByteCompile: true
-RoxygenNote: 7.2.1
+RoxygenNote: 7.3.1

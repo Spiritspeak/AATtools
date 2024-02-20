@@ -56,11 +56,16 @@
 <span></span>
 <span><span class="fu">r2t</span><span class="op">(</span><span class="va">r</span>, <span class="va">n</span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">t2r</span><span class="op">(</span><span class="va">t</span>, <span class="va">n</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">r2p</span><span class="op">(</span><span class="va">r</span>, <span class="va">n</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">rconfint</span><span class="op">(</span><span class="va">r</span>, <span class="va">n</span>, alpha <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">compcorr</span><span class="op">(</span><span class="va">r1</span>, <span class="va">r2</span>, <span class="va">n1</span>, <span class="va">n2</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">compcorr</span><span class="op">(</span><span class="va">r1</span>, <span class="va">r2</span>, <span class="va">n1</span>, <span class="va">n2</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for compcorr</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -87,9 +92,11 @@
 <ul><li><p><code>r2z()</code>: converts correlation coefficients to z-scores</p></li>
 <li><p><code>z2r()</code>: converts z-scores to correlation coefficients</p></li>
 <li><p><code>r2t()</code>: Converts correlation coefficients to t-scores</p></li>
+<li><p><code>t2r()</code>: Converts t-scores to correlation coefficients</p></li>
 <li><p><code>r2p()</code>: Computes the two-sided p-value for a given correlation</p></li>
 <li><p><code>rconfint()</code>: Computes confidence intervals for a given correlation coefficient</p></li>
 <li><p><code>compcorr()</code>: computes the significance of the difference between two correlation coefficients</p></li>
+<li><p><code>print(compcorr)</code>: computes the significance of the difference between two correlation coefficients</p></li>
 </ul></div>
     <div id="see-also">
     <h2>See also</h2>
@@ -111,17 +118,12 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>     confints &lt;- c(z2r(z - zint), z2r(z + zint))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     return(rconfint)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001da5ce19ba8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001ff48c54608&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: namespace:AATtools&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu">compcorr</span><span class="op">(</span><span class="fl">.5</span>,<span class="fl">.7</span>,<span class="fl">20</span>,<span class="fl">20</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $zscore</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.927105</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $pvalue</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.353872</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "compcorr"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Two-tailed Z-test for the difference between two correlation coefficients. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Z = 0.927105 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> p = 0.353872 </span>
 </code></pre></div>
     </div>
   </div>
@@ -136,7 +138,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>
