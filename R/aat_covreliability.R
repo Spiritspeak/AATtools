@@ -194,6 +194,8 @@ aat_covreliability_jackknife<-function(ds,subjvar,stimvar,pullvar,targetvar=NULL
                                        algorithm=c("calpha","lambda2","lambda4"),iters=5,
                                        holdout=c("both","participant","stimulus","cross")){
   algorithm<-match.arg(algorithm)
+  holdout<-match.arg(holdout)
+
   sc<-aat_stimulusscores(ds,subjvar=subjvar,stimvar=stimvar,pullvar=pullvar,targetvar=targetvar,
                          rtvar=rtvar,iters=iters)
   cat1<-sc$stimcats$stim[sc$stimcats$cat==0]
@@ -300,7 +302,7 @@ plot.aat_covreliability_jackknife<-function(x, ...){
   if(any("pps"==names(x))){
     ord<-order(x$pps$rel)
     plot(range(x$pps$rel), range(ord), bty = 'n', type = 'n',main="Participants",
-         xlab="Jackknife reliability",ylab="Rank")
+         xlab="Reliability with\nparticipant taken out",ylab="Rank")
     abline(v=x$rel,col="#00000055")
     text(x=x$pps$rel[ord],y=seq_along(x$pps$rel),label=as.character(x$pps$pp[ord]),cex=.7)
 
@@ -309,7 +311,7 @@ plot.aat_covreliability_jackknife<-function(x, ...){
   if(any("stims"==names(x))){
     ord<-order(x$stims$rel)
     plot(range(x$stims$rel), range(ord), bty = 'n', type = 'n',main="Stimuli",
-         xlab="Jackknife reliability",ylab="Rank")
+         xlab="Reliability with\nstimulus taken out",ylab="Rank")
     abline(v=x$rel,col="#00000055")
     text(x=x$stims$rel[ord],y=seq_along(x$stims$rel),label=as.character(x$stims$stim[ord]),cex=.7)
   }

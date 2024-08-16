@@ -35,7 +35,13 @@ compcorr(r1, r2, n1, n2)
 
 \item{n, n1, n2}{sample sizes}
 
+\item{t}{a t-score}
+
 \item{alpha}{the significance level to use}
+
+\item{x}{a \code{compcorr} object to print}
+
+\item{...}{ignored}
 }
 \description{
 Helper functions to compute important statistics from correlation coefficients.
@@ -52,7 +58,7 @@ Helper functions to compute important statistics from correlation coefficients.
 
 \item \code{r2p()}: Computes the two-sided p-value for a given correlation
 
-\item \code{rconfint()}: Computes confidence intervals for a given correlation coefficient
+\item \code{rconfint()}: Computes confidence intervals for one or multiple correlation coefficients
 
 \item \code{compcorr()}: computes the significance of the difference between two correlation coefficients
 
@@ -68,5 +74,5 @@ print(rconfint(r,30))
 print(compcorr(.5,.7,20,20))
 }
 \seealso{
-\link{cormean}, \link{multiple.cor}, \link{partial.cor}
+\link{cormean}
 }

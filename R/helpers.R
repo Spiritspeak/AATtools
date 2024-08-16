@@ -1,6 +1,6 @@
 serr<-function(x,na.rm=T){sqrt(var(x,na.rm=na.rm)/sum(!is.na(x)))}
 
-FlanaganRulonBilateral<-function(x1,x2){
+FlanaganRulonMirror<-function(x1,x2){
   key<-!is.na(x1) & !is.na(x2)
   x1<-x1[key]
   x2<-x2[key]
@@ -8,7 +8,7 @@ FlanaganRulonBilateral<-function(x1,x2){
   return(fr/max(1, 1-fr))
 }
 
-RajuBilateral<-function(x1,x2,prop){
+RajuMirror<-function(x1,x2,prop){
   covar<-cov(x1,x2)
   sumvar<-var(x1)+var(x2)+2*abs(covar)
   raju<-covar / (prop * (1-prop) * sumvar)

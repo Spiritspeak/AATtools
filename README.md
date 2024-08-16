@@ -5,9 +5,9 @@
 
 <!-- badges: start -->
 
-![CRAN status](https://www.r-pkg.org/badges/version/AATtools) [![Travis
-build
-status](https://travis-ci.org/Spiritspeak/AATtools.svg?branch=master)](https://travis-ci.org/Spiritspeak/AATtools)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/AATtools)](https://cran.r-project.org/package=AATtools)
+
 [![metacran
 downloads](https://cranlogs.r-pkg.org/badges/grand-total/AATtools)](https://cran.r-project.org/package=AATtools)
 [![metacran
@@ -78,11 +78,11 @@ print(split)
 ```
 
     ## 
-    ## Full-length reliability (Raju's beta):
-    ## beta (57.905) = .68, 95%CI [.54, .78], p = 0
+    ## Full-length reliability (Spearman-Brown coefficient):
+    ## SB (57.904) = .68, 95%CI [.54, .78], p = 0
     ## 
     ## Uncorrected, average split-half correlation:
-    ## r (57.905) = .52, 95%CI [.37, .65], p = 0
+    ## r (57.904) = .51, 95%CI [.37, .64], p = 0
 
 ``` r
 plot(split)
@@ -172,12 +172,6 @@ alpha<-aat_covreliability_jackknife(ds=dataset, #The dataset
                                     pullvar="is_pull", #Name of the column indicating approach or avoid trial
                                     rtvar="RT",        #Name of the column indicating reaction time
                                     algorithm="calpha") #Reliability computation method. calpha is Cronbach's alpha
-```
-
-    ## Warning in if ("cross" == holdout) {: the condition has length > 1 and only the
-    ## first element will be used
-
-``` r
 print(alpha)
 ```
 
@@ -218,9 +212,9 @@ print(boot)
 ```
 
     ## Bootstrapped bias scores and confidence intervals
-    ## Mean bias score: 0.1381435
-    ## Mean confidence interval: 0.8862338
-    ## reliability: q = 0.3243185
+    ## Mean bias score: 0.1398992
+    ## Mean confidence interval: 0.8943732
+    ## reliability: q = 0.3072345
     ## Number of iterations: 1000
 
 ``` r
@@ -268,6 +262,6 @@ hist(ds$rt)
 q_reliability2(ds=ds,subjvar="subj",splitvars=c("is_pull","is_target"),rtvar="rt",dscore=T)
 ```
 
-    ## q = 0.686825
+    ## q = 0.8184178
 
 ![](man/figures/simulate-1.png)<!-- -->

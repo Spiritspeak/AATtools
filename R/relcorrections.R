@@ -11,7 +11,7 @@ NULL
 #' @param ntests An integer indicating how many times larger the full test is, for which the corrected correlation coefficient is being computed.
 #' When \code{ntests=2}, the formula will compute what the correlation coefficient would be if the test were twice as long.
 #' @param fix.negative Determines how to deal with a negative value. "nullify" sets it to zero,
-#' "bilateral" applies the correction as if it were a positive number, and then sets it to negative.
+#' "mirror" applies the correction as if it were a positive number, and then sets it to negative.
 #' "none" gives the raw value. It should be noted that negative values are not supposed to occur,
 #' and there is no commonly accepted way to deal with them when they do occur.
 #' @return Spearman-Brown-corrected correlation coefficient.
@@ -20,9 +20,9 @@ NULL
 #' @examples
 #'
 #' SpearmanBrown(.5)
-SpearmanBrown<-function(corr,ntests=2,fix.negative=c("none","nullify","bilateral")){
+SpearmanBrown<-function(corr,ntests=2,fix.negative=c("none","nullify","mirror")){
   fix.negative<-match.arg(fix.negative)
-  if(fix.negative=="bilateral"){
+  if(fix.negative=="mirror"){
     s<-sign(corr)
     corr<-abs(corr)
     sb<-ntests*corr / (1+(ntests-1)*corr)
@@ -44,15 +44,15 @@ SpearmanBrown<-function(corr,ntests=2,fix.negative=c("none","nullify","bilateral
 #' @export
 #'
 #' @examples
-#' FlanaganRulon(a<-rnorm(50),rnorm(50)+a*.5,fix.negative="bilateral")
-FlanaganRulon<-function(x1,x2,fix.negative=c("none","nullify","bilateral")){
+#' FlanaganRulon(a<-rnorm(50),rnorm(50)+a*.5,fix.negative="mirror")
+FlanaganRulon<-function(x1,x2,fix.negative=c("none","nullify","mirror")){
   fix.negative<-match.arg(fix.negative)
   d<-var(x1-x2)
   k<-var(x1+x2)
 
   if(fix.negative=="none"){
     return(1-d/k)
-  }else if(fix.negative=="bilateral"){
+  }else if(fix.negative=="mirror"){
     fr<-(1-d/k)
     #fr<-ifelse(fr>0,fr,fr / (1-fr))
     fr<-fr/max(1, 1-fr)
@@ -73,11 +73,11 @@ FlanaganRulon<-function(x1,x2,fix.negative=c("none","nullify","bilateral")){
 #' @examples
 #' a<-rnorm(50)
 #' b<-rnorm(50)+a*.5
-#' RajuCoefficient(a,b,prop=.4,fix.negative="bilateral")
-RajuCoefficient<-function(x1,x2,prop,fix.negative=c("none","nullify","bilateral")){
+#' RajuCoefficient(a,b,prop=.4,fix.negative="mirror")
+RajuCoefficient<-function(x1,x2,prop,fix.negative=c("none","nullify","mirror")){
   fix.negative<-match.arg(fix.negative)
   covar<-cov(x1,x2)
-  if(fix.negative=="bilateral"){
+  if(fix.negative=="mirror"){
     sumvar<-var(x1)+var(x2)+2*abs(covar)
   }else{
     sumvar<-var(x1)+var(x2)+2*covar

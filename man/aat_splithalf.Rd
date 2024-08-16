@@ -13,7 +13,7 @@ aat_splithalf(
   targetvar = NULL,
   rtvar,
   stratvars = NULL,
-  iters,
+  iters = 6000,
   algorithm = c("aat_doublemeandiff", "aat_doublemediandiff", "aat_dscore",
     "aat_dscore_multiblock", "aat_regression", "aat_standardregression",
     "aat_singlemeandiff", "aat_singlemediandiff"),
@@ -134,6 +134,10 @@ Compute bootstrapped split-half reliability for approach-avoidance task data.
 \details{
 The calculated split-half coefficients are described in Warrens (2016).
 }
+\note{
+The Spearman-Brown, Raju, and Flanagan-Rulon correlation coefficients are modified to prevent
+negative correlations from reaching extreme and impossible values (e.g. below -1).
+}
 \examples{
 split <- aat_splithalf(ds=erotica[erotica$is_irrelevant==0,],
                        subjvar="subject", pullvar="is_pull", targetvar="is_target",
@@ -143,9 +147,6 @@ split <- aat_splithalf(ds=erotica[erotica$is_irrelevant==0,],
                        plot=FALSE, parallel=FALSE)
 
 print(split)
-#Mean reliability: 0.521959
-#Spearman-Brown-corrected r: 0.6859041
-#95\%CI: [0.4167018, 0.6172474]
 
 plot(split)
 
@@ -157,9 +158,6 @@ aat_splithalf(ds=erotica[erotica$is_irrelevant==0,],
               casedropfunc="case_prune_3SD", algorithm="aat_regression",
               formula = RT ~ is_pull * is_target, aatterm = "is_pull:is_target",
               plot=FALSE, parallel=FALSE)
-#Mean reliability: 0.5313939
-#Spearman-Brown-corrected r: 0.6940003
-#95\%CI: [0.2687186, 0.6749176]
 }
 }
 \references{

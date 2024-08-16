@@ -7,15 +7,11 @@
 \alias{RajuCoefficient}
 \title{Split Half-Based Reliability Coefficients}
 \usage{
-SpearmanBrown(
-  corr,
-  ntests = 2,
-  fix.negative = c("none", "nullify", "bilateral")
-)
+SpearmanBrown(corr, ntests = 2, fix.negative = c("none", "nullify", "mirror"))
 
-FlanaganRulon(x1, x2, fix.negative = c("none", "nullify", "bilateral"))
+FlanaganRulon(x1, x2, fix.negative = c("none", "nullify", "mirror"))
 
-RajuCoefficient(x1, x2, prop, fix.negative = c("none", "nullify", "bilateral"))
+RajuCoefficient(x1, x2, prop, fix.negative = c("none", "nullify", "mirror"))
 }
 \arguments{
 \item{corr}{To-be-corrected correlation coefficient}
@@ -24,7 +20,7 @@ RajuCoefficient(x1, x2, prop, fix.negative = c("none", "nullify", "bilateral"))
 When \code{ntests=2}, the formula will compute what the correlation coefficient would be if the test were twice as long.}
 
 \item{fix.negative}{Determines how to deal with a negative value. "nullify" sets it to zero,
-"bilateral" applies the correction as if it were a positive number, and then sets it to negative.
+"mirror" applies the correction as if it were a positive number, and then sets it to negative.
 "none" gives the raw value. It should be noted that negative values are not supposed to occur,
 and there is no commonly accepted way to deal with them when they do occur.}
 
@@ -54,10 +50,10 @@ which takes into account unequal split-halves and variances.
 \examples{
 
 SpearmanBrown(.5)
-FlanaganRulon(a<-rnorm(50),rnorm(50)+a*.5,fix.negative="bilateral")
+FlanaganRulon(a<-rnorm(50),rnorm(50)+a*.5,fix.negative="mirror")
 a<-rnorm(50)
 b<-rnorm(50)+a*.5
-RajuCoefficient(a,b,prop=.4,fix.negative="bilateral")
+RajuCoefficient(a,b,prop=.4,fix.negative="mirror")
 }
 \seealso{
 \link{covrel}

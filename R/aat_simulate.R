@@ -98,6 +98,11 @@ rgamma2<-function(n,shape,m=0,s=1){
   m + (rgamma(n=n,shape=shape,scale=1) - shape*1) *s/(sqrt(shape)*1)
 }
 
+rexgauss2<-function(m,s,beta){
+  m <- m - beta
+  rnorm(n, mean = m, sd = s) + rexp(n, rate = 1/beta)
+}
+
 aat_simulate_old<-function(npps=40,nstims=32,stimreps=2,
                   meanrt=743,meanrt_jitter=66,
                   sdrt=133,sdrt_jitter=38,
