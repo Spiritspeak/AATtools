@@ -37,7 +37,7 @@ z2r<-function(z){
 r2t<-function(r,n){ (r*sqrt(n-2))/sqrt(1-r^2) }
 #' @export
 #' @describeIn correlation-tools Converts t-scores to correlation coefficients
-t2r<-function(t,n){ sqrt(t/sqrt(t^2+n-2)) }
+t2r<-function(t,n){ t/sqrt(t^2+n-2) }
 #' @export
 #' @describeIn correlation-tools Computes the two-sided p-value for a given correlation
 r2p<-function(r,n){ 2*pt(abs(r2t(r,n)),n-2,lower.tail=FALSE) }
